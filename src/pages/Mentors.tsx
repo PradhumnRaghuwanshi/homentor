@@ -1,4 +1,4 @@
-import React, { useState,useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import Layout from "@/components/Layout";
@@ -15,10 +15,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Star, Search, Clock, MapPin } from "lucide-react";
+import { Star } from "lucide-react";
 import MentorCard from "@/components/MentorCard";
 import CollapsibleSelects from "@/components/CollapsibleSelects";
 import RadialFilterMenu from "@/components/RadialFilterMenu";
+import MentorCarousel from "@/components/MentorCarousel";
 
 // Mentor data for demonstration
 const mentorsData = [
@@ -248,7 +249,7 @@ const Mentors = () => {
               </SelectContent>
             </Select> */}
             {/* <CollapsibleSelects></CollapsibleSelects> */}
-            
+
             <div className="px-2 py-1">
               <Label>Price Range ($/hr)</Label>
               <div className="flex items-center justify-between mt-2">
@@ -265,7 +266,6 @@ const Mentors = () => {
                 }
                 className="mt-2"
               />
-              
             </div>
 
             <div className="px-2 py-1 flex gap-4">
@@ -276,20 +276,16 @@ const Mentors = () => {
                 Apply Filters
               </Button> */}
               <Select value={sortBy} onValueChange={setSortBy}>
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Sort by" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="rating">Highest Rated</SelectItem>
-                      <SelectItem value="priceAsc">
-                        Price: Low to High
-                      </SelectItem>
-                      <SelectItem value="priceDesc">
-                        Price: High to Low
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <RadialFilterMenu></RadialFilterMenu>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Sort by" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="rating">Highest Rated</SelectItem>
+                  <SelectItem value="priceAsc">Price: Low to High</SelectItem>
+                  <SelectItem value="priceDesc">Price: High to Low</SelectItem>
+                </SelectContent>
+              </Select>
+              <RadialFilterMenu></RadialFilterMenu>
               <Button
                 variant="outline"
                 className="border-homentor-blue text-homentor-blue hover:bg-homentor-lightBlue"
@@ -304,9 +300,7 @@ const Mentors = () => {
               <div className="flex flex-wrap gap-6">
                 <div className="min-w-[200px] space-y-4"></div>
 
-                <div className="flex-1 flex items-end">
-                  
-                </div>
+                <div className="flex-1 flex items-end"></div>
               </div>
             </div>
           </div>
@@ -317,10 +311,17 @@ const Mentors = () => {
             </p>
           </div>
 
+          <div className="w-full px-4 sm:px-6 lg:px-8">
+            <MentorCarousel mentors={filteredMentors} />
+          </div>
+
           <div className="md:col-span-3 grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredMentors.map((mentor) => (
-             
-              <Card ref={ref} key={mentor.id} className={`flex flex-col ${visible ? 'mentor-card' : ''} `}>
+              <Card
+                ref={ref}
+                key={mentor.id}
+                className={`flex flex-col ${visible ? "mentor-card" : ""} `}
+              >
                 <CardContent className="p-4 flex flex-col h-full">
                   <img
                     src={mentor.image}
@@ -328,10 +329,13 @@ const Mentors = () => {
                     className="w-full h-40 object-cover rounded-md mb-2"
                   />
                   <div className="flex-grow">
-                    <h3 className="text-lg font-semibold leading-snug">{mentor.name}</h3>
+                    <h3 className="text-lg font-semibold leading-snug">
+                      {mentor.name}
+                    </h3>
                     {/* <p className="text-sm text-gray-500 mb-1">{mentor.subjects.join(', ')}</p> */}
                     <p className="text-sm mb-1">
-                      <Star className="inline w-4 h-4 text-yellow-500" /> {mentor.rating}
+                      <Star className="inline w-4 h-4 text-yellow-500" />{" "}
+                      {mentor.rating}
                     </p>
                     {/* <p className="text-sm mb-1">
                       <MapPin className="inline w-4 h-4" /> {mentor.location}
@@ -339,19 +343,19 @@ const Mentors = () => {
                     {/* <p className="text-sm mb-1">Experience: {mentor.experience}</p> */}
                     {/* <p className="text-sm mb-1">Availability: {mentor.availability}</p> */}
                     <p className="text-sm mb-1 font-semibold text-homentor-blue">
-                       ₹{mentor.hourlyRate}/month
+                      ₹{mentor.hourlyRate}/month
                     </p>
                     <p className="text-sm">Class: {mentor.classLevel}</p>
                   </div>
                   <div className="mt-4">
                     <Link to={`/mentors/${mentor.id}`}>
-                      <Button className="w-full bg-homentor-blue hover:bg-homentor-darkBlue">View Profile</Button>
+                      <Button className="w-full bg-homentor-blue hover:bg-homentor-darkBlue">
+                        View Profile
+                      </Button>
                     </Link>
                   </div>
                 </CardContent>
               </Card>
-            
-
             ))}
           </div>
 
