@@ -168,7 +168,7 @@ const Mentors = () => {
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => setVisible(entry.isIntersecting),
-      { threshold: 0.4 }
+      { threshold: 0 }
     );
     if (ref.current) observer.observe(ref.current);
     return () => {
@@ -311,51 +311,46 @@ const Mentors = () => {
             </p>
           </div>
 
-          <div className="w-full px-4 sm:px-6 lg:px-8">
+          <div className="w-full ">
             <MentorCarousel mentors={filteredMentors} />
           </div>
 
           <div className="md:col-span-3 grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredMentors.map((mentor) => (
-              <Card
-                ref={ref}
-                key={mentor.id}
-                className={`flex flex-col ${visible ? "mentor-card" : ""} `}
-              >
-                <CardContent className="p-4 flex flex-col h-full">
-                  <img
-                    src={mentor.image}
-                    alt={mentor.name}
-                    className="w-full h-40 object-cover rounded-md mb-2"
-                  />
-                  <div className="flex-grow">
-                    <h3 className="text-lg font-semibold leading-snug">
-                      {mentor.name}
-                    </h3>
-                    {/* <p className="text-sm text-gray-500 mb-1">{mentor.subjects.join(', ')}</p> */}
-                    <p className="text-sm mb-1">
-                      <Star className="inline w-4 h-4 text-yellow-500" />{" "}
-                      {mentor.rating}
-                    </p>
-                    {/* <p className="text-sm mb-1">
-                      <MapPin className="inline w-4 h-4" /> {mentor.location}
-                    </p> */}
-                    {/* <p className="text-sm mb-1">Experience: {mentor.experience}</p> */}
-                    {/* <p className="text-sm mb-1">Availability: {mentor.availability}</p> */}
-                    <p className="text-sm mb-1 font-semibold text-homentor-blue">
-                      ₹{mentor.hourlyRate}/month
-                    </p>
-                    <p className="text-sm">Class: {mentor.classLevel}</p>
-                  </div>
-                  <div className="mt-4">
-                    <Link to={`/mentors/${mentor.id}`}>
-                      <Button className="w-full bg-homentor-blue hover:bg-homentor-darkBlue">
-                        View Profile
-                      </Button>
-                    </Link>
-                  </div>
-                </CardContent>
-              </Card>
+              // <Card
+              //   ref={ref}
+              //   key={mentor.id}
+              //   className={`flex flex-col  mentor-card  `}
+              // >
+              //   <CardContent className="p-4 flex flex-col h-full">
+              //     <img
+              //       src={mentor.image}
+              //       alt={mentor.name}
+              //       className="w-full h-40 object-cover rounded-md mb-2"
+              //     />
+              //     <div className="flex-grow">
+              //       <h3 className="text-lg font-semibold leading-snug">
+              //         {mentor.name}
+              //       </h3>
+              //       <p className="text-sm mb-1">
+              //         <Star className="inline w-4 h-4 text-yellow-500" />{" "}
+              //         {mentor.rating}
+              //       </p>
+              //       <p className="text-sm mb-1 font-semibold text-homentor-blue">
+              //         ₹{mentor.hourlyRate}/month
+              //       </p>
+              //       <p className="text-sm">Class: {mentor.classLevel}</p>
+              //     </div>
+              //     <div className="mt-4">
+              //       <Link to={`/mentors/${mentor.id}`}>
+              //         <Button className="w-full bg-homentor-blue hover:bg-homentor-darkBlue">
+              //           View Profile
+              //         </Button>
+              //       </Link>
+              //     </div>
+              //   </CardContent>
+              // </Card>
+              <MentorCard mentor={mentor} key={mentor.id}/>
             ))}
           </div>
 
