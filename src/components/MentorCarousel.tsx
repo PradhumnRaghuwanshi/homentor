@@ -8,13 +8,14 @@ import { Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import MentorCard from "./MentorCard";
+import TornCard from "./TornCard";
 
 export default function MentorCarousel({ mentors }) {
   const premiumMentors = mentors; // adjust key as needed
 
   return (
     <div className="my-10">
-      <h2 className="text-2xl font-bold mb-4 text-center text-indigo-700">
+      <h2 className="text-2xl font-bold mb-4 text-indigo-700">
         ⭐ Premium Mentors
       </h2>
 
@@ -57,7 +58,7 @@ export default function MentorCarousel({ mentors }) {
         >
           {premiumMentors.map((mentor) => (
             <SwiperSlide key={mentor.id}>
-              <MentorCard mentor={mentor} key={mentor._id}></MentorCard>
+              <TornCard ></TornCard>
             </SwiperSlide>
           ))}
         </Swiper>

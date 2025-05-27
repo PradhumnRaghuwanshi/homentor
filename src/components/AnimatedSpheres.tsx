@@ -22,8 +22,8 @@ const defaultKeyPoints: KeyPointSphere[] = [
     title: "HOME TUTOR",
     content: "Personalized one-on-one learning at home",
     color: "blue",
-    size: 180,
-    position: { left: "5%", top: "20%" },
+    size: 160,
+    position: { left: "10%", top: "15%" },
     delay: 0,
     duration: 20,
   },
@@ -31,8 +31,8 @@ const defaultKeyPoints: KeyPointSphere[] = [
     title: "School & College Teachers",
     content: "Experienced educators from top institutions",
     color: "gold",
-    size: 190,
-    position: { left: "55%", top: "40%" },
+    size: 170,
+    position: { left: "65%", top: "45%" },
     delay: 2, 
     duration: 25,
   },
@@ -40,8 +40,8 @@ const defaultKeyPoints: KeyPointSphere[] = [
     title: "Coaching & Counsellor",
     content: "Academic guidance and emotional support",
     color: "blue",
-    size: 170,
-    position: { left: "25%", top: "65%" },
+    size: 150,
+    position: { left: "20%", top: "70%" },
     delay: 4,
     duration: 22,
   },
@@ -57,54 +57,59 @@ const AnimatedSpheres: React.FC<AnimatedSpheresProps> = ({
     
     const sphereElements: HTMLDivElement[] = [];
     
-    // Create the key point spheres
+    // Create the key point spheres with better spacing
     keyPoints.forEach((point, index) => {
       const sphere = document.createElement('div');
       
       // Set basic styles for the sphere
-      sphere.className = `absolute rounded-full flex flex-col items-center justify-center p-6 backdrop-blur-md shadow-lg transform transition-all duration-500 cursor-pointer hover:scale-105 hover:shadow-xl`;
+      sphere.className = `absolute rounded-full flex flex-col items-center justify-center p-4 backdrop-blur-md shadow-lg transform transition-all duration-500 cursor-pointer hover:scale-105 hover:shadow-xl animate-float-smooth`;
       sphere.style.width = `${point.size}px`;
       sphere.style.height = `${point.size}px`;
       sphere.style.left = point.position.left;
       sphere.style.top = point.position.top;
-      sphere.style.opacity = "0.9";
-      sphere.style.zIndex = `${10 + index}`;
+      sphere.style.opacity = "0.95";
+      sphere.style.zIndex = `${20 + index}`;
       
       // Set the background color based on the logo colors
       if (point.color === 'blue') {
-        sphere.style.background = `radial-gradient(circle, rgba(30, 144, 255, 0.7) 0%, rgba(30, 144, 255, 0.3) 100%)`;
-        sphere.style.border = `2px solid rgba(30, 144, 255, 0.5)`;
+        sphere.style.background = `radial-gradient(circle, rgba(59, 130, 246, 0.8) 0%, rgba(59, 130, 246, 0.4) 100%)`;
+        sphere.style.border = `2px solid rgba(59, 130, 246, 0.6)`;
+        sphere.style.boxShadow = `0 0 30px rgba(59, 130, 246, 0.3)`;
       } else if (point.color === 'gold') {
-        sphere.style.background = `radial-gradient(circle, rgba(255, 215, 0, 0.7) 0%, rgba(255, 215, 0, 0.3) 100%)`;
-        sphere.style.border = `2px solid rgba(255, 215, 0, 0.5)`;
+        sphere.style.background = `radial-gradient(circle, rgba(245, 158, 11, 0.8) 0%, rgba(245, 158, 11, 0.4) 100%)`;
+        sphere.style.border = `2px solid rgba(245, 158, 11, 0.6)`;
+        sphere.style.boxShadow = `0 0 30px rgba(245, 158, 11, 0.3)`;
       }
       
-      // Set content
+      // Set content with better typography
       const title = document.createElement('h3');
-      title.className = "font-bold text-foreground text-center mb-1";
+      title.className = "font-bold text-white text-center mb-1 text-xs leading-tight";
+      title.style.textShadow = "0 1px 2px rgba(0,0,0,0.5)";
       title.textContent = point.title;
       
       const content = document.createElement('p');
-      content.className = "text-sm text-foreground/80 text-center";
+      content.className = "text-xs text-white/90 text-center leading-tight px-1";
+      content.style.textShadow = "0 1px 2px rgba(0,0,0,0.5)";
       content.textContent = point.content;
       
       sphere.appendChild(title);
       sphere.appendChild(content);
       
-      // Animation properties
+      // Animation properties with staggered timing
       sphere.style.animationDuration = `${point.duration}s`;
       sphere.style.animationDelay = `${point.delay}s`;
-      sphere.className += " animate-float";
+      sphere.style.animationIterationCount = "infinite";
+      sphere.style.animationTimingFunction = "ease-in-out";
       
-      // Add hover effect
+      // Add smooth hover effects
       sphere.addEventListener('mouseenter', () => {
-        sphere.style.transform = "scale(1.08)";
-        sphere.style.boxShadow = "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)";
+        sphere.style.transform = "scale(1.1) translateZ(0)";
+        sphere.style.transition = "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)";
       });
       
       sphere.addEventListener('mouseleave', () => {
-        sphere.style.transform = "scale(1)";
-        sphere.style.boxShadow = "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)";
+        sphere.style.transform = "scale(1) translateZ(0)";
+        sphere.style.transition = "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)";
       });
       
       // Add to DOM
@@ -112,43 +117,49 @@ const AnimatedSpheres: React.FC<AnimatedSpheresProps> = ({
       sphereElements.push(sphere);
     });
     
-    // Create decorative smaller spheres
-    const decorativeSphereCount = 5;
-    for (let i = 0; i < decorativeSphereCount; i++) {
+    // Create decorative smaller spheres with better positioning
+    const decorativePositions = [
+      { left: "85%", top: "20%" },
+      { left: "5%", top: "50%" },
+      { left: "45%", top: "10%" },
+      { left: "75%", top: "75%" },
+      { left: "40%", top: "85%" }
+    ];
+    
+    decorativePositions.forEach((pos, i) => {
       const sphere = document.createElement('div');
-      const size = Math.random() * 60 + 30; // 30px to 90px
+      const size = Math.random() * 40 + 20; // 20px to 60px
       
-      // Set basic styles
-      sphere.className = "absolute rounded-full";
+      sphere.className = "absolute rounded-full animate-float-gentle";
       sphere.style.width = `${size}px`;
       sphere.style.height = `${size}px`;
-      sphere.style.opacity = `${Math.random() * 0.3 + 0.1}`; // 0.1 to 0.4
+      sphere.style.opacity = `${Math.random() * 0.2 + 0.1}`;
+      sphere.style.left = pos.left;
+      sphere.style.top = pos.top;
+      sphere.style.zIndex = `${5 + i}`;
       
-      // Random position within boundaries for better alignment
-      sphere.style.left = `${Math.random() * 60 + 15}%`;
-      sphere.style.top = `${Math.random() * 60 + 10}%`;
+      // Alternating colors
+      const color = i % 2 === 0 ? 
+        "rgba(59, 130, 246, 0.3)" : 
+        "rgba(245, 158, 11, 0.3)";
+      sphere.style.background = `radial-gradient(circle, ${color} 0%, transparent 70%)`;
+      sphere.style.backdropFilter = "blur(2px)";
       
-      // Random color matching logo
-      const color = Math.random() > 0.5 ? 
-        "rgba(30, 144, 255, 0.2)" : // Blue
-        "rgba(255, 215, 0, 0.2)";   // Gold
-      sphere.style.backgroundColor = color;
-      sphere.style.backdropFilter = "blur(3px)";
+      // Staggered animation timing
+      sphere.style.animationDuration = `${Math.random() * 10 + 15}s`;
+      sphere.style.animationDelay = `${Math.random() * 3}s`;
+      sphere.style.animationIterationCount = "infinite";
       
-      // Animation properties
-      sphere.style.animationDuration = `${Math.random() * 15 + 15}s`; // 15-30s
-      sphere.style.animationDelay = `${Math.random() * 5}s`;
-      sphere.className += " animate-float";
-      
-      // Add to DOM
       containerRef.current.appendChild(sphere);
       sphereElements.push(sphere);
-    }
+    });
     
     // Cleanup
     return () => {
       sphereElements.forEach(sphere => {
-        sphere.remove();
+        if (sphere.parentNode) {
+          sphere.parentNode.removeChild(sphere);
+        }
       });
     };
   }, [keyPoints]);
@@ -156,10 +167,9 @@ const AnimatedSpheres: React.FC<AnimatedSpheresProps> = ({
   return (
     <div 
       ref={containerRef} 
-      className="absolute inset-0 overflow-hidden"
-      aria-hidden="false"
-      role="region"
-      aria-label="Interactive key features"
+      className="absolute inset-0 overflow-hidden pointer-events-none"
+      aria-hidden="true"
+      style={{ zIndex: 1 }}
     />
   );
 };

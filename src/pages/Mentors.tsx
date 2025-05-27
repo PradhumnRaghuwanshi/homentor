@@ -20,6 +20,9 @@ import MentorCard from "@/components/MentorCard";
 import CollapsibleSelects from "@/components/CollapsibleSelects";
 import RadialFilterMenu from "@/components/RadialFilterMenu";
 import MentorCarousel from "@/components/MentorCarousel";
+import TornCard from "@/components/TornCard";
+import SVGFilter from "@/components/SVGFilter";
+import SearchBar from "@/components/SearchBar";
 
 // Mentor data for demonstration
 const mentorsData = [
@@ -39,38 +42,38 @@ const mentorsData = [
     area: "Vijay Nagar",
     classLevel: "Class 10",
   },
-  {
-    id: 2,
-    name: "Rahul Verma",
-    subjects: ["English", "Social Studies"],
-    rating: 4.7,
-    hourlyRate: 20,
-    location: "Indore, Madhya Pradesh",
-    image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
-    experience: "4+ years",
-    bio: "Experienced English tutor with creative teaching methods.",
-    availability: "Weekends, morning slots",
-    state: "Madhya Pradesh",
-    city: "Indore",
-    area: "Palasia",
-    classLevel: "Class 8",
-  },
-  {
-    id: 3,
-    name: "Sneha Jain",
-    subjects: ["Biology", "Chemistry"],
-    rating: 4.8,
-    hourlyRate: 30,
-    location: "Indore, Madhya Pradesh",
-    image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
-    experience: "7+ years",
-    bio: "MSc in Biology, specializes in helping students with board exam preparation.",
-    availability: "Evenings after 6pm",
-    state: "Madhya Pradesh",
-    city: "Indore",
-    area: "Bhawarkuan",
-    classLevel: "Class 12",
-  },
+  // {
+  //   id: 2,
+  //   name: "Rahul Verma",
+  //   subjects: ["English", "Social Studies"],
+  //   rating: 4.7,
+  //   hourlyRate: 20,
+  //   location: "Indore, Madhya Pradesh",
+  //   image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
+  //   experience: "4+ years",
+  //   bio: "Experienced English tutor with creative teaching methods.",
+  //   availability: "Weekends, morning slots",
+  //   state: "Madhya Pradesh",
+  //   city: "Indore",
+  //   area: "Palasia",
+  //   classLevel: "Class 8",
+  // },
+  // {
+  //   id: 3,
+  //   name: "Sneha Jain",
+  //   subjects: ["Biology", "Chemistry"],
+  //   rating: 4.8,
+  //   hourlyRate: 30,
+  //   location: "Indore, Madhya Pradesh",
+  //   image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
+  //   experience: "7+ years",
+  //   bio: "MSc in Biology, specializes in helping students with board exam preparation.",
+  //   availability: "Evenings after 6pm",
+  //   state: "Madhya Pradesh",
+  //   city: "Indore",
+  //   area: "Bhawarkuan",
+  //   classLevel: "Class 12",
+  // },
 ];
 
 const subjects = [
@@ -188,14 +191,20 @@ const Mentors = () => {
               Search from our database of verified tutors
             </p>
           </div>
-          <div className="space-y-4">
-            <Input
-              placeholder="Search by name, subject, or location"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-
-            {/* <Select onValueChange={setSelectedSubject}>
+          <div className="space-y-3 ">
+            <div className="flex gap-4 items-center">
+            <SearchBar setSearchTerm={setSearchTerm} searchTerm={searchTerm}></SearchBar>
+            <Select onValueChange={setSelectedClass}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select Class" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Class 8">Class 8</SelectItem>
+                <SelectItem value="Class 10">Class 10</SelectItem>
+                <SelectItem value="Class 12">Class 12</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select onValueChange={setSelectedSubject}>
               <SelectTrigger>
                 <SelectValue placeholder="Select Subject" />
               </SelectTrigger>
@@ -208,16 +217,8 @@ const Mentors = () => {
                 <SelectItem value="Chemistry">Chemistry</SelectItem>
               </SelectContent>
             </Select>
-
-            <Select onValueChange={setSelectedState}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select State" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Madhya Pradesh">Madhya Pradesh</SelectItem>
-              </SelectContent>
-            </Select>
-
+            </div>
+            <div className="flex gap-4 items-center">
             <Select onValueChange={setSelectedCity}>
               <SelectTrigger>
                 <SelectValue placeholder="Select City" />
@@ -226,7 +227,6 @@ const Mentors = () => {
                 <SelectItem value="Indore">Indore</SelectItem>
               </SelectContent>
             </Select>
-
             <Select onValueChange={setSelectedArea}>
               <SelectTrigger>
                 <SelectValue placeholder="Select Area" />
@@ -237,24 +237,21 @@ const Mentors = () => {
                 <SelectItem value="Bhawarkuan">Bhawarkuan</SelectItem>
               </SelectContent>
             </Select>
-
-            <Select onValueChange={setSelectedClass}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select Class" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Class 8">Class 8</SelectItem>
-                <SelectItem value="Class 10">Class 10</SelectItem>
-                <SelectItem value="Class 12">Class 12</SelectItem>
-              </SelectContent>
-            </Select> */}
-            {/* <CollapsibleSelects></CollapsibleSelects> */}
+            <Button
+                variant="outline"
+                className="border-homentor-blue text-homentor-blue hover:bg-homentor-lightBlue"
+                onClick={resetFilters}
+              >
+                Reset
+              </Button>
+            </div>
 
             <div className="px-2 py-1">
-              <Label>Price Range ($/hr)</Label>
+              
               <div className="flex items-center justify-between mt-2">
-                <span>${priceRange[0]}</span>
-                <span>${priceRange[1]}</span>
+                <span>₹{priceRange[0]}</span>
+                <Label>Price Range (₹/month)</Label>
+                <span>₹{priceRange[1]}</span>
               </div>
               <Slider
                 defaultValue={[0, 100]}
@@ -268,32 +265,7 @@ const Mentors = () => {
               />
             </div>
 
-            <div className="px-2 py-1 flex gap-4">
-              {/* <Button
-                className="flex-1 bg-homentor-blue hover:bg-homentor-darkBlue"
-                onClick={applyFilters}
-              >
-                Apply Filters
-              </Button> */}
-              <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Sort by" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="rating">Highest Rated</SelectItem>
-                  <SelectItem value="priceAsc">Price: Low to High</SelectItem>
-                  <SelectItem value="priceDesc">Price: High to Low</SelectItem>
-                </SelectContent>
-              </Select>
-              <RadialFilterMenu></RadialFilterMenu>
-              <Button
-                variant="outline"
-                className="border-homentor-blue text-homentor-blue hover:bg-homentor-lightBlue"
-                onClick={resetFilters}
-              >
-                Reset
-              </Button>
-            </div>
+            
           </div>
           <div className="bg-white rounded-lg shadow-sm mb-8">
             <div className=" border-t border-gray-100">
@@ -314,43 +286,12 @@ const Mentors = () => {
           <div className="w-full ">
             <MentorCarousel mentors={filteredMentors} />
           </div>
+          <SVGFilter></SVGFilter>
+          
 
           <div className="md:col-span-3 grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredMentors.map((mentor) => (
-              // <Card
-              //   ref={ref}
-              //   key={mentor.id}
-              //   className={`flex flex-col  mentor-card  `}
-              // >
-              //   <CardContent className="p-4 flex flex-col h-full">
-              //     <img
-              //       src={mentor.image}
-              //       alt={mentor.name}
-              //       className="w-full h-40 object-cover rounded-md mb-2"
-              //     />
-              //     <div className="flex-grow">
-              //       <h3 className="text-lg font-semibold leading-snug">
-              //         {mentor.name}
-              //       </h3>
-              //       <p className="text-sm mb-1">
-              //         <Star className="inline w-4 h-4 text-yellow-500" />{" "}
-              //         {mentor.rating}
-              //       </p>
-              //       <p className="text-sm mb-1 font-semibold text-homentor-blue">
-              //         ₹{mentor.hourlyRate}/month
-              //       </p>
-              //       <p className="text-sm">Class: {mentor.classLevel}</p>
-              //     </div>
-              //     <div className="mt-4">
-              //       <Link to={`/mentors/${mentor.id}`}>
-              //         <Button className="w-full bg-homentor-blue hover:bg-homentor-darkBlue">
-              //           View Profile
-              //         </Button>
-              //       </Link>
-              //     </div>
-              //   </CardContent>
-              // </Card>
-              <MentorCard mentor={mentor} key={mentor.id}/>
+              <TornCard></TornCard>
             ))}
           </div>
 

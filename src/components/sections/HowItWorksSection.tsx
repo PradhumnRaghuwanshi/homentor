@@ -10,7 +10,7 @@ import ParallaxWrapper from '@/components/ParallaxWrapper';
 
 const HowItWorksSection = () => {
   return (
-    <section className="py-20 bg-gray-50 relative overflow-hidden">
+    <section className="py-20 bg-blue-50 relative overflow-hidden ">
       {/* SVG wave divider - top */}
       <div className="absolute top-0 left-0 right-0 w-full overflow-hidden leading-none transform rotate-180 translate-y-1">
         <svg className="relative block w-full h-20" viewBox="0 0 1200 120" preserveAspectRatio="none">
@@ -29,7 +29,7 @@ const HowItWorksSection = () => {
         <div></div>
       </ParallaxWrapper>
       
-      <div className="container-tight relative z-10">
+      <div className="container-tight my-10  relative z-10">
         <ScrollReveal className="text-center mb-12" cascade={true} cascadeDelay={0.1}>
           <h2 className="section-heading relative inline-block">
             How Homentor Works

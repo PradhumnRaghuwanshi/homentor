@@ -17,11 +17,6 @@ interface HeroSectionProps {
 const HeroSection: React.FC<HeroSectionProps> = ({
   title = "Your Child Deserves a Mentor, Not Just a Teacher",
   description = "Get matched with trusted tutors and subject mentors who provide customized learning plans based on your academic needs.",
-  image = "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
-  primaryButtonText = "Get Started",
-  primaryButtonLink = "/signup",
-  secondaryButtonText = "Learn How It Works",
-  secondaryButtonLink = "/how-it-works",
 }) => {
   const [scrollY, setScrollY] = useState(0);
 

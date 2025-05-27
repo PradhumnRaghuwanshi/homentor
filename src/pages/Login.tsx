@@ -50,9 +50,11 @@ const Login = () => {
     }
   };
 
+  const [isOtp, setIsOtp] = useState(false);
+
   return (
     <Layout>
-      <div className="container-tight max-w-md py-12">
+      <div className="container-tight max-w-md py-12 mt-[8vh]">
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-bold text-gray-900">Welcome Back</h1>
           <p className="text-gray-600 mt-2">Log in to your Homentor account</p>
@@ -72,48 +74,23 @@ const Login = () => {
               <TabsContent value="student">
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="student-email">Email</Label>
+                    <Label htmlFor="student-email">Mobile Number</Label>
                     <Input 
                       id="student-email" 
                       type="email" 
-                      placeholder="student@example.com" 
+                      placeholder="" 
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                     />
                   </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="student-password">Password</Label>
-                      <Link to="/forgot-password" className="text-sm text-homentor-blue hover:underline">
-                        Forgot password?
-                      </Link>
-                    </div>
-                    <div className="relative">
-                      <Input 
-                        id="student-password" 
-                        type={showPassword ? "text" : "password"} 
-                        placeholder="••••••••"
-                        required
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                      />
-                      <button 
-                        type="button" 
-                        onClick={() => setShowPassword(!showPassword)} 
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-                        tabIndex={-1}
-                      >
-                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                      </button>
-                    </div>
-                  </div>
+                
                   <Button 
                     type="submit" 
                     className="w-full bg-homentor-blue hover:bg-homentor-darkBlue"
                     disabled={isLoading}
                   >
-                    {isLoading ? 'Signing In...' : 'Sign In as Student'}
+                    {isLoading ? 'Signing In...' : 'Send OTP'}
                   </Button>
                 </form>
               </TabsContent>
@@ -121,81 +98,33 @@ const Login = () => {
               <TabsContent value="mentor">
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="mentor-email">Email</Label>
+                    <Label htmlFor="student-email">Mobile Number</Label>
                     <Input 
-                      id="mentor-email" 
+                      id="student-email" 
                       type="email" 
-                      placeholder="mentor@example.com"
+                      placeholder="" 
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                     />
                   </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="mentor-password">Password</Label>
-                      <Link to="/forgot-password" className="text-sm text-homentor-blue hover:underline">
-                        Forgot password?
-                      </Link>
-                    </div>
-                    <div className="relative">
-                      <Input 
-                        id="mentor-password" 
-                        type={showPassword ? "text" : "password"} 
-                        placeholder="••••••••"
-                        required
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                      />
-                      <button 
-                        type="button" 
-                        onClick={() => setShowPassword(!showPassword)} 
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-                        tabIndex={-1}
-                      >
-                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                      </button>
-                    </div>
-                  </div>
+                  
                   <Button 
                     type="submit" 
                     className="w-full bg-homentor-blue hover:bg-homentor-darkBlue"
                     disabled={isLoading}
                   >
-                    {isLoading ? 'Signing In...' : 'Sign In as Mentor'}
+                    {isLoading ? 'Signing In...' : 'Send OTP'}
                   </Button>
                 </form>
               </TabsContent>
             </Tabs>
             
-            <div className="relative my-6">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-gray-200" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="bg-white px-2 text-gray-500">Or</span>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 gap-3">
-              <Button variant="outline" className="w-full">
-                <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M20.283 10.356h-8.327v3.451h4.792c-.446 2.193-2.313 3.453-4.792 3.453a5.27 5.27 0 0 1-5.279-5.28 5.27 5.27 0 0 1 5.279-5.279c1.259 0 2.397.447 3.29 1.178l2.6-2.599c-1.584-1.381-3.615-2.233-5.89-2.233a8.908 8.908 0 0 0-8.934 8.934 8.907 8.907 0 0 0 8.934 8.934c4.467 0 8.529-3.249 8.529-8.934 0-.528-.081-1.097-.202-1.625z" 
-                  fill="#4285F4"/>
-                </svg>
-                Sign in with Google
-              </Button>
-            </div>
+          
           </CardContent>
-          <CardFooter className="flex flex-col items-center">
-            <p className="text-sm text-gray-600 mt-2">
-              Don't have an account?{" "}
-              <Link to="/signup" className="text-homentor-blue hover:underline font-semibold">
-                Sign up
-              </Link>
-            </p>
-          </CardFooter>
+          
         </Card>
+       
       </div>
     </Layout>
   );

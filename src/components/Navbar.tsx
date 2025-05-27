@@ -81,12 +81,20 @@ const Navbar = () => {
             How It Works
           </Link> */}
           <Link 
-            to="/about" 
+            to="/about-us" 
             className={`text-gray-700 hover:text-homentor-blue transition-colors font-medium ${
               location.pathname === '/about' ? 'text-homentor-blue' : ''
             }`}
           >
             About Us
+          </Link>
+          <Link 
+            to="/contact-us" 
+            className={`text-gray-700 hover:text-homentor-blue transition-colors font-medium ${
+              location.pathname === '/about' ? 'text-homentor-blue' : ''
+            }`}
+          >
+            Contact Us
           </Link>
         </nav>
         

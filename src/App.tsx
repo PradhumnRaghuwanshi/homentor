@@ -13,6 +13,9 @@ import MentorProfile from "./pages/MentorProfile";
 import StudentDashboard from "./pages/StudentDashboard";
 import MentorDashboard from "./pages/MentorDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
+import AboutUs from "./pages/AboutUs";
+import ContactUs from "./pages/ContactUs";
+import TutorApplicationForm from "./pages/TutorApplicationForm";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +34,9 @@ const App = () => (
           <Route path="/dashboard/student" element={<StudentDashboard />} />
           <Route path="/dashboard/mentor" element={<MentorDashboard />} />
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/about-us" element={<AboutUs />} />
+          <Route path="/contact-us" element={<ContactUs />} />
+          {/* <Route path="/TutorApplicationForm" element={<TutorApplicationForm />} /> */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
