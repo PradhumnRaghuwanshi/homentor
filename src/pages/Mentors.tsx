@@ -23,6 +23,7 @@ import MentorCarousel from "@/components/MentorCarousel";
 import TornCard from "@/components/TornCard";
 import SVGFilter from "@/components/SVGFilter";
 import SearchBar from "@/components/SearchBar";
+import AnimatedSelect from "@/components/AnimatedSelect";
 
 // Mentor data for demonstration
 const mentorsData = [
@@ -194,29 +195,22 @@ const Mentors = () => {
           <div className="space-y-3 ">
             <div className="flex gap-4 items-center">
             <SearchBar setSearchTerm={setSearchTerm} searchTerm={searchTerm}></SearchBar>
-            <Select onValueChange={setSelectedClass}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select Class" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Class 8">Class 8</SelectItem>
-                <SelectItem value="Class 10">Class 10</SelectItem>
-                <SelectItem value="Class 12">Class 12</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select onValueChange={setSelectedSubject}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select Subject" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Mathematics">Mathematics</SelectItem>
-                <SelectItem value="Science">Science</SelectItem>
-                <SelectItem value="English">English</SelectItem>
-                <SelectItem value="Social Studies">Social Studies</SelectItem>
-                <SelectItem value="Biology">Biology</SelectItem>
-                <SelectItem value="Chemistry">Chemistry</SelectItem>
-              </SelectContent>
-            </Select>
+            
+            <AnimatedSelect onValueChange={setSelectedClass}>
+  <SelectItem value="Class 8">Class 8</SelectItem>
+  <SelectItem value="Class 10">Class 10</SelectItem>
+  <SelectItem value="Class 12">Class 12</SelectItem>
+</AnimatedSelect>
+
+           
+            <AnimatedSelect onValueChange={setSelectedSubject}>
+  <SelectItem value="Class 8">Class 8</SelectItem>
+  <SelectItem value="Class 10">Class 10</SelectItem>
+  <SelectItem value="Class 12">Class 12</SelectItem>
+</AnimatedSelect>
+
+           
+           
             </div>
             <div className="flex gap-4 items-center">
             <Select onValueChange={setSelectedCity}>

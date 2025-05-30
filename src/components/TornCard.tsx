@@ -67,7 +67,7 @@ const TornCard = () => {
           {/* <MessageCircle className="lg:w-4 lg:h-4 h-2 w-2 transition-transform duration-300 group-hover/icon:scale-110" /> */}
           <span className="inline lg:text-md text-[11px]">Chat</span>
         </Button>
-        <Button className=" z-[100] px-3 gap-0 flex lg:hidden flex-col bottom-[1vh] right-2 h-[auto]">
+        <Button className="bg-green-500 z-[100] px-3 gap-0 flex lg:hidden flex-col bottom-[1vh] right-2 h-[auto]">
           <div className="flex gap-2">
             <CalendarPlus className="lg:w-4 lg:h-4 h-3 w-3 hidden lg:inline transition-transform duration-300 group-hover/icon:scale-110" />
             <span className="text-[10px] sm:inline">Book Now</span>
@@ -85,7 +85,7 @@ const TornCard = () => {
         </Button>
       </div>
 
-      <Button className="absolute z-[100] gap-0 lg:flex hidden flex-col bottom-[1vh] h-[auto]">
+      <Button className="absolute z-[100] bg-green-500 gap-0 lg:flex hidden flex-col bottom-[1vh] h-[auto]">
         <div className="flex gap-2">
           <CalendarPlus className="lg:w-4 lg:h-4 h-3 w-3 hidden lg:inline transition-transform duration-300 group-hover/icon:scale-110" />
           <span className="text-[10px] sm:inline">Book Now</span>

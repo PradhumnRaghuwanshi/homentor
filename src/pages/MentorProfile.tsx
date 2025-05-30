@@ -1,13 +1,27 @@
-import { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Star, MapPin, Calendar, Users, Award, MessageCircle, Video, Phone, Mail, Clock, CheckCircle, Quote, GraduationCap, Home } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Progress } from '@/components/ui/progress';
-import Layout from '@/components/Layout';
+import { useState } from "react";
+import { useParams, Link } from "react-router-dom";
+import {
+  Star,
+  MapPin,
+  Calendar,
+  Award,
+  MessageCircle,
+  Video,
+  Phone,
+  Mail,
+  Clock,
+  CheckCircle,
+  Quote,
+  GraduationCap,
+  Home,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Progress } from "@/components/ui/progress";
+import Layout from "@/components/Layout";
 
 // Mock teacher data for homentor platform
 const teacherData = {
@@ -28,12 +42,12 @@ const teacherData = {
   subjects: [
     "Mathematics (Grades 6-12)",
     "Physics (Grades 9-12)",
-    "Chemistry (Grades 9-10)", 
+    "Chemistry (Grades 9-10)",
     "Science (Grades 6-8)",
     "Algebra",
     "Geometry",
     "Calculus",
-    "Exam Preparation"
+    "Exam Preparation",
   ],
   teachingAreas: [
     "Home Tutoring",
@@ -41,45 +55,48 @@ const teacherData = {
     "Homework Help",
     "Concept Clearing",
     "Assignment Support",
-    "Board Exam Coaching"
+    "Board Exam Coaching",
   ],
   experience: [
     {
       school: "Greenfield High School",
       role: "Senior Mathematics Teacher",
       duration: "2020 - Present",
-      description: "Teaching advanced mathematics to grades 9-12, with 95% student pass rate in board exams."
+      description:
+        "Teaching advanced mathematics to grades 9-12, with 95% student pass rate in board exams.",
     },
     {
       school: "Riverside Academy",
       role: "Science Teacher",
-      duration: "2018 - 2020", 
-      description: "Taught physics and chemistry to middle and high school students with innovative teaching methods."
+      duration: "2018 - 2020",
+      description:
+        "Taught physics and chemistry to middle and high school students with innovative teaching methods.",
     },
     {
       school: "Home Tutoring (Independent)",
       role: "Private Tutor",
       duration: "2016 - Present",
-      description: "Providing personalized home tutoring to 50+ students with average grade improvement of 2 levels."
-    }
+      description:
+        "Providing personalized home tutoring to 50+ students with average grade improvement of 2 levels.",
+    },
   ],
   education: [
     {
       degree: "M.Ed in Mathematics Education",
       school: "State University",
-      year: "2016"
+      year: "2016",
     },
     {
-      degree: "B.Sc in Physics", 
+      degree: "B.Sc in Physics",
       school: "City College",
-      year: "2014"
-    }
+      year: "2014",
+    },
   ],
   achievements: [
     "Best Teacher Award 2023",
     "100% Board Exam Pass Rate",
     "Student Choice Award 2022",
-    "Excellence in Home Tutoring"
+    "Excellence in Home Tutoring",
   ],
   reviews: [
     {
@@ -88,15 +105,17 @@ const teacherData = {
       avatar: "/placeholder.svg",
       rating: 5,
       date: "2 weeks ago",
-      comment: "Sarah ma'am helped my daughter improve from C grade to A+ in mathematics. Her home tutoring sessions are excellent and very convenient for busy parents like us."
+      comment:
+        "Sarah ma'am helped my daughter improve from C grade to A+ in mathematics. Her home tutoring sessions are excellent and very convenient for busy parents like us.",
     },
     {
       id: 2,
       name: "Rajesh Kumar",
-      avatar: "/placeholder.svg", 
+      avatar: "/placeholder.svg",
       rating: 5,
       date: "1 month ago",
-      comment: "Fantastic teacher! My son's physics concepts became so clear after Sarah's tutoring sessions. She comes to our home and teaches with great patience."
+      comment:
+        "Fantastic teacher! My son's physics concepts became so clear after Sarah's tutoring sessions. She comes to our home and teaches with great patience.",
     },
     {
       id: 3,
@@ -104,8 +123,9 @@ const teacherData = {
       avatar: "/placeholder.svg",
       rating: 5,
       date: "2 months ago",
-      comment: "Best decision to hire Sarah for my child's mathematics tutoring. Her teaching style is amazing and my child now loves math!"
-    }
+      comment:
+        "Best decision to hire Sarah for my child's mathematics tutoring. Her teaching style is amazing and my child now loves math!",
+    },
   ],
   availability: [
     { day: "Monday", times: ["4:00 PM", "6:00 PM", "7:30 PM"] },
@@ -114,8 +134,8 @@ const teacherData = {
     { day: "Thursday", times: ["5:30 PM", "7:30 PM"] },
     { day: "Friday", times: ["4:00 PM", "6:00 PM"] },
     { day: "Saturday", times: ["10:00 AM", "2:00 PM", "4:00 PM"] },
-    { day: "Sunday", times: ["10:00 AM", "3:00 PM"] }
-  ]
+    { day: "Sunday", times: ["10:00 AM", "3:00 PM"] },
+  ],
 };
 
 const MentorDetails = () => {
@@ -124,363 +144,543 @@ const MentorDetails = () => {
 
   return (
     <Layout>
-<div className="min-h-screen bg-gray-50 mt-[7vh]">
+      <div className="min-h-screen bg-gray-50 mt-[7vh]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Teacher Header Section */}
+          <Card className="mb-8 overflow-hidden shadow-xl border-0">
+            <div className="bg-gradient-to-r from-slate-800 to-slate-900 h-32 relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-yellow-500/20"></div>
+            </div>
+            <CardContent className="p-8 -mt-16 relative bg-white">
+              <div className="flex flex-col lg:flex-row items-start gap-6">
+                <Avatar className="h-32 w-32 border-4 border-white shadow-2xl">
+                  <AvatarImage
+                    src={teacherData.avatar}
+                    alt={teacherData.name}
+                  />
+                  <AvatarFallback className="text-2xl bg-gradient-to-br from-blue-500 to-yellow-500 text-white">
+                    {teacherData.name
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")}
+                  </AvatarFallback>
+                </Avatar>
 
-<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-  {/* Teacher Header Section */}
-  <Card className="mb-8 overflow-hidden shadow-xl border-0">
-    <div className="bg-gradient-to-r from-slate-800 to-slate-900 h-32 relative">
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-yellow-500/20"></div>
-    </div>
-    <CardContent className="p-8 -mt-16 relative bg-white">
-      <div className="flex flex-col lg:flex-row items-start gap-6">
-        <Avatar className="h-32 w-32 border-4 border-white shadow-2xl">
-          <AvatarImage src={teacherData.avatar} alt={teacherData.name} />
-          <AvatarFallback className="text-2xl bg-gradient-to-br from-blue-500 to-yellow-500 text-white">
-            {teacherData.name.split(' ').map(n => n[0]).join('')}
-          </AvatarFallback>
-        </Avatar>
-        
-        <div className="flex-1">
-          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-slate-900 mb-2">{teacherData.name}</h1>
-              <p className="text-xl text-blue-700 mb-2 font-semibold">{teacherData.title}</p>
-              <p className="text-lg text-slate-600 mb-2">{teacherData.qualification}</p>
-              <div className="flex items-center gap-2 mb-4">
-                <div className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1">
-                  <Home className="h-4 w-4" />
-                  Home Tutoring Available
-                </div>
-              </div>
-              
-              <div className="flex flex-wrap items-center gap-4 text-sm text-slate-600 mb-4">
-                <div className="flex items-center gap-1">
-                  <MapPin className="h-4 w-4 text-blue-600" />
-                  {teacherData.location}
-                </div>
-                <div className="flex items-center gap-1">
-                  <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                  {teacherData.rating} ({teacherData.totalReviews} reviews)
-                </div>
-                <div className="flex items-center gap-1">
-                  <GraduationCap className="h-4 w-4 text-blue-600" />
-                  {teacherData.totalStudents} students taught
-                </div>
-                <div className="flex items-center gap-1">
+                <div className="flex-1">
+                  <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between">
+                    <div>
+                      <h1 className="text-3xl font-bold text-slate-900 mb-2">
+                        {teacherData.name}
+                      </h1>
+                      {/* <p className="text-xl text-blue-700 mb-2 font-semibold">{teacherData.title}</p> */}
+                      <p className="text-lg text-slate-600 mb-2">
+                        {teacherData.qualification}
+                      </p>
+                      <div className="flex items-center gap-2 mb-4">
+                        <div className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1">
+                          <Home className="h-4 w-4" />
+                          Home Tutoring Available
+                        </div>
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-4 text-sm text-slate-600 mb-4">
+                        <div className="flex items-center gap-1">
+                          <MapPin className="h-4 w-4 text-blue-600" />
+                          {teacherData.location}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                          {teacherData.rating} ({teacherData.totalReviews}{" "}
+                          reviews)
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <GraduationCap className="h-4 w-4 text-blue-600" />
+                          {teacherData.totalStudents} classes taught
+                        </div>
+                        {/* <div className="flex items-center gap-1">
                   <Clock className="h-4 w-4 text-blue-600" />
                   {teacherData.responseTime} response
+                </div> */}
+                      </div>
+
+                      <div className="flex flex-wrap gap-2 mb-6">
+                        {teacherData.subjects.slice(0, 4).map((subject) => (
+                          <Badge
+                            key={subject}
+                            className="bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-200"
+                          >
+                            {subject}
+                          </Badge>
+                        ))}
+                        {teacherData.subjects.length > 4 && (
+                          <Badge
+                            variant="outline"
+                            className="border-yellow-400 text-yellow-700"
+                          >
+                            +{teacherData.subjects.length - 4} more
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col gap-3 lg:min-w-[200px]">
+                      <div className="text-right lg:text-left">
+                        <p className="text-3xl font-bold text-yellow-600">
+                          ${teacherData.hourlyRate}
+                        </p>
+                        <p className="text-sm text-slate-600">per hour</p>
+                      </div>
+                      <Button
+                        size="lg"
+                        className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white shadow-lg"
+                      >
+                        <Calendar className="h-4 w-4 mr-2" />
+                        Book Home Session
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="lg"
+                        className="border-blue-500 text-blue-600 hover:bg-blue-50"
+                      >
+                        <MessageCircle className="h-4 w-4 mr-2" />
+                        Send Message
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="lg"
+                        className="border-blue-500 text-blue-600 hover:bg-blue-50"
+                      >
+                        <MessageCircle className="h-4 w-4 mr-2" />
+                        Call
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               </div>
-
-              <div className="flex flex-wrap gap-2 mb-6">
-                {teacherData.subjects.slice(0, 4).map((subject) => (
-                  <Badge key={subject} className="bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-200">
-                    {subject}
-                  </Badge>
-                ))}
-                {teacherData.subjects.length > 4 && (
-                  <Badge variant="outline" className="border-yellow-400 text-yellow-700">
-                    +{teacherData.subjects.length - 4} more
-                  </Badge>
-                )}
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-3 lg:min-w-[200px]">
-              <div className="text-right lg:text-left">
-                <p className="text-3xl font-bold text-yellow-600">${teacherData.hourlyRate}</p>
-                <p className="text-sm text-slate-600">per hour</p>
-              </div>
-              <Button size="lg" className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white shadow-lg">
-                <Calendar className="h-4 w-4 mr-2" />
-                Book Home Session
-              </Button>
-              <Button variant="outline" size="lg" className="border-blue-500 text-blue-600 hover:bg-blue-50">
-                <MessageCircle className="h-4 w-4 mr-2" />
-                Send Message
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </CardContent>
-  </Card>
-
-  {/* Main Content Tabs */}
-  <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-    <TabsList className="grid w-full grid-cols-5 bg-white border shadow-sm">
-      <TabsTrigger value="overview" className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:border-b-2 data-[state=active]:border-blue-600">Overview</TabsTrigger>
-      <TabsTrigger value="experience" className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:border-b-2 data-[state=active]:border-blue-600">Experience</TabsTrigger>
-      <TabsTrigger value="reviews" className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:border-b-2 data-[state=active]:border-blue-600">Reviews</TabsTrigger>
-      <TabsTrigger value="availability" className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:border-b-2 data-[state=active]:border-blue-600">Availability</TabsTrigger>
-      <TabsTrigger value="contact" className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:border-b-2 data-[state=active]:border-blue-600">Contact</TabsTrigger>
-    </TabsList>
-
-    <TabsContent value="overview" className="space-y-6">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-6">
-          <Card className="shadow-lg border-0">
-            <CardHeader className="bg-white border-b border-slate-100">
-              <CardTitle className="text-slate-800 flex items-center gap-2">
-                <Home className="h-5 w-5 text-blue-600" />
-                About Our Home Tutor
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-6 bg-white">
-              <p className="text-slate-700 leading-relaxed mb-4">{teacherData.bio}</p>
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                <h4 className="font-semibold text-yellow-800 mb-2">🏠 HomeMentor Advantage:</h4>
-                <p className="text-sm text-slate-700">
-                  Learn comfortably at home with personalized attention. No travel hassles for parents - 
-                  our qualified teachers come to your location for convenient, effective learning sessions.
-                </p>
-              </div>
             </CardContent>
           </Card>
 
-          <Card className="shadow-lg border-0">
-            <CardHeader className="bg-white border-b border-slate-100">
-              <CardTitle className="text-slate-800">Subjects & Specializations</CardTitle>
-            </CardHeader>
-            <CardContent className="p-6 bg-white">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {teacherData.subjects.map((subject) => (
-                  <div key={subject} className="flex items-center gap-2 p-3 bg-slate-50 rounded-lg border border-slate-200 hover:bg-blue-50 transition-colors">
-                    <CheckCircle className="h-4 w-4 text-yellow-600" />
-                    <span className="text-sm font-medium text-slate-800">{subject}</span>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          {/* Main Content Tabs */}
+          <Tabs
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className="space-y-6"
+          >
+            <TabsList className="grid w-full grid-cols-5 bg-white border shadow-sm">
+              <TabsTrigger
+                value="overview"
+                className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
+              >
+                Overview
+              </TabsTrigger>
+              <TabsTrigger
+                value="experience"
+                className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
+              >
+                Experience
+              </TabsTrigger>
+              <TabsTrigger
+                value="reviews"
+                className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
+              >
+                Reviews
+              </TabsTrigger>
+              <TabsTrigger
+                value="availability"
+                className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
+              >
+                Availability
+              </TabsTrigger>
+              <TabsTrigger
+                value="contact"
+                className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
+              >
+                Contact
+              </TabsTrigger>
+            </TabsList>
 
-          <Card className="shadow-lg border-0">
-            <CardHeader className="bg-white border-b border-slate-100">
-              <CardTitle className="text-slate-800">Teaching Approach</CardTitle>
-            </CardHeader>
-            <CardContent className="p-6 bg-white">
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {teacherData.teachingAreas.map((area) => (
-                  <div key={area} className="text-center p-3 bg-gradient-to-br from-blue-50 to-yellow-50 rounded-lg border border-slate-200">
-                    <span className="text-sm font-medium text-slate-800">{area}</span>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+            <TabsContent value="overview" className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2 space-y-6">
+                  <Card className="shadow-lg border-0">
+                    <CardHeader className="bg-white border-b border-slate-100">
+                      <CardTitle className="text-slate-800 flex items-center gap-2">
+                        <Home className="h-5 w-5 text-blue-600" />
+                        About Our Home Tutor
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-6 bg-white">
+                      <p className="text-slate-700 leading-relaxed mb-4">
+                        {teacherData.bio}
+                      </p>
+                      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                        <h4 className="font-semibold text-yellow-800 mb-2">
+                          🏠 HomeMentor Advantage:
+                        </h4>
+                        <p className="text-sm text-slate-700">
+                          Learn comfortably at home with personalized attention.
+                          No travel hassles for parents - our qualified teachers
+                          come to your location for convenient, effective
+                          learning sessions.
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
 
-        <div className="space-y-6">
-          <Card className="shadow-lg border-0">
-            <CardHeader className="bg-white border-b border-slate-100">
-              <CardTitle className="text-slate-800">Quick Stats</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4 p-6 bg-white">
-              <div className="flex justify-between items-center">
-                <span className="text-slate-600">Teaching Experience</span>
-                <span className="font-semibold text-blue-700">{teacherData.yearsExperience} years</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-slate-600">Students Taught</span>
-                <span className="font-semibold text-blue-700">{teacherData.totalStudents}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-slate-600">Response Time</span>
-                <span className="font-semibold text-blue-700">{teacherData.responseTime}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-slate-600">Languages</span>
-                <span className="font-semibold text-blue-700">{teacherData.languages.length}</span>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="shadow-lg border-0">
-            <CardHeader className="bg-white border-b border-slate-100">
-              <CardTitle className="text-slate-800">Achievements</CardTitle>
-            </CardHeader>
-            <CardContent className="p-6 bg-white">
-              <div className="space-y-3">
-                {teacherData.achievements.map((achievement, index) => (
-                  <div key={index} className="flex items-start gap-2">
-                    <Award className="h-4 w-4 text-yellow-500 mt-0.5 flex-shrink-0" />
-                    <span className="text-sm text-slate-700">{achievement}</span>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    </TabsContent>
-
-    <TabsContent value="experience" className="space-y-6">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="shadow-lg border-0">
-          <CardHeader className="bg-white border-b border-slate-100">
-            <CardTitle className="text-slate-800">Teaching Experience</CardTitle>
-          </CardHeader>
-          <CardContent className="p-6 bg-white">
-            <div className="space-y-6">
-              {teacherData.experience.map((exp, index) => (
-                <div key={index} className="border-l-4 border-blue-400 pl-4 bg-slate-50 p-4 rounded-r-lg">
-                  <h3 className="font-semibold text-lg text-slate-800">{exp.role}</h3>
-                  <p className="text-blue-600 font-medium">{exp.school}</p>
-                  <p className="text-sm text-slate-600 mb-2">{exp.duration}</p>
-                  <p className="text-slate-700 text-sm">{exp.description}</p>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-lg border-0">
-          <CardHeader className="bg-white border-b border-slate-100">
-            <CardTitle className="text-slate-800">Education</CardTitle>
-          </CardHeader>
-          <CardContent className="p-6 bg-white">
-            <div className="space-y-6">
-              {teacherData.education.map((edu, index) => (
-                <div key={index} className="border-l-4 border-yellow-400 pl-4 bg-slate-50 p-4 rounded-r-lg">
-                  <h3 className="font-semibold text-lg text-slate-800">{edu.degree}</h3>
-                  <p className="text-yellow-600 font-medium">{edu.school}</p>
-                  <p className="text-sm text-slate-600">{edu.year}</p>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    </TabsContent>
-
-    <TabsContent value="reviews" className="space-y-6">
-      <Card className="shadow-lg border-0">
-        <CardHeader className="bg-white border-b border-slate-100">
-          <CardTitle className="text-slate-800">Parent Reviews ({teacherData.totalReviews})</CardTitle>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-1">
-              <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-              <span className="text-2xl font-bold text-blue-700">{teacherData.rating}</span>
-            </div>
-            <Progress value={98} className="flex-1 max-w-xs [&>div]:bg-yellow-400" />
-            <span className="text-sm text-slate-600">98% positive</span>
-          </div>
-        </CardHeader>
-        <CardContent className="p-6 bg-white">
-          <div className="space-y-6">
-            {teacherData.reviews.map((review) => (
-              <div key={review.id} className="border-b border-slate-100 pb-6 last:border-0">
-                <div className="flex items-start gap-4">
-                  <Avatar className="h-10 w-10">
-                    <AvatarImage src={review.avatar} alt={review.name} />
-                    <AvatarFallback className="bg-gradient-to-br from-blue-400 to-yellow-400 text-white">
-                      {review.name.split(' ').map(n => n[0]).join('')}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="font-semibold text-slate-800">{review.name}</span>
-                      <div className="flex items-center">
-                        {[...Array(review.rating)].map((_, i) => (
-                          <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                  <Card className="shadow-lg border-0">
+                    <CardHeader className="bg-white border-b border-slate-100">
+                      <CardTitle className="text-slate-800">
+                        Subjects & Specializations
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-6 bg-white">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {teacherData.subjects.map((subject) => (
+                          <div
+                            key={subject}
+                            className="flex items-center gap-2 p-3 bg-slate-50 rounded-lg border border-slate-200 hover:bg-blue-50 transition-colors"
+                          >
+                            <CheckCircle className="h-4 w-4 text-yellow-600" />
+                            <span className="text-sm font-medium text-slate-800">
+                              {subject}
+                            </span>
+                          </div>
                         ))}
                       </div>
-                      <span className="text-sm text-slate-600">{review.date}</span>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <Quote className="h-4 w-4 text-yellow-500 mt-1 flex-shrink-0" />
-                      <p className="text-slate-700">{review.comment}</p>
-                    </div>
-                  </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="shadow-lg border-0">
+                    <CardHeader className="bg-white border-b border-slate-100">
+                      <CardTitle className="text-slate-800">
+                        Teaching Approach
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-6 bg-white">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                        {teacherData.teachingAreas.map((area) => (
+                          <div
+                            key={area}
+                            className="text-center p-3 bg-gradient-to-br from-blue-50 to-yellow-50 rounded-lg border border-slate-200"
+                          >
+                            <span className="text-sm font-medium text-slate-800">
+                              {area}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                <div className="space-y-6">
+                  <Card className="shadow-lg border-0">
+                    <CardHeader className="bg-white border-b border-slate-100">
+                      <CardTitle className="text-slate-800">
+                        Quick Stats
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4 p-6 bg-white">
+                      <div className="flex justify-between items-center">
+                        <span className="text-slate-600">
+                          Teaching Experience
+                        </span>
+                        <span className="font-semibold text-blue-700">
+                          {teacherData.yearsExperience} years
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-slate-600">Students Taught</span>
+                        <span className="font-semibold text-blue-700">
+                          {teacherData.totalStudents}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-slate-600">Response Time</span>
+                        <span className="font-semibold text-blue-700">
+                          {teacherData.responseTime}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-slate-600">Languages</span>
+                        <span className="font-semibold text-blue-700">
+                          {teacherData.languages.length}
+                        </span>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="shadow-lg border-0">
+                    <CardHeader className="bg-white border-b border-slate-100">
+                      <CardTitle className="text-slate-800">
+                        Achievements
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-6 bg-white">
+                      <div className="space-y-3">
+                        {teacherData.achievements.map((achievement, index) => (
+                          <div key={index} className="flex items-start gap-2">
+                            <Award className="h-4 w-4 text-yellow-500 mt-0.5 flex-shrink-0" />
+                            <span className="text-sm text-slate-700">
+                              {achievement}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-    </TabsContent>
+            </TabsContent>
 
-    <TabsContent value="availability" className="space-y-6">
-      <Card className="shadow-lg border-0">
-        <CardHeader className="bg-white border-b border-slate-100">
-          <CardTitle className="text-slate-800">Available Time Slots for Home Tutoring</CardTitle>
-        </CardHeader>
-        <CardContent className="p-6 bg-white">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {teacherData.availability.map((day) => (
-              <div key={day.day} className="border border-slate-200 rounded-lg p-4 bg-slate-50">
-                <h3 className="font-semibold mb-3 text-slate-800">{day.day}</h3>
-                <div className="space-y-2">
-                  {day.times.map((time) => (
-                    <Button key={time} variant="outline" size="sm" className="w-full border-blue-300 text-blue-700 hover:bg-blue-50">
-                      {time}
+            <TabsContent value="experience" className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card className="shadow-lg border-0">
+                  <CardHeader className="bg-white border-b border-slate-100">
+                    <CardTitle className="text-slate-800">
+                      Teaching Experience
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-6 bg-white">
+                    <div className="space-y-6">
+                      {teacherData.experience.map((exp, index) => (
+                        <div
+                          key={index}
+                          className="border-l-4 border-blue-400 pl-4 bg-slate-50 p-4 rounded-r-lg"
+                        >
+                          <h3 className="font-semibold text-lg text-slate-800">
+                            {exp.role}
+                          </h3>
+                          <p className="text-blue-600 font-medium">
+                            {exp.school}
+                          </p>
+                          <p className="text-sm text-slate-600 mb-2">
+                            {exp.duration}
+                          </p>
+                          <p className="text-slate-700 text-sm">
+                            {exp.description}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="shadow-lg border-0">
+                  <CardHeader className="bg-white border-b border-slate-100">
+                    <CardTitle className="text-slate-800">Education</CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-6 bg-white">
+                    <div className="space-y-6">
+                      {teacherData.education.map((edu, index) => (
+                        <div
+                          key={index}
+                          className="border-l-4 border-yellow-400 pl-4 bg-slate-50 p-4 rounded-r-lg"
+                        >
+                          <h3 className="font-semibold text-lg text-slate-800">
+                            {edu.degree}
+                          </h3>
+                          <p className="text-yellow-600 font-medium">
+                            {edu.school}
+                          </p>
+                          <p className="text-sm text-slate-600">{edu.year}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="reviews" className="space-y-6">
+              <Card className="shadow-lg border-0">
+                <CardHeader className="bg-white border-b border-slate-100">
+                  <CardTitle className="text-slate-800">
+                    Parent Reviews ({teacherData.totalReviews})
+                  </CardTitle>
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-1">
+                      <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
+                      <span className="text-2xl font-bold text-blue-700">
+                        {teacherData.rating}
+                      </span>
+                    </div>
+                    <Progress
+                      value={98}
+                      className="flex-1 max-w-xs [&>div]:bg-yellow-400"
+                    />
+                    <span className="text-sm text-slate-600">98% positive</span>
+                  </div>
+                </CardHeader>
+                <CardContent className="p-6 bg-white">
+                  <div className="space-y-6">
+                    {teacherData.reviews.map((review) => (
+                      <div
+                        key={review.id}
+                        className="border-b border-slate-100 pb-6 last:border-0"
+                      >
+                        <div className="flex items-start gap-4">
+                          <Avatar className="h-10 w-10">
+                            <AvatarImage
+                              src={review.avatar}
+                              alt={review.name}
+                            />
+                            <AvatarFallback className="bg-gradient-to-br from-blue-400 to-yellow-400 text-white">
+                              {review.name
+                                .split(" ")
+                                .map((n) => n[0])
+                                .join("")}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-2">
+                              <span className="font-semibold text-slate-800">
+                                {review.name}
+                              </span>
+                              <div className="flex items-center">
+                                {[...Array(review.rating)].map((_, i) => (
+                                  <Star
+                                    key={i}
+                                    className="h-4 w-4 fill-yellow-400 text-yellow-400"
+                                  />
+                                ))}
+                              </div>
+                              <span className="text-sm text-slate-600">
+                                {review.date}
+                              </span>
+                            </div>
+                            <div className="flex items-start gap-2">
+                              <Quote className="h-4 w-4 text-yellow-500 mt-1 flex-shrink-0" />
+                              <p className="text-slate-700">{review.comment}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="availability" className="space-y-6">
+              <Card className="shadow-lg border-0">
+                <CardHeader className="bg-white border-b border-slate-100">
+                  <CardTitle className="text-slate-800">
+                    Available Time Slots for Home Tutoring
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-6 bg-white">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {teacherData.availability.map((day) => (
+                      <div
+                        key={day.day}
+                        className="border border-slate-200 rounded-lg p-4 bg-slate-50"
+                      >
+                        <h3 className="font-semibold mb-3 text-slate-800">
+                          {day.day}
+                        </h3>
+                        <div className="space-y-2">
+                          {day.times.map((time) => (
+                            <Button
+                              key={time}
+                              variant="outline"
+                              size="sm"
+                              className="w-full border-blue-300 text-blue-700 hover:bg-blue-50"
+                            >
+                              {time}
+                            </Button>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="contact" className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card className="shadow-lg border-0">
+                  <CardHeader className="bg-white border-b border-slate-100">
+                    <CardTitle className="text-slate-800">
+                      Contact & Session Options
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4 p-6 bg-white">
+                    <Button
+                      className="w-full justify-start bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white"
+                      size="lg"
+                    >
+                      <Home className="h-4 w-4 mr-3" />
+                      Schedule Home Visit
                     </Button>
-                  ))}
-                </div>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start border-blue-500 text-blue-600 hover:bg-blue-50"
+                      size="lg"
+                    >
+                      <Video className="h-4 w-4 mr-3" />
+                      Video Call Session
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start border-blue-500 text-blue-600 hover:bg-blue-50"
+                      size="lg"
+                    >
+                      <Phone className="h-4 w-4 mr-3" />
+                      Phone Consultation
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start border-blue-500 text-blue-600 hover:bg-blue-50"
+                      size="lg"
+                    >
+                      <MessageCircle className="h-4 w-4 mr-3" />
+                      Chat with Teacher
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start border-blue-500 text-blue-600 hover:bg-blue-50"
+                      size="lg"
+                    >
+                      <Mail className="h-4 w-4 mr-3" />
+                      Email Discussion
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                <Card className="shadow-lg border-0">
+                  <CardHeader className="bg-white border-b border-slate-100">
+                    <CardTitle className="text-slate-800">
+                      Languages Spoken
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-6 bg-white">
+                    <div className="space-y-3">
+                      {teacherData.languages.map((language) => (
+                        <div
+                          key={language}
+                          className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg border border-slate-200"
+                        >
+                          <div className="h-8 w-8 bg-blue-100 rounded-full flex items-center justify-center">
+                            <span className="text-blue-600 font-semibold text-sm">
+                              {language.slice(0, 2).toUpperCase()}
+                            </span>
+                          </div>
+                          <span className="font-medium text-slate-800">
+                            {language}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-    </TabsContent>
-
-    <TabsContent value="contact" className="space-y-6">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="shadow-lg border-0">
-          <CardHeader className="bg-white border-b border-slate-100">
-            <CardTitle className="text-slate-800">Contact & Session Options</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4 p-6 bg-white">
-            <Button className="w-full justify-start bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white" size="lg">
-              <Home className="h-4 w-4 mr-3" />
-              Schedule Home Visit
-            </Button>
-            <Button variant="outline" className="w-full justify-start border-blue-500 text-blue-600 hover:bg-blue-50" size="lg">
-              <Video className="h-4 w-4 mr-3" />
-              Video Call Session
-            </Button>
-            <Button variant="outline" className="w-full justify-start border-blue-500 text-blue-600 hover:bg-blue-50" size="lg">
-              <Phone className="h-4 w-4 mr-3" />
-              Phone Consultation
-            </Button>
-            <Button variant="outline" className="w-full justify-start border-blue-500 text-blue-600 hover:bg-blue-50" size="lg">
-              <MessageCircle className="h-4 w-4 mr-3" />
-              Chat with Teacher
-            </Button>
-            <Button variant="outline" className="w-full justify-start border-blue-500 text-blue-600 hover:bg-blue-50" size="lg">
-              <Mail className="h-4 w-4 mr-3" />
-              Email Discussion
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-lg border-0">
-          <CardHeader className="bg-white border-b border-slate-100">
-            <CardTitle className="text-slate-800">Languages Spoken</CardTitle>
-          </CardHeader>
-          <CardContent className="p-6 bg-white">
-            <div className="space-y-3">
-              {teacherData.languages.map((language) => (
-                <div key={language} className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg border border-slate-200">
-                  <div className="h-8 w-8 bg-blue-100 rounded-full flex items-center justify-center">
-                    <span className="text-blue-600 font-semibold text-sm">
-                      {language.slice(0, 2).toUpperCase()}
-                    </span>
-                  </div>
-                  <span className="font-medium text-slate-800">{language}</span>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
-    </TabsContent>
-  </Tabs>
-</div>
-</div>
     </Layout>
-    
   );
 };
 
