@@ -4,7 +4,7 @@ import { CalendarPlus, MessageCircle, PhoneCall, Star } from "lucide-react";
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
 
-const TornCard = () => {
+const TornCard = ({mentor}) => {
   const navigate = useNavigate()
   return (
     <div className="relative animate-shake origin-top w-[100%] flex overflow-hidden flex-col items-center bg-[papayawhip] rounded-lg  shadow-[0_0_20px_-5px_black]">
@@ -34,11 +34,11 @@ const TornCard = () => {
       <div className="w-[100%] lg:block hidden h-[20vh] bg-blue-500 absolute z-[100] opacity-50 mentor-bg"></div>
 
       <div className="lg:text-lg text-white text-sm lg:block hidden font-bold mentor-content absolute z-[100] bottom-[16vh]">
-        Filan Fisteku
+        {mentor.fullName}
       </div>
 
       <div className="lg:text-lg text-sm text-white lg:hidden font-bold mentor-content absolute z-[100] bottom-[8vh]">
-        Filan Fisteku
+       {mentor.fullName}
       </div>
       <div className="absolute z-[100] lg:flex hidden gap-10 bottom-[10vh]">
         <Button
@@ -73,7 +73,7 @@ const TornCard = () => {
             <span className="text-[10px] sm:inline">Book Now</span>
           </div>
           <div className="lg:text-[12px] text-[9px] mentor-content-2 text-white">
-            (6k/month)
+            {mentor.teachingModes.homeTuition.monthlyPrice}
           </div>
         </Button>
         <Button

@@ -1,13 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
-import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -15,67 +10,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Star } from "lucide-react";
-import MentorCard from "@/components/MentorCard";
-import CollapsibleSelects from "@/components/CollapsibleSelects";
-import RadialFilterMenu from "@/components/RadialFilterMenu";
 import MentorCarousel from "@/components/MentorCarousel";
 import TornCard from "@/components/TornCard";
 import SVGFilter from "@/components/SVGFilter";
 import SearchBar from "@/components/SearchBar";
 import AnimatedSelect from "@/components/AnimatedSelect";
+import axios from "axios";
 
-// Mentor data for demonstration
-const mentorsData = [
-  {
-    id: 1,
-    name: "Anita Sharma",
-    subjects: ["Mathematics", "Science"],
-    rating: 4.9,
-    hourlyRate: 25,
-    location: "Indore, Madhya Pradesh",
-    image: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7",
-    experience: "6+ years",
-    bio: "B.Ed in Mathematics, passionate about teaching and mentoring young students.",
-    availability: "Weekdays, 5pm - 8pm",
-    state: "Madhya Pradesh",
-    city: "Indore",
-    area: "Vijay Nagar",
-    classLevel: "Class 10",
-  },
-  // {
-  //   id: 2,
-  //   name: "Rahul Verma",
-  //   subjects: ["English", "Social Studies"],
-  //   rating: 4.7,
-  //   hourlyRate: 20,
-  //   location: "Indore, Madhya Pradesh",
-  //   image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
-  //   experience: "4+ years",
-  //   bio: "Experienced English tutor with creative teaching methods.",
-  //   availability: "Weekends, morning slots",
-  //   state: "Madhya Pradesh",
-  //   city: "Indore",
-  //   area: "Palasia",
-  //   classLevel: "Class 8",
-  // },
-  // {
-  //   id: 3,
-  //   name: "Sneha Jain",
-  //   subjects: ["Biology", "Chemistry"],
-  //   rating: 4.8,
-  //   hourlyRate: 30,
-  //   location: "Indore, Madhya Pradesh",
-  //   image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
-  //   experience: "7+ years",
-  //   bio: "MSc in Biology, specializes in helping students with board exam preparation.",
-  //   availability: "Evenings after 6pm",
-  //   state: "Madhya Pradesh",
-  //   city: "Indore",
-  //   area: "Bhawarkuan",
-  //   classLevel: "Class 12",
-  // },
-];
 
 const subjects = [
   "Mathematics",
@@ -92,6 +33,16 @@ const subjects = [
 ];
 
 const Mentors = () => {
+  useEffect(()=>{getAllMentorsData()}, [])
+
+  const [mentorsData, setMentorsData] = useState([])
+  const getAllMentorsData = ()=>{
+    axios.get('http://localhost:5001/api/mentor').then((res)=>{
+      setMentorsData(res.data.data)
+      console.log(res.data.data)
+    })
+  }
+
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSubject, setSelectedSubject] = useState<string | undefined>(
     undefined
@@ -284,8 +235,8 @@ const Mentors = () => {
           
 
           <div className="md:col-span-3 grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredMentors.map((mentor) => (
-              <TornCard></TornCard>
+            {mentorsData.map((mentor) => (
+              <TornCard mentor={mentor}></TornCard>
             ))}
           </div>
 

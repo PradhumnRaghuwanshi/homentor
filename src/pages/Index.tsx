@@ -84,7 +84,7 @@ const Index = () => {
       <FeaturesSection />
 
       {/* Featured Mentors */}
-      <FeaturedMentorsSection />
+      {/* <FeaturedMentorsSection /> */}
 
       {/* Subjects */}
       <SubjectsSection />

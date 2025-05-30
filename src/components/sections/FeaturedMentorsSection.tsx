@@ -31,11 +31,11 @@ const FeaturedMentorsSection = () => {
         </ScrollReveal>
         
         <div className="grid md:grid-cols-3 gap-8">
-          {[1, 2, 3].map((index) => (
+          {/* {[1, 2, 3].map((index) => (
             <ScrollReveal key={index} delay={index * 0.1}>
               <TornCard></TornCard>
             </ScrollReveal>
-          ))}
+          ))} */}
         </div>
         
         <div className="text-center mt-12">
