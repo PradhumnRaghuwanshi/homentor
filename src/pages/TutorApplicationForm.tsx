@@ -11,7 +11,6 @@ import { User, Upload, Image, IdCard, Video, GraduationCap, MapPin, IndianRupee,
 
 const TutorRegistrationForm = () => {
   const { toast } = useToast();
-  const [expandedSubjects, setExpandedSubjects] = useState<Record<string, boolean>>({});
   
   const [formData, setFormData] = useState({
     // Personal Information
@@ -41,18 +40,112 @@ const TutorRegistrationForm = () => {
     // Teaching Modes & Pricing
     teachingModes: {} as Record<string, { selected: boolean; monthlyPrice: string }>,
     
-    // Teaching Preferences (Subject -> Classes mapping)
-    subjectPreferences: {} as Record<string, string[]>,
+    // Teaching Preferences (Level -> Class -> Subject mapping)
+    teachingPreferences: {} as Record<string, Record<string, string[]>>,
     
     // Availability
     availableDays: [] as string[],
-    timeSlots: [] as string[],
     startDate: '',
     
     // Additional Information
-    teachingExperience: '',
-    achievements: ''
+    teachingExperience: ''
   });
+
+  // Hierarchical structure for teaching preferences
+  const educationLevels = {
+    'school': {
+      label: 'School Level',
+      classes: {
+        'class-1-6': {
+          label: 'Class 1-6',
+          subjects: ['Mathematics', 'English', 'Hindi', 'Science', 'Social Science', 'Computer Science']
+        },
+        'class-7-8': {
+          label: 'Class 7-8', 
+          subjects: ['Mathematics', 'English', 'Hindi', 'Science', 'Social Science', 'Computer Science']
+        },
+        'class-9-10': {
+          label: 'Class 9-10',
+          subjects: ['Mathematics', 'Physics', 'Chemistry', 'Biology', 'English', 'Hindi', 'Social Science', 'Computer Science']
+        },
+        'class-11': {
+          label: 'Class 11',
+          subjects: ['Mathematics', 'Physics', 'Chemistry', 'Biology', 'English', 'Economics', 'Accountancy', 'Business Studies', 'Computer Science']
+        },
+        'class-12': {
+          label: 'Class 12',
+          subjects: ['Mathematics', 'Physics', 'Chemistry', 'Biology', 'English', 'Economics', 'Accountancy', 'Business Studies', 'Computer Science']
+        }
+      }
+    },
+    'graduation': {
+      label: 'Graduation Level',
+      classes: {
+        'btech': {
+          label: 'B.Tech/Engineering',
+          subjects: ['Engineering Mathematics', 'Physics', 'Chemistry', 'Computer Science', 'Mechanical Engineering', 'Electrical Engineering', 'Civil Engineering']
+        },
+        'bsc': {
+          label: 'B.Sc',
+          subjects: ['Mathematics', 'Physics', 'Chemistry', 'Biology', 'Computer Science', 'Statistics']
+        },
+        'bcom': {
+          label: 'B.Com',
+          subjects: ['Accountancy', 'Business Studies', 'Economics', 'Mathematics', 'Statistics']
+        },
+        'ba': {
+          label: 'B.A',
+          subjects: ['English', 'Hindi', 'History', 'Geography', 'Political Science', 'Economics', 'Psychology']
+        }
+      }
+    },
+    'postgraduation': {
+      label: 'Post Graduation',
+      classes: {
+        'mtech': {
+          label: 'M.Tech/M.E',
+          subjects: ['Advanced Engineering Mathematics', 'Research Methodology', 'Specialized Engineering Subjects']
+        },
+        'msc': {
+          label: 'M.Sc',
+          subjects: ['Advanced Mathematics', 'Advanced Physics', 'Advanced Chemistry', 'Research Methods']
+        },
+        'mcom': {
+          label: 'M.Com', 
+          subjects: ['Advanced Accountancy', 'Financial Management', 'Business Research', 'Economics']
+        },
+        'ma': {
+          label: 'M.A',
+          subjects: ['Literature', 'Linguistics', 'History', 'Political Science', 'Psychology']
+        }
+      }
+    },
+    'competitive': {
+      label: 'Competitive Exams',
+      classes: {
+        'jee': {
+          label: 'JEE Preparation',
+          subjects: ['Mathematics', 'Physics', 'Chemistry']
+        },
+        'neet': {
+          label: 'NEET Preparation', 
+          subjects: ['Physics', 'Chemistry', 'Biology']
+        },
+        'gate': {
+          label: 'GATE Preparation',
+          subjects: ['Engineering Mathematics', 'General Aptitude', 'Technical Subjects']
+        },
+        'banking': {
+          label: 'Banking Exams',
+          subjects: ['Quantitative Aptitude', 'Reasoning', 'English', 'General Knowledge']
+        }
+      }
+    }
+  };
+
+  const [selectedLevels, setSelectedLevels] = useState<string[]>([]);
+  const [expandedLevels, setExpandedLevels] = useState<Record<string, boolean>>({});
+  const [expandedClasses, setExpandedClasses] = useState<Record<string, boolean>>({});
 
   const updateFormData = (updates: Partial<typeof formData>) => {
     setFormData(prev => ({ ...prev, ...updates }));
@@ -86,35 +179,71 @@ const TutorRegistrationForm = () => {
     { id: 'my-place', label: 'My Place', description: 'Students come to your location' },
     { id: 'coaching-center', label: 'Coaching Center', description: 'Teach at coaching institutes' },
     { id: 'school-teaching', label: 'School Teaching', description: 'Regular school teaching positions' },
-    { id: 'online-tutoring', label: 'Counsellor/Mentor', description: 'Home Counsellor for session or guidance' },
+    { id: 'online-tutoring', label: 'Online Tutoring', description: 'Virtual teaching sessions' },
     { id: 'group-classes', label: 'Group Classes', description: 'Small group batch teaching' }
   ];
 
-  const subjects = [
-    'School Level', 'Graduation Level', 'Post Graduation Level', 'Competitive Preparation'
-  ];
-//   const subjects = [
-//     'Mathematics', 'Physics', 'Chemistry', 'Biology', 'English', 'Hindi', 
-//     'Social Science', 'Computer Science', 'Economics', 'Accountancy', 
-//     'Business Studies', 'Geography', 'History', 'Political Science'
-//   ];f
-
-  const classGroups = [
-    { id: '1-6', label: 'Class 1-6', classes: ['Class 1', 'Class 2', 'Class 3', 'Class 4', 'Class 5', 'Class 6'] },
-    { id: '7-8', label: 'Class 7-8', classes: ['Class 7', 'Class 8'] },
-    { id: '9-10', label: 'Class 9-10', classes: ['Class 9', 'Class 10'] },
-    { id: '11', label: 'Class 11', classes: ['Class 11'] },
-    { id: '12', label: 'Class 12', classes: ['Class 12'] },
-    { id: 'prep', label: 'Competitive Prep', classes: ['JEE Prep', 'NEET Prep', 'Board Exam Prep'] }
-  ];
-
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-  
-  const timeSlots = [
-    'Early Morning (6:00-8:00 AM)', 'Morning (8:00-12:00 PM)', 
-    'Afternoon (12:00-4:00 PM)', 'Evening (4:00-8:00 PM)', 
-    'Night (8:00-10:00 PM)'
-  ];
+
+  // Handler functions for teaching preferences
+  const handleLevelChange = (level: string, checked: boolean) => {
+    if (checked) {
+      setSelectedLevels(prev => [...prev, level]);
+      setExpandedLevels(prev => ({ ...prev, [level]: true }));
+    } else {
+      setSelectedLevels(prev => prev.filter(l => l !== level));
+      setExpandedLevels(prev => ({ ...prev, [level]: false }));
+      // Remove all classes and subjects for this level
+      const updatedPreferences = { ...formData.teachingPreferences };
+      delete updatedPreferences[level];
+      updateFormData({ teachingPreferences: updatedPreferences });
+    }
+  };
+
+  const handleClassChange = (level: string, classId: string, checked: boolean) => {
+    const updatedPreferences = { ...formData.teachingPreferences };
+    
+    if (!updatedPreferences[level]) {
+      updatedPreferences[level] = {};
+    }
+    
+    if (checked) {
+      updatedPreferences[level][classId] = [];
+      setExpandedClasses(prev => ({ ...prev, [`${level}-${classId}`]: true }));
+    } else {
+      delete updatedPreferences[level][classId];
+      setExpandedClasses(prev => ({ ...prev, [`${level}-${classId}`]: false }));
+    }
+    
+    updateFormData({ teachingPreferences: updatedPreferences });
+  };
+
+  const handleSubjectChange = (level: string, classId: string, subject: string, checked: boolean) => {
+    const updatedPreferences = { ...formData.teachingPreferences };
+    
+    if (!updatedPreferences[level]) {
+      updatedPreferences[level] = {};
+    }
+    if (!updatedPreferences[level][classId]) {
+      updatedPreferences[level][classId] = [];
+    }
+    
+    if (checked) {
+      updatedPreferences[level][classId] = [...updatedPreferences[level][classId], subject];
+    } else {
+      updatedPreferences[level][classId] = updatedPreferences[level][classId].filter(s => s !== subject);
+    }
+    
+    updateFormData({ teachingPreferences: updatedPreferences });
+  };
+
+  const isSubjectSelected = (level: string, classId: string, subject: string) => {
+    return formData.teachingPreferences[level]?.[classId]?.includes(subject) || false;
+  };
+
+  const getSelectedSubjectsCount = (level: string, classId: string) => {
+    return formData.teachingPreferences[level]?.[classId]?.length || 0;
+  };
 
   // Handler functions
   const handleTeachingModeChange = (modeId: string, field: 'selected' | 'monthlyPrice', value: boolean | string) => {
@@ -129,69 +258,11 @@ const TutorRegistrationForm = () => {
     });
   };
 
-  const handleSubjectClassChange = (subject: string, classId: string, checked: boolean) => {
-    updateFormData({
-      subjectPreferences: {
-        ...formData.subjectPreferences,
-        [subject]: checked 
-          ? [...(formData.subjectPreferences[subject] || []), classId]
-          : (formData.subjectPreferences[subject] || []).filter(c => c !== classId)
-      }
-    });
-  };
-
-  const handleClassGroupChange = (subject: string, groupId: string, checked: boolean) => {
-    const group = classGroups.find(g => g.id === groupId);
-    if (!group) return;
-
-    const currentClasses = formData.subjectPreferences[subject] || [];
-    let updatedClasses;
-
-    if (checked) {
-      updatedClasses = [...new Set([...currentClasses, ...group.classes])];
-    } else {
-      updatedClasses = currentClasses.filter(cls => !group.classes.includes(cls));
-    }
-
-    updateFormData({
-      subjectPreferences: {
-        ...formData.subjectPreferences,
-        [subject]: updatedClasses
-      }
-    });
-  };
-
-  const isGroupSelected = (subject: string, groupId: string) => {
-    const group = classGroups.find(g => g.id === groupId);
-    if (!group) return false;
-    const selectedClasses = formData.subjectPreferences[subject] || [];
-    return group.classes.every(cls => selectedClasses.includes(cls));
-  };
-
-  const toggleSubjectExpansion = (subject: string) => {
-    setExpandedSubjects(prev => ({
-      ...prev,
-      [subject]: !prev[subject]
-    }));
-  };
-
-  const getSelectedClassesCount = (subject: string) => {
-    return formData.subjectPreferences[subject]?.length || 0;
-  };
-
   const handleDayChange = (day: string, checked: boolean) => {
     updateFormData({
       availableDays: checked 
         ? [...formData.availableDays, day]
         : formData.availableDays.filter(d => d !== day)
-    });
-  };
-
-  const handleTimeSlotChange = (slot: string, checked: boolean) => {
-    updateFormData({
-      timeSlots: checked 
-        ? [...formData.timeSlots, slot]
-        : formData.timeSlots.filter(t => t !== slot)
     });
   };
 
@@ -211,7 +282,7 @@ const TutorRegistrationForm = () => {
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Personal Information */}
           <Card className="border-mentor-blue-200 shadow-lg">
-            <CardHeader className="bg-gradient-to-r from-homentor-blue to-homentor-blue text-white rounded-t-lg">
+            <CardHeader className="bg-gradient-to-r from-mentor-blue-500 to-mentor-blue-600 text-white rounded-t-lg">
               <CardTitle className="flex items-center gap-2">
                 <User className="h-5 w-5" />
                 Personal Information
@@ -377,34 +448,6 @@ const TutorRegistrationForm = () => {
                       </label>
                     </div>
                   </div>
-
-                  {/* Resume Upload */}
-                  <div>
-                    <Label htmlFor="tutorialVideo" className="flex items-center gap-2 mb-2">
-                      <Video className="h-4 w-4" />
-                      Resume/CV
-                    </Label>
-                    <div className="relative">
-                      <Input
-                        id="tutorialVideo"
-                        type="file"
-                        accept="video/*"
-                        onChange={(e) => handleFileChange('tutorialVideo', e.target.files?.[0] || null)}
-                        className="hidden"
-                      />
-                      <label
-                        htmlFor="tutorialVideo"
-                        className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-mentor-yellow-400 bg-gray-50 hover:bg-mentor-yellow-50 transition-colors"
-                      >
-                        <div className="text-center">
-                          <Upload className="h-6 w-6 mx-auto mb-2 text-gray-400" />
-                          <p className="text-sm text-gray-600">
-                            {formData.tutorialVideo ? formData.tutorialVideo.name : 'Sample Resume file'}
-                          </p>
-                        </div>
-                      </label>
-                    </div>
-                  </div>
                 </div>
                 <p className="text-xs text-gray-500 mt-2">
                   * Required fields. Teaching video is optional but recommended to showcase your teaching style.
@@ -427,7 +470,7 @@ const TutorRegistrationForm = () => {
             <CardContent className="p-6 space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="qualification">Current/Highest Qualification *</Label>
+                  <Label htmlFor="qualification">Highest Qualification *</Label>
                   <Select value={formData.highestQualification} onValueChange={(value) => updateFormData({ highestQualification: value })}>
                     <SelectTrigger className="mt-1 focus:ring-mentor-blue-400 focus:border-mentor-blue-400">
                       <SelectValue placeholder="Select qualification" />
@@ -510,7 +553,7 @@ const TutorRegistrationForm = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="p-6 space-y-4">
-              {/* <div>
+              <div>
                 <Label htmlFor="address">Full Address *</Label>
                 <Input
                   id="address"
@@ -520,18 +563,8 @@ const TutorRegistrationForm = () => {
                   className="mt-1 focus:ring-mentor-yellow-400 focus:border-mentor-yellow-400"
                   required
                 />
-              </div> */}
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                  <Label htmlFor="pincode">Area *</Label>
-                  <Input
-                    id="pincode"
-                    value={formData.pincode}
-                    onChange={(e) => updateFormData({ pincode: e.target.value })}
-                    className="mt-1 focus:ring-mentor-yellow-400 focus:border-mentor-yellow-400"
-                    required
-                  />
-                </div>
                 <div>
                   <Label htmlFor="city">City *</Label>
                   <Input
@@ -555,7 +588,16 @@ const TutorRegistrationForm = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                
+                <div>
+                  <Label htmlFor="pincode">Pincode *</Label>
+                  <Input
+                    id="pincode"
+                    value={formData.pincode}
+                    onChange={(e) => updateFormData({ pincode: e.target.value })}
+                    className="mt-1 focus:ring-mentor-yellow-400 focus:border-mentor-yellow-400"
+                    required
+                  />
+                </div>
               </div>
               <div>
                 <Label htmlFor="availabilityRange">Teaching Availability Range *</Label>
@@ -632,7 +674,7 @@ const TutorRegistrationForm = () => {
             </CardContent>
           </Card>
 
-          {/* Teaching Preferences */}
+          {/* Teaching Preferences - Hierarchical Selection */}
           <Card className="border-mentor-blue-200 shadow-lg">
             <CardHeader className="bg-gradient-to-r from-mentor-blue-500 to-mentor-blue-600 text-white rounded-t-lg">
               <CardTitle className="flex items-center gap-2">
@@ -640,76 +682,106 @@ const TutorRegistrationForm = () => {
                 Teaching Preferences
               </CardTitle>
               <CardDescription className="text-mentor-blue-100">
-                Select subjects and specify which classes you can teach
+                Select education levels, then classes/courses, and finally subjects you can teach
               </CardDescription>
             </CardHeader>
-            
             <CardContent className="p-6 space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {subjects.map((subject) => (
-                  <div key={subject} className="border border-gray-200 rounded-lg p-3">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center space-x-2">
+              {/* Education Levels */}
+              <div className="space-y-4">
+                {Object.entries(educationLevels).map(([levelId, level]) => (
+                  <div key={levelId} className="border border-gray-200 rounded-lg p-4">
+                    {/* Level Selection */}
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center space-x-3">
                         <Checkbox
-                          id={subject}
-                          checked={getSelectedClassesCount(subject) > 0}
-                          onCheckedChange={(checked) => {
-                            if (!checked) {
-                              updateFormData({
-                                subjectPreferences: {
-                                  ...formData.subjectPreferences,
-                                  [subject]: []
-                                }
-                              });
-                            } else {
-                              setExpandedSubjects(prev => ({ ...prev, [subject]: true }));
-                            }
-                          }}
+                          id={`level-${levelId}`}
+                          checked={selectedLevels.includes(levelId)}
+                          onCheckedChange={(checked) => handleLevelChange(levelId, checked as boolean)}
                           className="data-[state=checked]:bg-mentor-yellow-500 data-[state=checked]:border-mentor-yellow-500"
                         />
-                        <Label htmlFor={subject} className="text-sm font-medium cursor-pointer">
-                          {subject}
+                        <Label htmlFor={`level-${levelId}`} className="text-lg font-medium cursor-pointer">
+                          {level.label}
                         </Label>
                       </div>
-                      {getSelectedClassesCount(subject) > 0 && (
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs bg-mentor-yellow-100 text-mentor-yellow-700 px-2 py-1 rounded">
-                            {getSelectedClassesCount(subject)} classes
-                          </span>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => toggleSubjectExpansion(subject)}
-                            className="h-6 w-6 p-0"
-                          >
-                            {expandedSubjects[subject] ? (
-                              <ChevronUp className="h-3 w-3" />
-                            ) : (
-                              <ChevronDown className="h-3 w-3" />
-                            )}
-                          </Button>
-                        </div>
+                      {selectedLevels.includes(levelId) && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setExpandedLevels(prev => ({ ...prev, [levelId]: !prev[levelId] }))}
+                          className="h-8 w-8 p-0"
+                        >
+                          {expandedLevels[levelId] ? (
+                            <ChevronUp className="h-4 w-4" />
+                          ) : (
+                            <ChevronDown className="h-4 w-4" />
+                          )}
+                        </Button>
                       )}
                     </div>
-                    
-                    {(expandedSubjects[subject] || getSelectedClassesCount(subject) === 0) && getSelectedClassesCount(subject) >= 0 && (
-                      <div className="space-y-2 mt-2">
-                        <div className="grid grid-cols-2 gap-2">
-                          {classGroups.map((group) => (
-                            <div key={`${subject}-${group.id}`} className="flex items-center space-x-1">
-                              <Checkbox
-                                id={`${subject}-${group.id}`}
-                                checked={isGroupSelected(subject, group.id)}
-                                onCheckedChange={(checked) => handleClassGroupChange(subject, group.id, checked as boolean)}
-                                className="data-[state=checked]:bg-mentor-yellow-500 data-[state=checked]:border-mentor-yellow-500 h-3 w-3"
-                              />
-                              <Label htmlFor={`${subject}-${group.id}`} className="text-xs cursor-pointer">
-                                {group.label}
-                              </Label>
+
+                    {/* Classes/Courses (shown when level is selected and expanded) */}
+                    {selectedLevels.includes(levelId) && expandedLevels[levelId] && (
+                      <div className="ml-6 space-y-3 border-l-2 border-gray-200 pl-4">
+                        {Object.entries(level.classes).map(([classId, classInfo]) => (
+                          <div key={classId} className="border border-gray-100 rounded-md p-3">
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="flex items-center space-x-2">
+                                <Checkbox
+                                  id={`class-${levelId}-${classId}`}
+                                  checked={!!formData.teachingPreferences[levelId]?.[classId]}
+                                  onCheckedChange={(checked) => handleClassChange(levelId, classId, checked as boolean)}
+                                  className="data-[state=checked]:bg-mentor-blue-500 data-[state=checked]:border-mentor-blue-500"
+                                />
+                                <Label htmlFor={`class-${levelId}-${classId}`} className="font-medium cursor-pointer">
+                                  {classInfo.label}
+                                </Label>
+                              </div>
+                              {formData.teachingPreferences[levelId]?.[classId] && (
+                                <div className="flex items-center gap-2">
+                                  <span className="text-xs bg-mentor-blue-100 text-mentor-blue-700 px-2 py-1 rounded">
+                                    {getSelectedSubjectsCount(levelId, classId)} subjects
+                                  </span>
+                                  <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => setExpandedClasses(prev => ({ 
+                                      ...prev, 
+                                      [`${levelId}-${classId}`]: !prev[`${levelId}-${classId}`] 
+                                    }))}
+                                    className="h-6 w-6 p-0"
+                                  >
+                                    {expandedClasses[`${levelId}-${classId}`] ? (
+                                      <ChevronUp className="h-3 w-3" />
+                                    ) : (
+                                      <ChevronDown className="h-3 w-3" />
+                                    )}
+                                  </Button>
+                                </div>
+                              )}
                             </div>
-                          ))}
-                        </div>
+
+                            {/* Subjects (shown when class is selected and expanded) */}
+                            {formData.teachingPreferences[levelId]?.[classId] && expandedClasses[`${levelId}-${classId}`] && (
+                              <div className="ml-4 grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
+                                {classInfo.subjects.map((subject) => (
+                                  <div key={subject} className="flex items-center space-x-1">
+                                    <Checkbox
+                                      id={`subject-${levelId}-${classId}-${subject}`}
+                                      checked={isSubjectSelected(levelId, classId, subject)}
+                                      onCheckedChange={(checked) => handleSubjectChange(levelId, classId, subject, checked as boolean)}
+                                      className="data-[state=checked]:bg-mentor-yellow-500 data-[state=checked]:border-mentor-yellow-500 h-3 w-3"
+                                    />
+                                    <Label htmlFor={`subject-${levelId}-${classId}-${subject}`} className="text-xs cursor-pointer">
+                                      {subject}
+                                    </Label>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        ))}
                       </div>
                     )}
                   </div>
@@ -718,7 +790,7 @@ const TutorRegistrationForm = () => {
             </CardContent>
           </Card>
 
-          {/* Availability */}
+          {/* Availability - Simplified */}
           <Card className="border-mentor-yellow-200 shadow-lg">
             <CardHeader className="bg-gradient-to-r from-mentor-yellow-500 to-mentor-yellow-600 text-white rounded-t-lg">
               <CardTitle className="flex items-center gap-2">
@@ -748,23 +820,6 @@ const TutorRegistrationForm = () => {
               </div>
 
               <div>
-                <Label className="text-base font-medium">Preferred Time Slots * (Select multiple)</Label>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
-                  {timeSlots.map((slot) => (
-                    <div key={slot} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`slot-${slot}`}
-                        checked={formData.timeSlots.includes(slot)}
-                        onCheckedChange={(checked) => handleTimeSlotChange(slot, checked as boolean)}
-                        className="data-[state=checked]:bg-mentor-blue-500 data-[state=checked]:border-mentor-blue-500"
-                      />
-                      <Label htmlFor={`slot-${slot}`} className="text-sm">{slot}</Label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div>
                 <Label htmlFor="startDate">When can you start? *</Label>
                 <Select value={formData.startDate} onValueChange={(value) => updateFormData({ startDate: value })}>
                   <SelectTrigger className="mt-1 focus:ring-mentor-blue-400 focus:border-mentor-blue-400">
@@ -781,36 +836,26 @@ const TutorRegistrationForm = () => {
             </CardContent>
           </Card>
 
-          {/* Additional Information */}
+          {/* Teaching Experience - Simplified */}
           <Card className="border-mentor-blue-200 shadow-lg">
             <CardHeader className="bg-gradient-to-r from-mentor-blue-500 to-mentor-blue-600 text-white rounded-t-lg">
               <CardTitle className="flex items-center gap-2">
                 <Award className="h-5 w-5" />
-                Additional Information
+                Teaching Details
               </CardTitle>
               <CardDescription className="text-mentor-blue-100">
-                Tell us more about your teaching experience and achievements
+                Brief description of your teaching approach
               </CardDescription>
             </CardHeader>
-            <CardContent className="p-6 space-y-4">
+            <CardContent className="p-6">
               <div>
-                <Label htmlFor="teachingExperience">Teaching Experience & Methodology</Label>
+                <Label htmlFor="teachingExperience">Teaching Experience & Approach</Label>
                 <Textarea
                   id="teachingExperience"
-                  placeholder="Describe your teaching experience, methodology, and what makes you a great tutor..."
+                  placeholder="Briefly describe your teaching experience and methodology (e.g., years of experience, teaching style, student success stories)..."
                   value={formData.teachingExperience}
                   onChange={(e) => updateFormData({ teachingExperience: e.target.value })}
-                  className="mt-1 min-h-[100px] focus:ring-mentor-yellow-400 focus:border-mentor-yellow-400"
-                />
-              </div>
-              <div>
-                <Label htmlFor="achievements">Academic Achievements & Certifications</Label>
-                <Textarea
-                  id="achievements"
-                  placeholder="List your academic achievements, certifications, awards, or any relevant accomplishments..."
-                  value={formData.achievements}
-                  onChange={(e) => updateFormData({ achievements: e.target.value })}
-                  className="mt-1 min-h-[100px] focus:ring-mentor-yellow-400 focus:border-mentor-yellow-400"
+                  className="mt-1 min-h-[80px] focus:ring-mentor-yellow-400 focus:border-mentor-yellow-400"
                 />
               </div>
             </CardContent>
