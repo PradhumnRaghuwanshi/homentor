@@ -36,123 +36,11 @@ const Mentors = () => {
     lat: number;
     lon: number;
   } | null>(null);
-
-  useEffect(() => {
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-
-          const lat = position.coords.latitude;
-          const lon = position.coords.longitude;
-          setUserLocation({ lat, lon });
-          console.log(lat, lon);
-          getAllMentorsData();
-        },
-        (error) => {
-          console.warn("Geolocation error:", error);
-        }
-      );
-    } else {
-      console.warn("Geolocation not available");
-    }
-  }, []);
-
-  useEffect(() => {
-    getAllMentorsData();
-  }, []);
-
   const [mentorsData, setMentorsData] = useState([]);
-  const getAllMentorsData = () => {
-    axios.get("https://homentor-backend.onrender.com/api/mentor").then((res) => {
-      const filteredAndSorted = filterAndSortMentors(res.data.data, userLocation);
-      setMentorsData(filteredAndSorted);
-      // setMentorsData(
-      //   res.data.data
-      //     .map((mentor) => {
-      //       const distance = getDistance(
-      //         userLocation.lat,
-      //         userLocation.lon,
-      //         mentor.location.lat,
-      //         mentor.location.lon
-      //       );
-      //       const range = parseTeachingRange(mentor.teachingRange);
+  const [filteredMentors, setFilteredMentors] = useState([]);
+  const [loader, setLoader] = useState(false);
 
-      //       return {
-      //         ...mentor,
-      //         distance,
-      //         inRange: distance <= range,
-      //         inRangeDistance : distance  ,
-      //       };
-      //     })
-      //     .sort((a, b) => {
-      //       // First sort by "inRange"
-      //       if (a.inRange !== b.inRange) {
-      //         return a.inRange ? -1 : 1;
-      //       }
-      //       // Then sort by distance
-      //       return a.distance - b.distance;
-      //     })
-      // );
-      console.log(mentorsData);
-    });
-  };
-
-  const filterAndSortMentors = (mentors, parentLocation) => {
-    const withinRange = [];
-    const outsideRange = [];
-
-    mentors.forEach((mentor) => {
-      const latitude = mentor.location.lat;
-      const longitude = mentor.location.lon;
-
-      const distance = getDistance(
-        parentLocation.lat,
-        parentLocation.lon,
-        latitude,
-        longitude
-      );
-
-      const range = parseTeachingRange(mentor.teachingRange);
-      const mentorWithDistance = { ...mentor, distance };
-
-      if (distance <= range) {
-        withinRange.push(mentorWithDistance);
-      } else {
-        outsideRange.push(mentorWithDistance);
-      }
-    });
-
-    const sortByRanking = (a, b) => (a.adminRanking || 10) - (b.adminRanking || 10);
-
-    const sortedWithin = withinRange.sort(sortByRanking);
-    const sortedOutside = outsideRange.sort(sortByRanking);
-
-    return [...sortedWithin, ...sortedOutside];
-  };
-
-
-  function getDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371; // km
-    const dLat = ((lat2 - lat1) * Math.PI) / 180;
-    const dLon = ((lon2 - lon1) * Math.PI) / 180;
-
-    const a =
-      Math.sin(dLat / 2) ** 2 +
-      Math.cos((lat1 * Math.PI) / 180) *
-        Math.cos((lat2 * Math.PI) / 180) *
-        Math.sin(dLon / 2) ** 2;
-
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    console.log(lat2)
-    return R * c;
-  }
-
-  function parseTeachingRange(rangeStr) {
-    if (!rangeStr || rangeStr.toLowerCase() === "anywhere") return Infinity;
-    const match = rangeStr.match(/\d+/);
-    return match ? parseInt(match[0], 10) : 0;
-  }
-
+  // Filter states
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSubject, setSelectedSubject] = useState<string | undefined>(
     undefined
@@ -174,7 +62,135 @@ const Mentors = () => {
   );
   const [shake, setShake] = useState(false);
 
-  const [filteredMentors, setFilteredMentors] = useState(mentorsData);
+  // Step 1: Get user location
+  useEffect(() => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          console.log("User location:", lat, lon);
+          setUserLocation({ lat, lon });
+        },
+        (error) => {
+          console.warn("Geolocation error:", error);
+          // Set a default location if geolocation fails
+          setUserLocation({ lat: 22.7196, lon: 75.8577 }); // Indore coordinates as fallback
+        }
+      );
+    } else {
+      console.warn("Geolocation not available");
+      setUserLocation({ lat: 22.7196, lon: 75.8577 }); // Default location
+    }
+  }, []);
+
+  // Step 2: Once location is available, fetch mentors
+  useEffect(() => {
+    if (userLocation) {
+      fetchMentors();
+    }
+  }, [userLocation]);
+
+  // Step 3: Apply filters whenever mentorsData or filter states change
+  useEffect(() => {
+    applyFilters();
+  }, [
+    mentorsData,
+    searchTerm,
+    selectedSubject,
+    priceRange,
+    sortBy,
+    selectedCity,
+    selectedArea,
+    selectedClass
+  ]);
+
+  const fetchMentors = async () => {
+    setLoader(true);
+    try {
+      console.log("Fetching mentors...");
+      const res = await axios.get("https://homentor-backend.onrender.com/api/mentor");
+      console.log("API Response:", res.data);
+      
+      if (res.data && res.data.data) {
+        const filteredAndSorted = filterAndSortMentors(res.data.data, userLocation);
+        console.log("Processed mentors:", filteredAndSorted);
+        setMentorsData(filteredAndSorted);
+      } else {
+        console.warn("No data found in API response");
+        setMentorsData([]);
+      }
+    } catch (err) {
+      console.error("Error fetching mentors:", err);
+      setMentorsData([]);
+    } finally {
+      setLoader(false);
+    }
+  };
+
+  const filterAndSortMentors = (mentors, parentLocation) => {
+    if (!mentors || !Array.isArray(mentors)) {
+      console.warn("Invalid mentors data:", mentors);
+      return [];
+    }
+
+    const withinRange = [];
+    const outsideRange = [];
+
+    mentors.forEach((mentor) => {
+      try {
+        const latitude = mentor.location?.lat || 0;
+        const longitude = mentor.location?.lon || 0;
+
+        const distance = getDistance(
+          parentLocation.lat,
+          parentLocation.lon,
+          latitude,
+          longitude
+        );
+
+        const range = parseTeachingRange(mentor.teachingRange);
+        const mentorWithDistance = { ...mentor, distance };
+
+        if (distance <= range) {
+          withinRange.push(mentorWithDistance);
+        } else {
+          outsideRange.push(mentorWithDistance);
+        }
+      } catch (error) {
+        console.warn("Error processing mentor:", mentor, error);
+      }
+    });
+
+    const sortByRanking = (a, b) =>
+      (a.adminRanking || 10) - (b.adminRanking || 10);
+
+    const sortedWithin = withinRange.sort(sortByRanking);
+    const sortedOutside = outsideRange.sort(sortByRanking);
+
+    return [...sortedWithin, ...sortedOutside];
+  };
+
+  function getDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371; // km
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLon = ((lon2 - lon1) * Math.PI) / 180;
+
+    const a =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLon / 2) ** 2;
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  }
+
+  function parseTeachingRange(rangeStr) {
+    if (!rangeStr || rangeStr.toLowerCase() === "anywhere") return Infinity;
+    const match = rangeStr.match(/\d+/);
+    return match ? parseInt(match[0], 10) : 0;
+  }
 
   // Apply filters
   const applyFilters = () => {
@@ -184,18 +200,18 @@ const Mentors = () => {
     if (searchTerm) {
       result = result.filter(
         (mentor) =>
-          mentor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          mentor.subjects.some((subject) =>
+          mentor.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          mentor.subjects?.some((subject) =>
             subject.toLowerCase().includes(searchTerm.toLowerCase())
           ) ||
-          mentor.location.toLowerCase().includes(searchTerm.toLowerCase())
+          mentor.location?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
     // Filter by subject
     if (selectedSubject) {
       result = result.filter((mentor) =>
-        mentor.subjects.some((subject) => subject === selectedSubject)
+        mentor.subjects?.some((subject) => subject === selectedSubject)
       );
     }
 
@@ -205,15 +221,30 @@ const Mentors = () => {
         mentor.hourlyRate >= priceRange[0] && mentor.hourlyRate <= priceRange[1]
     );
 
-    // Sort results
-    if (sortBy === "rating") {
-      result = result.sort((a, b) => b.rating - a.rating);
-    } else if (sortBy === "priceAsc") {
-      result = result.sort((a, b) => a.hourlyRate - b.hourlyRate);
-    } else if (sortBy === "priceDesc") {
-      result = result.sort((a, b) => b.hourlyRate - a.hourlyRate);
+    // Filter by city
+    if (selectedCity) {
+      result = result.filter((mentor) =>
+        mentor.location?.city?.toLowerCase() === selectedCity.toLowerCase()
+      );
     }
 
+    // Filter by area
+    if (selectedArea) {
+      result = result.filter((mentor) =>
+        mentor.location?.area?.toLowerCase() === selectedArea.toLowerCase()
+      );
+    }
+
+    // Sort results
+    if (sortBy === "rating") {
+      result = result.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+    } else if (sortBy === "priceAsc") {
+      result = result.sort((a, b) => (a.hourlyRate || 0) - (b.hourlyRate || 0));
+    } else if (sortBy === "priceDesc") {
+      result = result.sort((a, b) => (b.hourlyRate || 0) - (a.hourlyRate || 0));
+    }
+
+    console.log("Filtered mentors:", result);
     setFilteredMentors(result);
   };
 
@@ -224,7 +255,9 @@ const Mentors = () => {
     setPriceRange([0, 100]);
     setSortBy("rating");
     setInPersonOnly(false);
-    setFilteredMentors(mentorsData);
+    setSelectedCity(undefined);
+    setSelectedArea(undefined);
+    setSelectedClass(undefined);
   };
 
   const ref = useRef();
@@ -244,7 +277,7 @@ const Mentors = () => {
   return (
     <Layout>
       <div className="bg-gray-50 py-16">
-        <div className="container-tight">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
               Find Your Perfect Mentor
@@ -253,25 +286,28 @@ const Mentors = () => {
               Search from our database of verified tutors
             </p>
           </div>
-          <div className="space-y-3 ">
+          <div className="space-y-3">
             <div className="flex gap-4 items-center">
               <SearchBar
                 setSearchTerm={setSearchTerm}
                 searchTerm={searchTerm}
-              ></SearchBar>
+              />
 
-              <AnimatedSelect onValueChange={setSelectedClass}>
+              <AnimatedSelect onValueChange={setSelectedClass} placeholder="Select Class">
                 <SelectItem value="Class 8">Class 8</SelectItem>
                 <SelectItem value="Class 10">Class 10</SelectItem>
                 <SelectItem value="Class 12">Class 12</SelectItem>
               </AnimatedSelect>
 
-              <AnimatedSelect onValueChange={setSelectedSubject}>
-                <SelectItem value="Class 8">Class 8</SelectItem>
-                <SelectItem value="Class 10">Class 10</SelectItem>
-                <SelectItem value="Class 12">Class 12</SelectItem>
+              <AnimatedSelect onValueChange={setSelectedSubject} placeholder="Select Subject">
+                {subjects.map((subject) => (
+                  <SelectItem key={subject} value={subject}>
+                    {subject}
+                  </SelectItem>
+                ))}
               </AnimatedSelect>
             </div>
+            
             <div className="flex gap-4 items-center">
               <Select onValueChange={setSelectedCity}>
                 <SelectTrigger>
@@ -293,7 +329,7 @@ const Mentors = () => {
               </Select>
               <Button
                 variant="outline"
-                className="border-homentor-blue text-homentor-blue hover:bg-homentor-lightBlue"
+                className="border-blue-500 text-blue-500 hover:bg-blue-50"
                 onClick={resetFilters}
               >
                 Reset
@@ -318,50 +354,71 @@ const Mentors = () => {
               />
             </div>
           </div>
-          <div className="bg-white rounded-lg shadow-sm mb-8">
-            <div className=" border-t border-gray-100">
-              <div className="flex flex-wrap gap-6">
-                <div className="min-w-[200px] space-y-4"></div>
 
-                <div className="flex-1 flex items-end"></div>
-              </div>
-            </div>
-          </div>
-
-          <div className="mb-4">
+          <div className="mb-4 mt-8">
             <p className="text-gray-600">
               Showing {filteredMentors.length} mentors
             </p>
           </div>
 
-          <div className="w-full ">
+          <div className="w-full mb-8">
             <MentorCarousel mentors={filteredMentors} />
           </div>
-          <SVGFilter></SVGFilter>
+          
+          <SVGFilter />
+          
+          <div className="mt-8">
+            <p className="text-sm text-gray-500 mb-4">
+              Total mentors loaded: {mentorsData.length}
+            </p>
+            
+            {loader ? (
+              <div className="flex justify-center items-center py-16">
+                <div className="text-lg">Loading mentors...</div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {mentorsData?.map((mentor, index) => (
+                  <TornCard key={mentor.id || mentor._id || index} mentor={mentor} />
+                ))}
+              </div>
+            )}
 
-          <div className="md:col-span-3 grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {mentorsData.map((mentor) => (
-              <TornCard mentor={mentor}></TornCard>
-            ))}
+            {!loader && filteredMentors.length === 0 && mentorsData.length > 0 && (
+              <div className="text-center py-16">
+                <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                  No mentors found
+                </h3>
+                <p className="text-gray-600">
+                  Try adjusting your search filters or reset them to see all
+                  available mentors.
+                </p>
+                <Button
+                  className="mt-4 bg-blue-600 hover:bg-blue-700"
+                  onClick={resetFilters}
+                >
+                  Reset Filters
+                </Button>
+              </div>
+            )}
+
+            {!loader && mentorsData.length === 0 && (
+              <div className="text-center py-16">
+                <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                  Unable to load mentors
+                </h3>
+                <p className="text-gray-600">
+                  Please check your internet connection and try again.
+                </p>
+                <Button
+                  className="mt-4 bg-blue-600 hover:bg-blue-700"
+                  onClick={fetchMentors}
+                >
+                  Retry
+                </Button>
+              </div>
+            )}
           </div>
-
-          {filteredMentors.length === 0 && (
-            <div className="text-center py-16">
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                No mentors found
-              </h3>
-              <p className="text-gray-600">
-                Try adjusting your search filters or reset them to see all
-                available mentors.
-              </p>
-              <Button
-                className="mt-4 bg-homentor-blue hover:bg-homentor-darkBlue"
-                onClick={resetFilters}
-              >
-                Reset Filters
-              </Button>
-            </div>
-          )}
         </div>
       </div>
     </Layout>
