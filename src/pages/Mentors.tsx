@@ -63,7 +63,7 @@ const Mentors = () => {
 
   const [mentorsData, setMentorsData] = useState([]);
   const getAllMentorsData = () => {
-    axios.get("http://localhost:5001/api/mentor").then((res) => {
+    axios.get("https://homentor-backend.onrender.com/api/mentor").then((res) => {
       const filteredAndSorted = filterAndSortMentors(res.data.data, userLocation);
       setMentorsData(filteredAndSorted);
       // setMentorsData(
