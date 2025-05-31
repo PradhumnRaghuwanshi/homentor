@@ -3,6 +3,7 @@ import { locationsData } from "./locationsData";
 import { Label } from "@/components/ui/label";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { assert } from "console";
 
 interface LocationState {
   state: string;
@@ -11,7 +12,7 @@ interface LocationState {
 }
 
 export default function LocationSelector({mentorsData, setFormData}) {
-  const [location, setLocation] = useState<LocationState>({
+  const [location, setLocation] = useState({
     state: "",
     city: "",
     area: ""
@@ -21,19 +22,31 @@ export default function LocationSelector({mentorsData, setFormData}) {
   const cities = location.state ? Object.keys(locationsData[location.state]) : [];
   const areas = location.city ? locationsData[location.state]?.[location.city] || [] : [];
 
-  const handleChange = (key: keyof LocationState, value: string) => {
-    setLocation((prev) => ({
-      ...prev,
-      [key]: value,
-    //   ...(key === "state" && { city: "", area: "" }),
-    //   ...(key === "city" && { area: "" })
-    }));
-    setFormData({...mentorsData, location:{
-        ...mentorsData.location,
-        [key] : value
-    }})
-    console.log(location)
+  const handleChange = (key, value) => {
+    let updatedLocation = { ...location, [key]: value };
+  
+    // Reset city and area if state changes
+    if (key === "state") {
+      updatedLocation.city = "";
+      updatedLocation.area = "";
+    }
+  
+    // Reset area if city changes
+    if (key === "city") {
+      updatedLocation.area = "";
+    }
+  
+    setLocation(updatedLocation);
+  
+    // Sync to parent form
+    setFormData({
+      ...mentorsData,
+      location: {
+        ...updatedLocation
+      }
+    });
   };
+  
 
   return (
     <div className="space-y-6">

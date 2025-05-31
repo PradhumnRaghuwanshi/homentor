@@ -35,7 +35,11 @@ import {
 } from "lucide-react";
 import axios from "axios";
 import LocationSelector from "@/components/LocationSelector";
+import { locationsData } from "@/components/locationsData";
+
 const TutorRegistrationForm = () => {
+
+  
   const [mentorData, setFormData] = useState({
     // Personal Information
     fullName: "",
@@ -59,11 +63,11 @@ const TutorRegistrationForm = () => {
 
     // Location & Availability
     location: {
-      area: "Palasia",
-      city: "Indore",
-      state: "Madhya Pradesh",
-      lat:'',
-      lon:''
+      area: "",
+      city: "",
+      state: "",
+      lat: "",
+      lon: "",
     },
 
     teachingRange: "",
@@ -81,27 +85,37 @@ const TutorRegistrationForm = () => {
     // Additional Information
     brief: "",
   });
+  const states = Object.keys(locationsData);
+  const cities = mentorData.location.state ? Object.keys(locationsData[mentorData.location.state]) : [];
+  const areas = mentorData.location.city ? locationsData[mentorData.location.state]?.[mentorData.location.city] || [] : [];
 
   const GOOGLE_API_KEY = "AIzaSyAb6ZthJEvNAczmOeuvFrnwEcMJjhlNpUk"; // secure this in .env for production
   useEffect(() => {
     const { state, city, area } = mentorData.location;
     if (state && city && area) {
       const address = `${area}, ${city}, ${state}`;
-      axios.get(
-        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
-          address
-        )}&key=${GOOGLE_API_KEY}`
-      )
-        .then((res) => {console.log(res.data)
-            if (res.data.status === "OK") {
-                const location = res.data.results[0].geometry.location;
-                handleLocation("lat", location.lat);
-                handleLocation("lon", location.lng);
-                console.log(location)
-              } else {
-                console.warn("Geocoding failed:", res.data.status);
-              }
-        })
+      axios
+        .get(
+          `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+            address
+          )}&key=${GOOGLE_API_KEY}`
+        )
+        .then((res) => {
+          console.log(res.data);
+          if (res.data.status === "OK") {
+            const location = res.data.results[0].geometry.location;
+            setFormData({
+              ...mentorData,
+              location: {
+                ...mentorData.location,
+                lat: location.lat,
+                lon: location.lng,
+              },
+            });
+          } else {
+            console.warn("Geocoding failed:", res.data.status);
+          }
+        });
     }
   }, [
     mentorData.location.state,
@@ -335,39 +349,6 @@ const TutorRegistrationForm = () => {
   };
 
   // Data for various form sections
-  const states = [
-    "Andhra Pradesh",
-    "Arunachal Pradesh",
-    "Assam",
-    "Bihar",
-    "Chhattisgarh",
-    "Goa",
-    "Gujarat",
-    "Haryana",
-    "Himachal Pradesh",
-    "Jharkhand",
-    "Karnataka",
-    "Kerala",
-    "Madhya Pradesh",
-    "Maharashtra",
-    "Manipur",
-    "Meghalaya",
-    "Mizoram",
-    "Nagaland",
-    "Odisha",
-    "Punjab",
-    "Rajasthan",
-    "Sikkim",
-    "Tamil Nadu",
-    "Telangana",
-    "Tripura",
-    "Uttar Pradesh",
-    "Uttarakhand",
-    "West Bengal",
-    "Delhi",
-    "Jammu and Kashmir",
-    "Ladakh",
-  ];
 
   const teachingModeOptions = [
     {
@@ -772,9 +753,9 @@ const TutorRegistrationForm = () => {
                     </Label>
                     <div className="relative">
                       <Input
-                        id="tutorialVideo"
+                        id="cv"
                         type="file"
-                        accept="video/*"
+                        accept="image/*,.pdf"
                         onChange={(e) => handleImageUpload(e, "cv")}
                         className="hidden"
                       />
@@ -961,18 +942,22 @@ const TutorRegistrationForm = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="p-6 space-y-4">
-                <LocationSelector mentorsData={mentorData} setFormData={setFormData}></LocationSelector>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* <LocationSelector
+                mentorsData={mentorData}
+                setFormData={setFormData}
+              ></LocationSelector> */}
+              <div className="space-y-6">
+                {/* State */}
                 <div>
                   <Label htmlFor="state">State *</Label>
                   <Select
                     value={mentorData.location.state}
                     onValueChange={(value) => handleLocation("state", value)}
                   >
-                    <SelectTrigger className="mt-1 focus:ring-mentor-yellow-400 focus:border-mentor-yellow-400">
+                    <SelectTrigger className="mt-1">
                       <SelectValue placeholder="Select state" />
                     </SelectTrigger>
-                    <SelectContent className="bg-white border-mentor-blue-200 max-h-60">
+                    <SelectContent>
                       {states.map((state) => (
                         <SelectItem key={state} value={state}>
                           {state}
@@ -981,33 +966,47 @@ const TutorRegistrationForm = () => {
                     </SelectContent>
                   </Select>
                 </div>
+
+                {/* City */}
                 <div>
-                  <Label htmlFor="state">City *</Label>
+                  <Label htmlFor="city">City *</Label>
                   <Select
                     value={mentorData.location.city}
                     onValueChange={(value) => handleLocation("city", value)}
+                    disabled={!mentorData.location.state}
                   >
-                    <SelectTrigger className="mt-1 focus:ring-mentor-yellow-400 focus:border-mentor-yellow-400">
-                      <SelectValue placeholder="Select state" />
+                    <SelectTrigger className="mt-1">
+                      <SelectValue placeholder="Select city" />
                     </SelectTrigger>
-                    <SelectContent className="bg-white border-mentor-blue-200 max-h-60">
-                      {states.map((state) => (
-                        <SelectItem key={state} value={state}>
-                          {state}
+                    <SelectContent>
+                      {cities.map((city) => (
+                        <SelectItem key={city} value={city}>
+                          {city}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
+
+                {/* Area */}
                 <div>
                   <Label htmlFor="area">Area *</Label>
-                  <Input
-                    id="area"
+                  <Select
                     value={mentorData.location.area}
-                    onChange={(e) => handleLocation("area", e.target.value)}
-                    className="mt-1 focus:ring-mentor-yellow-400 focus:border-mentor-yellow-400"
-                    required
-                  />
+                    onValueChange={(value) => handleLocation("area", value)}
+                    disabled={!mentorData.location.city}
+                  >
+                    <SelectTrigger className="mt-1">
+                      <SelectValue placeholder="Select area" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {areas.map((area) => (
+                        <SelectItem key={area} value={area}>
+                          {area}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
               <div>
@@ -1099,8 +1098,8 @@ const TutorRegistrationForm = () => {
                               <SelectValue placeholder="Select monthly rate" />
                             </SelectTrigger>
                             <SelectContent className="bg-white border-mentor-yellow-200">
-                              <SelectItem value="2000-4000">
-                                ₹2,000 - ₹4,000
+                              <SelectItem value="3000">
+                                ₹3,000
                               </SelectItem>
                               <SelectItem value="4000-6000">
                                 ₹4,000 - ₹6,000

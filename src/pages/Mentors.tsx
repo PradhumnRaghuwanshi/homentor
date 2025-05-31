@@ -17,7 +17,6 @@ import SearchBar from "@/components/SearchBar";
 import AnimatedSelect from "@/components/AnimatedSelect";
 import axios from "axios";
 
-
 const subjects = [
   "Mathematics",
   "Physics",
@@ -33,14 +32,125 @@ const subjects = [
 ];
 
 const Mentors = () => {
-  useEffect(()=>{getAllMentorsData()}, [])
+  const [userLocation, setUserLocation] = useState<{
+    lat: number;
+    lon: number;
+  } | null>(null);
 
-  const [mentorsData, setMentorsData] = useState([])
-  const getAllMentorsData = ()=>{
-    axios.get('http://localhost:5001/api/mentor').then((res)=>{
-      setMentorsData(res.data.data)
-      console.log(res.data.data)
-    })
+  useEffect(() => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          setUserLocation({ lat, lon });
+          console.log(lat, lon);
+          getAllMentorsData();
+        },
+        (error) => {
+          console.warn("Geolocation error:", error);
+        }
+      );
+    } else {
+      console.warn("Geolocation not available");
+    }
+  }, []);
+
+  useEffect(() => {
+    getAllMentorsData();
+  }, []);
+
+  const [mentorsData, setMentorsData] = useState([]);
+  const getAllMentorsData = () => {
+    axios.get("http://localhost:5001/api/mentor").then((res) => {
+      const filteredAndSorted = filterAndSortMentors(res.data.data, userLocation);
+      setMentorsData(filteredAndSorted);
+      // setMentorsData(
+      //   res.data.data
+      //     .map((mentor) => {
+      //       const distance = getDistance(
+      //         userLocation.lat,
+      //         userLocation.lon,
+      //         mentor.location.lat,
+      //         mentor.location.lon
+      //       );
+      //       const range = parseTeachingRange(mentor.teachingRange);
+
+      //       return {
+      //         ...mentor,
+      //         distance,
+      //         inRange: distance <= range,
+      //         inRangeDistance : distance  ,
+      //       };
+      //     })
+      //     .sort((a, b) => {
+      //       // First sort by "inRange"
+      //       if (a.inRange !== b.inRange) {
+      //         return a.inRange ? -1 : 1;
+      //       }
+      //       // Then sort by distance
+      //       return a.distance - b.distance;
+      //     })
+      // );
+      console.log(mentorsData);
+    });
+  };
+
+  const filterAndSortMentors = (mentors, parentLocation) => {
+    const withinRange = [];
+    const outsideRange = [];
+
+    mentors.forEach((mentor) => {
+      const latitude = mentor.location.lat;
+      const longitude = mentor.location.lon;
+
+      const distance = getDistance(
+        parentLocation.lat,
+        parentLocation.lon,
+        latitude,
+        longitude
+      );
+
+      const range = parseTeachingRange(mentor.teachingRange);
+      const mentorWithDistance = { ...mentor, distance };
+
+      if (distance <= range) {
+        withinRange.push(mentorWithDistance);
+      } else {
+        outsideRange.push(mentorWithDistance);
+      }
+    });
+
+    const sortByRanking = (a, b) => (a.adminRanking || 10) - (b.adminRanking || 10);
+
+    const sortedWithin = withinRange.sort(sortByRanking);
+    const sortedOutside = outsideRange.sort(sortByRanking);
+
+    return [...sortedWithin, ...sortedOutside];
+  };
+
+
+  function getDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371; // km
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLon = ((lon2 - lon1) * Math.PI) / 180;
+
+    const a =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLon / 2) ** 2;
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    console.log(lat2)
+    return R * c;
+  }
+
+  function parseTeachingRange(rangeStr) {
+    if (!rangeStr || rangeStr.toLowerCase() === "anywhere") return Infinity;
+    const match = rangeStr.match(/\d+/);
+    return match ? parseInt(match[0], 10) : 0;
   }
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -145,44 +255,43 @@ const Mentors = () => {
           </div>
           <div className="space-y-3 ">
             <div className="flex gap-4 items-center">
-            <SearchBar setSearchTerm={setSearchTerm} searchTerm={searchTerm}></SearchBar>
-            
-            <AnimatedSelect onValueChange={setSelectedClass}>
-  <SelectItem value="Class 8">Class 8</SelectItem>
-  <SelectItem value="Class 10">Class 10</SelectItem>
-  <SelectItem value="Class 12">Class 12</SelectItem>
-</AnimatedSelect>
+              <SearchBar
+                setSearchTerm={setSearchTerm}
+                searchTerm={searchTerm}
+              ></SearchBar>
 
-           
-            <AnimatedSelect onValueChange={setSelectedSubject}>
-  <SelectItem value="Class 8">Class 8</SelectItem>
-  <SelectItem value="Class 10">Class 10</SelectItem>
-  <SelectItem value="Class 12">Class 12</SelectItem>
-</AnimatedSelect>
+              <AnimatedSelect onValueChange={setSelectedClass}>
+                <SelectItem value="Class 8">Class 8</SelectItem>
+                <SelectItem value="Class 10">Class 10</SelectItem>
+                <SelectItem value="Class 12">Class 12</SelectItem>
+              </AnimatedSelect>
 
-           
-           
+              <AnimatedSelect onValueChange={setSelectedSubject}>
+                <SelectItem value="Class 8">Class 8</SelectItem>
+                <SelectItem value="Class 10">Class 10</SelectItem>
+                <SelectItem value="Class 12">Class 12</SelectItem>
+              </AnimatedSelect>
             </div>
             <div className="flex gap-4 items-center">
-            <Select onValueChange={setSelectedCity}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select City" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Indore">Indore</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select onValueChange={setSelectedArea}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select Area" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Vijay Nagar">Vijay Nagar</SelectItem>
-                <SelectItem value="Palasia">Palasia</SelectItem>
-                <SelectItem value="Bhawarkuan">Bhawarkuan</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button
+              <Select onValueChange={setSelectedCity}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select City" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Indore">Indore</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select onValueChange={setSelectedArea}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Area" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Vijay Nagar">Vijay Nagar</SelectItem>
+                  <SelectItem value="Palasia">Palasia</SelectItem>
+                  <SelectItem value="Bhawarkuan">Bhawarkuan</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button
                 variant="outline"
                 className="border-homentor-blue text-homentor-blue hover:bg-homentor-lightBlue"
                 onClick={resetFilters}
@@ -192,7 +301,6 @@ const Mentors = () => {
             </div>
 
             <div className="px-2 py-1">
-              
               <div className="flex items-center justify-between mt-2">
                 <span>₹{priceRange[0]}</span>
                 <Label>Price Range (₹/month)</Label>
@@ -209,8 +317,6 @@ const Mentors = () => {
                 className="mt-2"
               />
             </div>
-
-            
           </div>
           <div className="bg-white rounded-lg shadow-sm mb-8">
             <div className=" border-t border-gray-100">
@@ -232,7 +338,6 @@ const Mentors = () => {
             <MentorCarousel mentors={filteredMentors} />
           </div>
           <SVGFilter></SVGFilter>
-          
 
           <div className="md:col-span-3 grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {mentorsData.map((mentor) => (

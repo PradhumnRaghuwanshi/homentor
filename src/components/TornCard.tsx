@@ -73,7 +73,7 @@ const TornCard = ({mentor}) => {
             <span className="text-[10px] sm:inline">Book Now</span>
           </div>
           <div className="lg:text-[12px] text-[9px] mentor-content-2 text-white">
-            {mentor.teachingModes.homeTuition.monthlyPrice}
+            {/* {mentor.teachingModes.homeTuition.monthlyPrice} */}
           </div>
         </Button>
         <Button
@@ -96,9 +96,9 @@ const TornCard = ({mentor}) => {
       </Button>
 
       {/* 🖼 Foreground content (not distorted) */}
-      <div className="relative z-20 w-full h-full">
+      <div className="relative z-20 w-full h-[25vh]">
         <img
-          src="https://photosnow.org/wp-content/uploads/2024/04/indian-girl-photo_18.jpg"
+          src={mentor.profilePhoto ? mentor.profilePhoto : "https://photosnow.org/wp-content/uploads/2024/04/indian-girl-photo_18.jpg"}
           alt="mentor"
           className="w-[98%] relative left-[01%] top-[1%] rounded-lg h-full object-cover"
           onClick={()=> navigate('/mentors/prashant')}
