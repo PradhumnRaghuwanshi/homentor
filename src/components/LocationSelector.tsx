@@ -25,8 +25,8 @@ export default function LocationSelector({mentorsData, setFormData}) {
     setLocation((prev) => ({
       ...prev,
       [key]: value,
-      ...(key === "state" && { city: "", area: "" }),
-      ...(key === "city" && { area: "" })
+    //   ...(key === "state" && { city: "", area: "" }),
+    //   ...(key === "city" && { area: "" })
     }));
     setFormData({...mentorsData, location:{
         ...mentorsData.location,

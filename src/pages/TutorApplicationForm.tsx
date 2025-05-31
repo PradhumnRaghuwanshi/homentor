@@ -59,9 +59,9 @@ const TutorRegistrationForm = () => {
 
     // Location & Availability
     location: {
-      area: "",
-      city: "",
-      state: "",
+      area: "Palasia",
+      city: "Indore",
+      state: "Madhya Pradesh",
       lat:'',
       lon:''
     },
@@ -87,21 +87,21 @@ const TutorRegistrationForm = () => {
     const { state, city, area } = mentorData.location;
     if (state && city && area) {
       const address = `${area}, ${city}, ${state}`;
-      fetch(
+      axios.get(
         `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
           address
         )}&key=${GOOGLE_API_KEY}`
       )
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.status === "OK") {
-            const location = data.results[0].geometry.location;
-            handleLocation("lat", location.lat);
-            handleLocation("lon", location.lng);
-          } else {
-            console.warn("Geocoding failed:", data.status);
-          }
-        });
+        .then((res) => {console.log(res.data)
+            if (res.data.status === "OK") {
+                const location = res.data.results[0].geometry.location;
+                handleLocation("lat", location.lat);
+                handleLocation("lon", location.lng);
+                console.log(location)
+              } else {
+                console.warn("Geocoding failed:", res.data.status);
+              }
+        })
     }
   }, [
     mentorData.location.state,
