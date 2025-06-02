@@ -21,7 +21,7 @@ const Layout: React.FC<LayoutProps> = ({ children, fullWidth = false }) => {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen overflow-hidden">
+    <div className="flex flex-col min-h-screen overflow-hidden ">
       <Navbar />
       <main className={`flex-grow ${fullWidth ? '' : 'pt-4 pb-12'}`} style={{ perspective: '1000px' }}>
         {children}

@@ -3,8 +3,28 @@ import { Badge } from "./ui/badge";
 import { CalendarPlus, MessageCircle, PhoneCall, Star } from "lucide-react";
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const TornCard = ({mentor}) => {
+  const makeCall = async () => {
+    console.log("Hi")
+    try {
+      const response = await axios.post('https://homentor-backend.onrender.com/api/call', {
+        parentNumber: '7748833998',  // Parent's phone number
+        mentorNumber: '9630709988'   // Mentor's real phone number
+      });
+  
+      if (response.data.success) {
+        alert('Call initiated successfully!');
+      } else {
+        alert('Failed to initiate call');
+      }
+    } catch (error) {
+      console.error('Call error:', error);
+      alert('Something went wrong!');
+    }
+  };
+  
   const navigate = useNavigate()
   return (
     <div className="relative animate-shake origin-top w-[100%] flex overflow-hidden flex-col items-center bg-[papayawhip] rounded-lg  shadow-[0_0_20px_-5px_black]">
@@ -40,7 +60,7 @@ const TornCard = ({mentor}) => {
       <div className="lg:text-lg text-sm text-white lg:hidden font-bold mentor-content absolute z-[100] bottom-[8vh]">
        {mentor.fullName}
       </div>
-      <div className="absolute z-[100] lg:flex hidden gap-10 bottom-[10vh]">
+      <div className="absolute z-[1000] lg:flex hidden bg-red-500 gap-10 bottom-[10vh]">
         <Button
           className="bg-gradient-to-r mentor-icons1  from-homentor-chat to-homentor-chatHover hover:from-homentor-chatHover hover:to-homentor-chat transition-all duration-300 flex items-center justify-center gap-1 group/icon overflow-hidden relative"
           title="Chat with mentor"
@@ -50,7 +70,8 @@ const TornCard = ({mentor}) => {
           <span className=" absolute inset-0 bg-white/10 transform-gpu -translate-x-full group-hover/icon:translate-x-0 transition-transform duration-500"></span>
         </Button>
 
-        <Button
+        <Button 
+          
           className="bg-gradient-to-r mentor-icons2 from-homentor-call to-homentor-callHover hover:from-homentor-callHover hover:to-homentor-call transition-all duration-300 flex items-center justify-center gap-1 group/icon overflow-hidden relative"
           title="Call mentor"
         >
@@ -59,15 +80,14 @@ const TornCard = ({mentor}) => {
         </Button>
       </div>
 
-      <div className="absolute z-[100] lg:hidden flex w-full items-center  gap-1 bottom-[1vh] left-2">
-        <Button
-          className="bg-gradient-to-r px-3 mentor-icons1-sm from-homentor-chat to-homentor-chatHover hover:from-homentor-chatHover hover:to-homentor-chat transition-all duration-300 flex items-center justify-center gap-1 group/icon overflow-hidden relative"
+      <div className="absolute z-[100] lg:hidden flex justify-between w-full items-center  gap-1 bottom-[1vh] px-2">
+        <button
+          className="border bg-blue-opacity px-1 py-0.5 border-mentor-blue-500 rounded-[2px] bg-mentor-blue-500 text-white mentor-icons1-sm from-homentor-chat to-homentor-chatHover hover:from-homentor-chatHover hover:to-homentor-chat transition-all duration-300 flex items-center justify-center overflow-hidden "
           title="Chat with mentor"
         >
-          {/* <MessageCircle className="lg:w-4 lg:h-4 h-2 w-2 transition-transform duration-300 group-hover/icon:scale-110" /> */}
           <span className="inline lg:text-md text-[11px]">Chat</span>
-        </Button>
-        <Button className="bg-green-500 z-[100] px-3 gap-0 flex lg:hidden flex-col bottom-[1vh] right-2 h-[auto]">
+        </button>
+        <Button className="bg-green-500 z-[100] bg-opacity px-1 py-0.5 gap-0 rounded-[2px] flex lg:hidden flex-col h-[auto]">
           <div className="flex gap-2">
             <CalendarPlus className="lg:w-4 lg:h-4 h-3 w-3 hidden lg:inline transition-transform duration-300 group-hover/icon:scale-110" />
             <span className="text-[10px] sm:inline">Book Now</span>
@@ -76,13 +96,14 @@ const TornCard = ({mentor}) => {
             {/* {mentor.teachingModes.homeTuition.monthlyPrice} */}
           </div>
         </Button>
-        <Button
-          className="bg-gradient-to-r px-3 mentor-icons2 from-homentor-call to-homentor-callHover hover:from-homentor-callHover hover:to-homentor-call transition-all duration-300 flex items-center justify-center gap-1 group/icon overflow-hidden relative"
-          title="Call mentor"
+        <button 
+        onClick={()=> makeCall()}
+          className="border bg-blue-opacity px-1 py-0.5 border-mentor-blue-500 rounded-[2px] bg-mentor-blue-500 text-white mentor-icons1-sm from-homentor-chat to-homentor-chatHover hover:from-homentor-chatHover hover:to-homentor-chat transition-all duration-300 flex items-center justify-center overflow-hidden "
+          title="Chat with mentor"
         >
-          {/* <PhoneCall className="lg:w-4 lg:h-4 h-2 w-2 transition-transform duration-300 group-hover/icon:scale-110" /> */}
           <span className="inline lg:text-md text-[11px]">Call</span>
-        </Button>
+        </button>
+        
       </div>
 
       <Button className="absolute z-[100] bg-green-500 gap-0 lg:flex hidden flex-col bottom-[1vh] h-[auto]">
@@ -96,7 +117,7 @@ const TornCard = ({mentor}) => {
       </Button>
 
       {/* 🖼 Foreground content (not distorted) */}
-      <div className="relative z-20 w-full h-[25vh]">
+      <div className="relative z-20 w-full lg:h-[60vh] h-[28vh]">
         <img
           src={mentor.profilePhoto ? mentor.profilePhoto : "https://photosnow.org/wp-content/uploads/2024/04/indian-girl-photo_18.jpg"}
           alt="mentor"

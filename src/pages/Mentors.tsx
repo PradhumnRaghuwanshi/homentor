@@ -17,19 +17,74 @@ import SearchBar from "@/components/SearchBar";
 import AnimatedSelect from "@/components/AnimatedSelect";
 import axios from "axios";
 
-const subjects = [
-  "Mathematics",
-  "Physics",
-  "Chemistry",
-  "Biology",
-  "English Literature",
-  "Writing",
-  "Computer Science",
-  "History",
-  "Social Studies",
-  "Spanish",
-  "French",
-];
+
+const classSubjects = {
+  "1": ["English", "Math", "EVS", "Hindi"],
+  "2": ["English", "Math", "EVS", "Hindi"],
+  "3": ["English", "Math", "EVS", "Hindi"],
+  "4": ["English", "Math", "Science", "Social Studies", "Hindi"],
+  "5": ["English", "Math", "Science", "Social Studies", "Hindi"],
+  "6": [
+    "English",
+    "Math",
+    "Science",
+    "Social Studies",
+    "Hindi",
+    "Sanskrit",
+  ],
+  "7": [
+    "English",
+    "Math",
+    "Science",
+    "Social Studies",
+    "Hindi",
+    "Sanskrit",
+  ],
+  "8": [
+    "English",
+    "Math",
+    "Science",
+    "Social Studies",
+    "Hindi",
+    "Sanskrit",
+  ],
+  "9": [
+    "English",
+    "Mathematics",
+    "Science",
+    "Social Science",
+    "Hindi",
+    "Sanskrit",
+  ],
+  "10": [
+    "English",
+    "Mathematics",
+    "Science",
+    "Social Science",
+    "Hindi",
+    "Sanskrit",
+  ],
+  "11": [
+    "Physics",
+    "Chemistry",
+    "Mathematics",
+    "Biology",
+    "Business Studies",
+    "Accountancy",
+    "Economics",
+    "English",
+  ],
+  "12": [
+    "Physics",
+    "Chemistry",
+    "Mathematics",
+    "Biology",
+    "Business Studies",
+    "Accountancy",
+    "Economics",
+    "English",
+  ],
+};
 
 const Mentors = () => {
   const [userLocation, setUserLocation] = useState<{
@@ -42,9 +97,7 @@ const Mentors = () => {
 
   // Filter states
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedSubject, setSelectedSubject] = useState<string | undefined>(
-    undefined
-  );
+  const [selectedSubject, setSelectedSubject] = useState([]);
   const [priceRange, setPriceRange] = useState([0, 100]);
   const [sortBy, setSortBy] = useState("rating");
   const [inPersonOnly, setInPersonOnly] = useState(false);
@@ -74,7 +127,6 @@ const Mentors = () => {
         },
         (error) => {
           console.warn("Geolocation error:", error);
-          // Set a default location if geolocation fails
           setUserLocation({ lat: 22.7196, lon: 75.8577 }); // Indore coordinates as fallback
         }
       );
@@ -95,27 +147,33 @@ const Mentors = () => {
   useEffect(() => {
     applyFilters();
   }, [
-    mentorsData,
+    // mentorsData,
     searchTerm,
     selectedSubject,
     priceRange,
     sortBy,
     selectedCity,
     selectedArea,
-    selectedClass
+    selectedClass,
   ]);
 
   const fetchMentors = async () => {
     setLoader(true);
     try {
       console.log("Fetching mentors...");
-      const res = await axios.get("https://homentor-backend.onrender.com/api/mentor");
+      const res = await axios.get(
+        "https://homentor-backend.onrender.com/api/mentor"
+      );
       console.log("API Response:", res.data);
-      
+
       if (res.data && res.data.data) {
-        const filteredAndSorted = filterAndSortMentors(res.data.data, userLocation);
+        const filteredAndSorted = filterAndSortMentors(
+          res.data.data,
+          userLocation
+        );
         console.log("Processed mentors:", filteredAndSorted);
         setMentorsData(filteredAndSorted);
+        setFilteredMentors(filteredAndSorted);
       } else {
         console.warn("No data found in API response");
         setMentorsData([]);
@@ -191,47 +249,114 @@ const Mentors = () => {
     const match = rangeStr.match(/\d+/);
     return match ? parseInt(match[0], 10) : 0;
   }
+  const [subjects, setSubjects] = useState<string[]>([]);
+  const handleClassChange = (value: string) => {
+    setSelectedClass(value);
+    setSubjects(classSubjects[value] || []);
+  };
 
   // Apply filters
   const applyFilters = () => {
     let result = [...mentorsData];
+    console.log("result");
+    // Filter by search term
+    // if (selectedClass) {
+    //   result = result.filter((mentor) => {
+    //     const schoolClasses = Object.keys(
+    //       mentor?.teachingPreferences?.school || {}
+    //     );
+
+    //     return schoolClasses.some((key) => {
+    //       const match = key.match(/\d+/g); // extract all numbers from keys like "class-9-10"
+    //       if (!match) return false;
+    //       const numbers = match.map(Number); // convert to [9, 10] or [12]
+
+    //       // if the class is in a range like class-9-10, check if selectedClass is in range
+    //       if (numbers.length === 2) {
+    //         return +selectedClass >= numbers[0] && +selectedClass <= numbers[1];
+    //       }
+
+    //       // if single class like class-12
+    //       return numbers[0] === +selectedClass;
+    //     });
+    //   });
+    // }
+
+    console.log(result);
 
     // Filter by search term
     if (searchTerm) {
-      result = result.filter(
-        (mentor) =>
-          mentor.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          mentor.subjects?.some((subject) =>
-            subject.toLowerCase().includes(searchTerm.toLowerCase())
-          ) ||
-          mentor.location?.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
+      const terms = searchTerm.toLowerCase().trim().split(/\s+/);
 
+      result = result.filter((mentor) => {
+        const name = mentor.fullName?.toLowerCase() || "";
+        const city = mentor.location?.city?.toLowerCase() || "";
+        const area = mentor.location?.area?.toLowerCase() || "";
+        const state = mentor.location?.state?.toLowerCase() || "";
+
+        // Gather all subjects from all classes into a flat list
+        const subjects = Object.values(
+          mentor?.teachingPreferences?.school || {}
+        )
+          .flat()
+          .map((subject) => subject.toLowerCase());
+
+        // Also extract class keys to match class numbers like "9", "10", "12"
+        const classKeys = Object.keys(
+          mentor?.teachingPreferences?.school || {}
+        ).map((key) => key.replace("class-", ""));
+
+        return terms.some(
+          (term) =>
+            name.includes(term) ||
+            city.includes(term) ||
+            area.includes(term) ||
+            state.includes(term) ||
+            subjects.some((subj) => subj.includes(term)) ||
+            classKeys.some((cls) => cls.includes(term))
+        );
+      });
+    }
+    let output = 1
     // Filter by subject
-    if (selectedSubject) {
-      result = result.filter((mentor) =>
-        mentor.subjects?.some((subject) => subject === selectedSubject)
-      );
+    if (selectedSubject.length > 0) {
+      result = result.filter((mentor) => {
+        // Safe check: teachingPreferences and school data exist
+        const schoolPrefs = mentor.teachingPreferences?.school;
+
+        if (!schoolPrefs) return false; // If no school preferences, skip this mentor
+        // const allSubjects: string[] = [];
+        console.log(schoolPrefs)    
+
+        // // Combine all subjects from different classes safely
+        // Object.values(schoolPrefs).forEach((subjectArray) => {
+        //   if (Array.isArray(subjectArray)) {
+        //     allSubjects.push(...subjectArray);
+        //   }
+        // });
+
+        // // If no subjects listed, skip mentor
+        // if (allSubjects.length === 0) return false;
+    
+        // // Check if at least one selected subject is taught by the mentor
+        // return selectedSubject.some((subject) => allSubjects.includes(subject));
+      });
     }
-
-    // Filter by price range
-    result = result.filter(
-      (mentor) =>
-        mentor.hourlyRate >= priceRange[0] && mentor.hourlyRate <= priceRange[1]
-    );
-
+    
+    console.log(selectedSubject)
     // Filter by city
     if (selectedCity) {
-      result = result.filter((mentor) =>
-        mentor.location?.city?.toLowerCase() === selectedCity.toLowerCase()
+      result = result.filter(
+        (mentor) =>
+          mentor.location?.city?.toLowerCase() === selectedCity.toLowerCase()
       );
     }
 
     // Filter by area
     if (selectedArea) {
-      result = result.filter((mentor) =>
-        mentor.location?.area?.toLowerCase() === selectedArea.toLowerCase()
+      result = result.filter(
+        (mentor) =>
+          mentor.location?.area?.toLowerCase() === selectedArea.toLowerCase()
       );
     }
 
@@ -283,7 +408,7 @@ const Mentors = () => {
               Find Your Perfect Mentor
             </h1>
             <p className="text-xl text-gray-600 mt-2">
-              Search from our database of verified tutors
+              Search from our database of verified tutors {selectedClass}
             </p>
           </div>
           <div className="space-y-3">
@@ -293,13 +418,32 @@ const Mentors = () => {
                 searchTerm={searchTerm}
               />
 
-              <AnimatedSelect onValueChange={setSelectedClass} placeholder="Select Class">
-                <SelectItem value="Class 8">Class 8</SelectItem>
-                <SelectItem value="Class 10">Class 10</SelectItem>
-                <SelectItem value="Class 12">Class 12</SelectItem>
+              <AnimatedSelect
+                onValueChange={handleClassChange}
+                placeholder="Select Class"
+              >
+                {[
+                  "1",
+                  "2",
+                  "3",
+                  "4",
+                  "5",
+                  "6",
+                  "7",
+                  "8",
+                  "9",
+                  "10",
+                  "11",
+                  "12",
+                ].map((i) => (
+                  <SelectItem value={`${i}`}>{`class ${i}`}</SelectItem>
+                ))}
               </AnimatedSelect>
 
-              <AnimatedSelect onValueChange={setSelectedSubject} placeholder="Select Subject">
+              <AnimatedSelect
+                onValueChange={(value)=> {setSelectedSubject([...selectedSubject, value])}}
+                placeholder="Select Subject"
+              >
                 {subjects.map((subject) => (
                   <SelectItem key={subject} value={subject}>
                     {subject}
@@ -307,7 +451,7 @@ const Mentors = () => {
                 ))}
               </AnimatedSelect>
             </div>
-            
+
             <div className="flex gap-4 items-center">
               <Select onValueChange={setSelectedCity}>
                 <SelectTrigger>
@@ -362,45 +506,50 @@ const Mentors = () => {
           </div>
 
           <div className="w-full mb-8">
-            <MentorCarousel mentors={filteredMentors} />
+            {/* <MentorCarousel mentors={filteredMentors} /> */}
           </div>
-          
+
           <SVGFilter />
-          
+
           <div className="mt-8">
             <p className="text-sm text-gray-500 mb-4">
               Total mentors loaded: {mentorsData.length}
             </p>
-            
+
             {loader ? (
               <div className="flex justify-center items-center py-16">
                 <div className="text-lg">Loading mentors...</div>
               </div>
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {mentorsData?.map((mentor, index) => (
-                  <TornCard key={mentor.id || mentor._id || index} mentor={mentor} />
+                {filteredMentors?.map((mentor, index) => (
+                  <TornCard
+                    key={mentor._id || mentor._id || index}
+                    mentor={mentor}
+                  />
                 ))}
               </div>
             )}
 
-            {!loader && filteredMentors.length === 0 && mentorsData.length > 0 && (
-              <div className="text-center py-16">
-                <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                  No mentors found
-                </h3>
-                <p className="text-gray-600">
-                  Try adjusting your search filters or reset them to see all
-                  available mentors.
-                </p>
-                <Button
-                  className="mt-4 bg-blue-600 hover:bg-blue-700"
-                  onClick={resetFilters}
-                >
-                  Reset Filters
-                </Button>
-              </div>
-            )}
+            {!loader &&
+              filteredMentors.length === 0 &&
+              mentorsData.length > 0 && (
+                <div className="text-center py-16">
+                  <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                    No mentors found
+                  </h3>
+                  <p className="text-gray-600">
+                    Try adjusting your search filters or reset them to see all
+                    available mentors.
+                  </p>
+                  <Button
+                    className="mt-4 bg-blue-600 hover:bg-blue-700"
+                    onClick={resetFilters}
+                  >
+                    Reset Filters
+                  </Button>
+                </div>
+              )}
 
             {!loader && mentorsData.length === 0 && (
               <div className="text-center py-16">

@@ -36,10 +36,9 @@ import {
 import axios from "axios";
 import LocationSelector from "@/components/LocationSelector";
 import { locationsData } from "@/components/locationsData";
+import MonthlyRateSlider from "@/components/MonthlyRateSlider";
 
 const TutorRegistrationForm = () => {
-
-  
   const [mentorData, setFormData] = useState({
     // Personal Information
     fullName: "",
@@ -47,9 +46,10 @@ const TutorRegistrationForm = () => {
     phone: "",
     gender: "",
     age: "",
-    photo: null as File | null,
-    idDocument: null as File | null,
-    tutorialVideo: null as File | null,
+    profilePhoto: null as File | null,
+    mentorId: null as File | null,
+    teachingVideo: null as File | null,
+    cv: null as File | null,
 
     // Educational Background
     qualifications: {
@@ -86,8 +86,12 @@ const TutorRegistrationForm = () => {
     brief: "",
   });
   const states = Object.keys(locationsData);
-  const cities = mentorData.location.state ? Object.keys(locationsData[mentorData.location.state]) : [];
-  const areas = mentorData.location.city ? locationsData[mentorData.location.state]?.[mentorData.location.city] || [] : [];
+  const cities = mentorData.location.state
+    ? Object.keys(locationsData[mentorData.location.state])
+    : [];
+  const areas = mentorData.location.city
+    ? locationsData[mentorData.location.state]?.[mentorData.location.city] || []
+    : [];
 
   const GOOGLE_API_KEY = "AIzaSyAb6ZthJEvNAczmOeuvFrnwEcMJjhlNpUk"; // secure this in .env for production
   useEffect(() => {
@@ -535,9 +539,54 @@ const TutorRegistrationForm = () => {
       //   setUploading(false);
     }
   };
+  // const handleDetectLocation = async () => {
+  //   if (!navigator.geolocation) {
+  //     alert("Geolocation is not supported by your browser.");
+  //     return;
+  //   }
+  
+  //   navigator.geolocation.getCurrentPosition(
+  //     async (position) => {
+  //       const { latitude, longitude } = position.coords;
+  //       console.log("hhi")
+  //       try {
+  //         const response = await fetch(
+  //           `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+  //         );
+  
+  //         if (!response.ok) {
+  //           throw new Error("Failed to fetch location data.");
+  //         }
+  
+  //         const data = await response.json();
+  //         const address = data?.address || {};
+  
+  //         setFormData((prev) => ({
+  //           ...prev,
+  //           location: {
+  //             state: address.state || "",
+  //             city: address.city || address.town || address.village || "",
+  //             area: address.suburb || address.neighbourhood || "",
+  //             lat: latitude,
+  //             lon: longitude,
+  //           },
+  //         }));
+  //       } catch (error) {
+  //         console.error("Error fetching address:", error);
+  //         alert("Could not fetch address details. Please enter manually.");
+  //       }
+  //     },
+  //     (error) => {
+  //       console.error("Geolocation Error:", error);
+  //       alert("Could not detect location. Please allow permission or enter manually.");
+  //     }
+  //   );
+  // };
+  
+
   console.log(mentorData);
   return (
-    <div className="min-h-screen bg-gradient-to-br from-mentor-blue-50 via-white to-mentor-yellow-50 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br  from-mentor-blue-50 via-white to-mentor-yellow-50 py-8 lg:px-4 px-2">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
@@ -664,14 +713,20 @@ const TutorRegistrationForm = () => {
                         htmlFor="photo"
                         className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-mentor-yellow-400 bg-gray-50 hover:bg-mentor-yellow-50 transition-colors"
                       >
-                        <div className="text-center">
-                          <Upload className="h-6 w-6 mx-auto mb-2 text-gray-400" />
-                          <p className="text-sm text-gray-600">
-                            {mentorData.photo
-                              ? mentorData.photo.name
-                              : "Click to upload photo"}
-                          </p>
-                        </div>
+                        {mentorData?.profilePhoto ? (
+                          <img
+                            src={mentorData?.profilePhoto}
+                            alt="Preview"
+                            className="h-full w-auto object-contain rounded"
+                          />
+                        ) : (
+                          <div className="text-center">
+                            <Upload className="h-6 w-6 mx-auto mb-2 text-gray-400" />
+                            <p className="text-sm text-gray-600">
+                              Click to upload photo
+                            </p>
+                          </div>
+                        )}
                       </label>
                     </div>
                   </div>
@@ -687,24 +742,30 @@ const TutorRegistrationForm = () => {
                     </Label>
                     <div className="relative">
                       <Input
-                        id="idDocument"
+                        id="mentorId"
                         type="file"
                         accept="image/*,.pdf"
-                        onChange={(e) => handleImageUpload(e, "id")}
+                        onChange={(e) => handleImageUpload(e, "mentorId")}
                         className="hidden"
                       />
                       <label
-                        htmlFor="idDocument"
+                        htmlFor="photo"
                         className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-mentor-yellow-400 bg-gray-50 hover:bg-mentor-yellow-50 transition-colors"
                       >
-                        <div className="text-center">
-                          <Upload className="h-6 w-6 mx-auto mb-2 text-gray-400" />
-                          <p className="text-sm text-gray-600">
-                            {mentorData.idDocument
-                              ? mentorData.idDocument.name
-                              : "Aadhar/PAN/License"}
-                          </p>
-                        </div>
+                        {mentorData?.mentorId ? (
+                          <img
+                            src={mentorData?.mentorId}
+                            alt="Preview"
+                            className="h-full w-auto object-contain rounded"
+                          />
+                        ) : (
+                          <div className="text-center">
+                            <Upload className="h-6 w-6 mx-auto mb-2 text-gray-400" />
+                            <p className="text-sm text-gray-600">
+                              Click to upload Id
+                            </p>
+                          </div>
+                        )}
                       </label>
                     </div>
                   </div>
@@ -727,17 +788,23 @@ const TutorRegistrationForm = () => {
                         className="hidden"
                       />
                       <label
-                        htmlFor="tutorialVideo"
+                        htmlFor="photo"
                         className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-mentor-yellow-400 bg-gray-50 hover:bg-mentor-yellow-50 transition-colors"
                       >
-                        <div className="text-center">
-                          <Upload className="h-6 w-6 mx-auto mb-2 text-gray-400" />
-                          <p className="text-sm text-gray-600">
-                            {mentorData.tutorialVideo
-                              ? mentorData.tutorialVideo.name
-                              : "Sample teaching video"}
-                          </p>
-                        </div>
+                        {mentorData?.teachingVideo ? (
+                          <img
+                            src={mentorData?.teachingVideo}
+                            alt="Preview"
+                            className="h-full w-auto object-contain rounded"
+                          />
+                        ) : (
+                          <div className="text-center">
+                            <Upload className="h-6 w-6 mx-auto mb-2 text-gray-400" />
+                            <p className="text-sm text-gray-600">
+                              Click to upload video
+                            </p>
+                          </div>
+                        )}
                       </label>
                     </div>
                   </div>
@@ -748,7 +815,7 @@ const TutorRegistrationForm = () => {
                       htmlFor="tutorialVideo"
                       className="flex items-center gap-2 mb-2"
                     >
-                      <Video className="h-4 w-4" />
+                      <IdCard className="h-4 w-4" />
                       Resume/CV
                     </Label>
                     <div className="relative">
@@ -760,17 +827,23 @@ const TutorRegistrationForm = () => {
                         className="hidden"
                       />
                       <label
-                        htmlFor="tutorialVideo"
+                        htmlFor="cv"
                         className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-mentor-yellow-400 bg-gray-50 hover:bg-mentor-yellow-50 transition-colors"
                       >
-                        <div className="text-center">
-                          <Upload className="h-6 w-6 mx-auto mb-2 text-gray-400" />
-                          <p className="text-sm text-gray-600">
-                            {mentorData.tutorialVideo
-                              ? mentorData.tutorialVideo.name
-                              : "Sample teaching video"}
-                          </p>
-                        </div>
+                        {mentorData?.cv ? (
+                          <img
+                            src={mentorData?.cv}
+                            alt="Preview"
+                            className="h-full w-auto object-contain rounded"
+                          />
+                        ) : (
+                          <div className="text-center">
+                            <Upload className="h-6 w-6 mx-auto mb-2 text-gray-400" />
+                            <p className="text-sm text-gray-600">
+                              Click to upload cv/resume
+                            </p>
+                          </div>
+                        )}
                       </label>
                     </div>
                   </div>
@@ -827,39 +900,19 @@ const TutorRegistrationForm = () => {
                   </Select>
                 </div>
                 <div>
-                  <Label htmlFor="specialization">
-                    Field of Specialization *
-                  </Label>
-                  <Select
+                  <Label htmlFor="specialization">Degree Name *</Label>
+                  <Input
                     value={mentorData.qualifications.specialization}
-                    onValueChange={(value) =>
+                    onChange={(e) =>
                       setFormData({
                         ...mentorData,
                         qualifications: {
                           ...mentorData.qualifications,
-                          specialization: value,
+                          specialization: e.target.value,
                         },
                       })
                     }
-                  >
-                    <SelectTrigger className="mt-1 focus:ring-mentor-blue-400 focus:border-mentor-blue-400">
-                      <SelectValue placeholder="Select specialization" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white border-mentor-yellow-200">
-                      <SelectItem value="science">
-                        Science & Technology
-                      </SelectItem>
-                      <SelectItem value="commerce">
-                        Commerce & Business
-                      </SelectItem>
-                      <SelectItem value="arts">Arts & Humanities</SelectItem>
-                      <SelectItem value="engineering">Engineering</SelectItem>
-                      <SelectItem value="medicine">
-                        Medicine & Healthcare
-                      </SelectItem>
-                      <SelectItem value="education">Education</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  ></Input>
                 </div>
                 <div>
                   <Label htmlFor="university">University/Institution</Label>
@@ -896,7 +949,7 @@ const TutorRegistrationForm = () => {
                       <SelectValue placeholder="Select year" />
                     </SelectTrigger>
                     <SelectContent className="bg-white border-mentor-yellow-200">
-                      {Array.from({ length: 20 }, (_, i) => 2024 - i).map(
+                      {Array.from({ length: 20 }, (_, i) => 2030 - i).map(
                         (year) => (
                           <SelectItem key={year} value={year.toString()}>
                             {year}
@@ -941,6 +994,15 @@ const TutorRegistrationForm = () => {
                 Where are you located and what's your teaching range?
               </CardDescription>
             </CardHeader>
+            <Button
+              type="button"
+              variant="outline"
+              // onClick={handleDetectLocation}
+              className="w-full"
+            >
+              📍 Detect My Location
+            </Button>
+
             <CardContent className="p-6 space-y-4">
               {/* <LocationSelector
                 mentorsData={mentorData}
@@ -1047,7 +1109,7 @@ const TutorRegistrationForm = () => {
                 Select your preferred teaching modes and set monthly rates
               </CardDescription>
             </CardHeader>
-            <CardContent className="p-6 space-y-6">
+            <CardContent className="lg:p-6 py-2 px-2 lg:px-4 lg:space-y-6 space-y-2">
               {teachingModeOptions.map((mode) => (
                 <div
                   key={mode.id}
@@ -1080,11 +1142,11 @@ const TutorRegistrationForm = () => {
                       </p>
                       {mentorData.teachingModes[mode.id]?.selected && (
                         <div className="mt-3">
-                          <Label className="text-sm">Monthly Rate (₹) *</Label>
-                          <Select
+                          <MonthlyRateSlider
+                            className="px-0"
                             value={
                               mentorData.teachingModes[mode.id]?.monthlyPrice ||
-                              ""
+                              3000
                             }
                             onValueChange={(value) =>
                               handleTeachingModeChange(
@@ -1093,32 +1155,7 @@ const TutorRegistrationForm = () => {
                                 value
                               )
                             }
-                          >
-                            <SelectTrigger className="mt-1 w-full md:w-64 focus:ring-mentor-yellow-400 focus:border-mentor-yellow-400">
-                              <SelectValue placeholder="Select monthly rate" />
-                            </SelectTrigger>
-                            <SelectContent className="bg-white border-mentor-yellow-200">
-                              <SelectItem value="3000">
-                                ₹3,000
-                              </SelectItem>
-                              <SelectItem value="4000-6000">
-                                ₹4,000 - ₹6,000
-                              </SelectItem>
-                              <SelectItem value="6000-8000">
-                                ₹6,000 - ₹8,000
-                              </SelectItem>
-                              <SelectItem value="8000-10000">
-                                ₹8,000 - ₹10,000
-                              </SelectItem>
-                              <SelectItem value="10000-15000">
-                                ₹10,000 - ₹15,000
-                              </SelectItem>
-                              <SelectItem value="15000-20000">
-                                ₹15,000 - ₹20,000
-                              </SelectItem>
-                              <SelectItem value="20000+">₹20,000+</SelectItem>
-                            </SelectContent>
-                          </Select>
+                          />
                         </div>
                       )}
                     </div>
@@ -1129,7 +1166,7 @@ const TutorRegistrationForm = () => {
           </Card>
 
           {/* Teaching Preferences - Hierarchical Selection */}
-          <Card className="border-mentor-blue-200 shadow-lg">
+          <Card className="border-mentor-blue-200 shadow-lg ">
             <CardHeader className="bg-gradient-to-r from-mentor-blue-500 to-mentor-blue-600 text-white rounded-t-lg">
               <CardTitle className="flex items-center gap-2">
                 <BookOpen className="h-5 w-5" />
@@ -1140,16 +1177,16 @@ const TutorRegistrationForm = () => {
                 subjects you can teach
               </CardDescription>
             </CardHeader>
-            <CardContent className="p-6 space-y-4">
+            <CardContent className="py-6 px-2 lg:px-4  space-y-4">
               {/* Education Levels */}
-              <div className="space-y-4">
+              <div className="space-y-4 ">
                 {Object.entries(educationLevels).map(([levelId, level]) => (
                   <div
                     key={levelId}
-                    className="border border-gray-200 rounded-lg p-4"
+                    className="border  border-blue-200 rounded-lg lg:py-4 py-2 lg:px-4 px-2"
                   >
                     {/* Level Selection */}
-                    <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center justify-between lg:mb-3">
                       <div className="flex items-center space-x-3">
                         <Checkbox
                           id={`level-${levelId}`}
@@ -1191,7 +1228,7 @@ const TutorRegistrationForm = () => {
                     {/* Classes/Courses (shown when level is selected and expanded) */}
                     {selectedLevels.includes(levelId) &&
                       expandedLevels[levelId] && (
-                        <div className="ml-6 space-y-3 border-l-2 border-gray-200 pl-4">
+                        <div className="lg:ml-6 space-y-3 lg:border-l-2 border-gray-200 lg:pl-4">
                           {Object.entries(level.classes).map(
                             ([classId, classInfo]) => (
                               <div
@@ -1342,7 +1379,25 @@ const TutorRegistrationForm = () => {
                   ))}
                 </div>
               </div>
-
+              <div className="space-y-2">
+                <Label htmlFor="daily-hours" className="text-sm font-medium">
+                  Hours available per day *
+                </Label>
+                <Input
+                  id="daily-hours"
+                  type="number"
+                  min="1"
+                  max="12"
+                  step="0.5"
+                  // value={dailyHours}
+                  // onChange={(e) => onDailyHoursChange(e.target.value)}
+                  placeholder="e.g. 4"
+                  className="w-32"
+                />
+                <p className="text-xs text-gray-500">
+                  Enter hours (1-12, in 0.5 hour increments)
+                </p>
+              </div>
               <div>
                 <Label htmlFor="startDate">When can you start? *</Label>
                 <Select
