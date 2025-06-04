@@ -16,6 +16,8 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AboutUs from "./pages/AboutUs";
 import ContactUs from "./pages/ContactUs";
 import TutorApplicationForm from "./pages/TutorApplicationForm";
+import ChatPage from "./pages/ChatPage";
+
 
 const queryClient = new QueryClient();
 
@@ -36,6 +38,8 @@ const App = () => (
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/contact-us" element={<ContactUs />} />
+          <Route path="/chat/:mentorPhone" element={<ChatPage/>} />
+
           {/* <Route path="/TutorApplicationForm" element={<TutorApplicationForm />} /> */}
           <Route path="*" element={<NotFound />} />
         </Routes>

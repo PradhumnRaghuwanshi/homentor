@@ -6,6 +6,13 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const TornCard = ({mentor}) => {
+  const navigate = useNavigate()
+  const handleChatClick = () => {
+    const parentPhone = '8878084604';
+    if (!parentPhone) return alert("Login required");
+
+    navigate(`/chat/${mentor.phone}`);
+  };
   const makeCall = async () => {
     console.log("Hi")
     try {
@@ -25,7 +32,6 @@ const TornCard = ({mentor}) => {
     }
   };
   
-  const navigate = useNavigate()
   return (
     <div className="relative animate-shake origin-top w-[100%] flex overflow-hidden flex-col items-center bg-[papayawhip] rounded-lg  shadow-[0_0_20px_-5px_black]">
       {/* 📌 Pin (just like CSS :after) */}
@@ -62,6 +68,7 @@ const TornCard = ({mentor}) => {
       </div>
       <div className="absolute z-[1000] lg:flex hidden bg-red-500 gap-10 bottom-[10vh]">
         <Button
+          onClick={()=>handleChatClick()}
           className="bg-gradient-to-r mentor-icons1  from-homentor-chat to-homentor-chatHover hover:from-homentor-chatHover hover:to-homentor-chat transition-all duration-300 flex items-center justify-center gap-1 group/icon overflow-hidden relative"
           title="Chat with mentor"
         >
@@ -82,6 +89,7 @@ const TornCard = ({mentor}) => {
 
       <div className="absolute z-[100] lg:hidden flex justify-between w-full items-center  gap-1 bottom-[1vh] px-2">
         <button
+                  onClick={()=>handleChatClick()}
           className="border bg-blue-opacity px-1 py-0.5 border-mentor-blue-500 rounded-[2px] bg-mentor-blue-500 text-white mentor-icons1-sm from-homentor-chat to-homentor-chatHover hover:from-homentor-chatHover hover:to-homentor-chat transition-all duration-300 flex items-center justify-center overflow-hidden "
           title="Chat with mentor"
         >
