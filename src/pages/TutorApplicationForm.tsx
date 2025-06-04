@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+
 import {
   Card,
   CardContent,
@@ -32,6 +33,7 @@ import {
   Award,
   ChevronDown,
   ChevronUp,
+  Loader2,
 } from "lucide-react";
 import axios from "axios";
 import LocationSelector from "@/components/LocationSelector";
@@ -508,10 +510,16 @@ const TutorRegistrationForm = () => {
         : mentorData.availableDays.filter((d) => d !== day),
     });
   };
-
+  // ---------------------------Image/Video Upload------------------------------
+  const [uploadingKey, setUploadingKey] = useState(null);
   const handleImageUpload = async (e, key) => {
     const file = e.target.files[0];
     if (!file) return;
+    setUploadingKey(key)
+    const isVideo = file.type.startsWith("video/");
+    const uploadUrl = `https://api.cloudinary.com/v1_1/dpveehhtq/${
+      isVideo ? "video" : "image"
+    }/upload`;
 
     const formData = new FormData();
     formData.append("file", file);
@@ -520,69 +528,21 @@ const TutorRegistrationForm = () => {
 
     // setUploading(true);
     try {
-      const res = await fetch(
-        "https://api.cloudinary.com/v1_1/dpveehhtq/image/upload",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+      const res = await fetch(uploadUrl, {
+        method: "POST",
+        body: formData,
+      });
       const data = await res.json();
-      console.log(data.secure_url);
+      console.log(key);
       setFormData({ ...mentorData, [key]: data.secure_url });
-      //   setPreview(data.secure_url);
-      //   onUpload(data.secure_url);
+      
     } catch (err) {
       alert("Upload failed");
       console.error(err);
     } finally {
-      //   setUploading(false);
+      setUploadingKey("")
     }
   };
-  // const handleDetectLocation = async () => {
-  //   if (!navigator.geolocation) {
-  //     alert("Geolocation is not supported by your browser.");
-  //     return;
-  //   }
-  
-  //   navigator.geolocation.getCurrentPosition(
-  //     async (position) => {
-  //       const { latitude, longitude } = position.coords;
-  //       console.log("hhi")
-  //       try {
-  //         const response = await fetch(
-  //           `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
-  //         );
-  
-  //         if (!response.ok) {
-  //           throw new Error("Failed to fetch location data.");
-  //         }
-  
-  //         const data = await response.json();
-  //         const address = data?.address || {};
-  
-  //         setFormData((prev) => ({
-  //           ...prev,
-  //           location: {
-  //             state: address.state || "",
-  //             city: address.city || address.town || address.village || "",
-  //             area: address.suburb || address.neighbourhood || "",
-  //             lat: latitude,
-  //             lon: longitude,
-  //           },
-  //         }));
-  //       } catch (error) {
-  //         console.error("Error fetching address:", error);
-  //         alert("Could not fetch address details. Please enter manually.");
-  //       }
-  //     },
-  //     (error) => {
-  //       console.error("Geolocation Error:", error);
-  //       alert("Could not detect location. Please allow permission or enter manually.");
-  //     }
-  //   );
-  // };
-  
 
   console.log(mentorData);
   return (
@@ -713,88 +673,17 @@ const TutorRegistrationForm = () => {
                         htmlFor="photo"
                         className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-mentor-yellow-400 bg-gray-50 hover:bg-mentor-yellow-50 transition-colors"
                       >
-                        {mentorData?.profilePhoto ? (
-                          <img
-                            src={mentorData?.profilePhoto}
-                            alt="Preview"
-                            className="h-full w-auto object-contain rounded"
-                          />
-                        ) : (
-                          <div className="text-center">
-                            <Upload className="h-6 w-6 mx-auto mb-2 text-gray-400" />
-                            <p className="text-sm text-gray-600">
-                              Click to upload photo
+                        {uploadingKey === "profilePhoto" ? (
+                          <div className="flex flex-col items-center justify-center">
+                            <Loader2 className="h-6 w-6 animate-spin text-mentor-yellow-500" />
+                            <p className="text-sm text-gray-600 mt-2">
+                              Uploading...
                             </p>
                           </div>
-                        )}
-                      </label>
-                    </div>
-                  </div>
-
-                  {/* ID Document */}
-                  <div>
-                    <Label
-                      htmlFor="idDocument"
-                      className="flex items-center gap-2 mb-2"
-                    >
-                      <IdCard className="h-4 w-4" />
-                      ID Document *
-                    </Label>
-                    <div className="relative">
-                      <Input
-                        id="mentorId"
-                        type="file"
-                        accept="image/*,.pdf"
-                        onChange={(e) => handleImageUpload(e, "mentorId")}
-                        className="hidden"
-                      />
-                      <label
-                        htmlFor="photo"
-                        className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-mentor-yellow-400 bg-gray-50 hover:bg-mentor-yellow-50 transition-colors"
-                      >
-                        {mentorData?.mentorId ? (
+                        ) : mentorData?.profilePhoto ? (
                           <img
-                            src={mentorData?.mentorId}
-                            alt="Preview"
-                            className="h-full w-auto object-contain rounded"
-                          />
-                        ) : (
-                          <div className="text-center">
-                            <Upload className="h-6 w-6 mx-auto mb-2 text-gray-400" />
-                            <p className="text-sm text-gray-600">
-                              Click to upload Id
-                            </p>
-                          </div>
-                        )}
-                      </label>
-                    </div>
-                  </div>
-
-                  {/* Tutorial Video */}
-                  <div>
-                    <Label
-                      htmlFor="tutorialVideo"
-                      className="flex items-center gap-2 mb-2"
-                    >
-                      <Video className="h-4 w-4" />
-                      Teaching Video
-                    </Label>
-                    <div className="relative">
-                      <Input
-                        id="tutorialVideo"
-                        type="file"
-                        accept="video/*"
-                        onChange={(e) => handleImageUpload(e, "teachingVideo")}
-                        className="hidden"
-                      />
-                      <label
-                        htmlFor="photo"
-                        className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-mentor-yellow-400 bg-gray-50 hover:bg-mentor-yellow-50 transition-colors"
-                      >
-                        {mentorData?.teachingVideo ? (
-                          <img
-                            src={mentorData?.teachingVideo}
-                            alt="Preview"
+                            src={mentorData.profilePhoto}
+                            controls
                             className="h-full w-auto object-contain rounded"
                           />
                         ) : (
@@ -809,10 +698,102 @@ const TutorRegistrationForm = () => {
                     </div>
                   </div>
 
+                  {/* ID Document */}
+                  <div>
+                    <Label
+                      htmlFor="mentorId"
+                      className="flex items-center gap-2 mb-2"
+                    >
+                      <IdCard className="h-4 w-4" />
+                      ID Document *
+                    </Label>
+                    <div className="relative">
+                      <Input
+                        id="mentorId"
+                        type="file"
+                        accept="image/*,.pdf"
+                        onChange={(e) => handleImageUpload(e, "mentorId")}
+                        className="hidden"
+                      />
+                      <label
+                        htmlFor="mentorId"
+                        className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-mentor-yellow-400 bg-gray-50 hover:bg-mentor-yellow-50 transition-colors"
+                      >
+                         {uploadingKey === "mentorId" ? (
+                          <div className="flex flex-col items-center justify-center">
+                            <Loader2 className="h-6 w-6 animate-spin text-mentor-yellow-500" />
+                            <p className="text-sm text-gray-600 mt-2">
+                              Uploading...
+                            </p>
+                          </div>
+                        ) : mentorData?.mentorId ? (
+                          <img
+                            src={mentorData.mentorId}
+                            controls
+                            className="h-full w-auto object-contain rounded"
+                          />
+                        ) : (
+                          <div className="text-center">
+                            <Upload className="h-6 w-6 mx-auto mb-2 text-gray-400" />
+                            <p className="text-sm text-gray-600">
+                              Click to upload documents/id
+                            </p>
+                          </div>
+                        )}
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* Tutorial Video */}
+                  <div>
+                    <Label
+                      htmlFor="teachingVideo"
+                      className="flex items-center gap-2 mb-2"
+                    >
+                      <Video className="h-4 w-4" />
+                      Teaching Video
+                    </Label>
+                    <div className="relative">
+                      <Input
+                        id="teachingVideo"
+                        type="file"
+                        accept="video/*"
+                        onChange={(e) => handleImageUpload(e, "teachingVideo")}
+                        className="hidden"
+                      />
+                      <label
+                        htmlFor="teachingVideo"
+                        className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-mentor-yellow-400 bg-gray-50 hover:bg-mentor-yellow-50 transition-colors"
+                      >
+                        {uploadingKey === "teachingVideo" ? (
+                          <div className="flex flex-col items-center justify-center">
+                            <Loader2 className="h-6 w-6 animate-spin text-mentor-yellow-500" />
+                            <p className="text-sm text-gray-600 mt-2">
+                              Uploading...
+                            </p>
+                          </div>
+                        ) : mentorData?.teachingVideo ? (
+                          <video
+                            src={mentorData.teachingVideo}
+                            controls
+                            className="h-full w-auto object-contain rounded"
+                          />
+                        ) : (
+                          <div className="text-center">
+                            <Upload className="h-6 w-6 mx-auto mb-2 text-gray-400" />
+                            <p className="text-sm text-gray-600">
+                              Click to upload teaching video
+                            </p>
+                          </div>
+                        )}
+                      </label>
+                    </div>
+                  </div>
+
                   {/* Resume */}
                   <div>
                     <Label
-                      htmlFor="tutorialVideo"
+                      htmlFor="cv"
                       className="flex items-center gap-2 mb-2"
                     >
                       <IdCard className="h-4 w-4" />
@@ -830,10 +811,17 @@ const TutorRegistrationForm = () => {
                         htmlFor="cv"
                         className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-mentor-yellow-400 bg-gray-50 hover:bg-mentor-yellow-50 transition-colors"
                       >
-                        {mentorData?.cv ? (
+                        {uploadingKey === "cv" ? (
+                          <div className="flex flex-col items-center justify-center">
+                            <Loader2 className="h-6 w-6 animate-spin text-mentor-yellow-500" />
+                            <p className="text-sm text-gray-600 mt-2">
+                              Uploading...
+                            </p>
+                          </div>
+                        ) : mentorData?.cv ? (
                           <img
-                            src={mentorData?.cv}
-                            alt="Preview"
+                            src={mentorData.cv}
+                            controls
                             className="h-full w-auto object-contain rounded"
                           />
                         ) : (
