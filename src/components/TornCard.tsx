@@ -10,8 +10,8 @@ const TornCard = ({mentor}) => {
     console.log("Hi")
     try {
       const response = await axios.post('https://homentor-backend.onrender.com/api/call', {
-        parentNumber: '7748833998',  // Parent's phone number
-        mentorNumber: '9630709988'   // Mentor's real phone number
+        parentNumber: '9630709988',  // Parent's phone number
+        mentorNumber: '8182858627'   // Mentor's real phone number
       });
   
       if (response.data.success) {
