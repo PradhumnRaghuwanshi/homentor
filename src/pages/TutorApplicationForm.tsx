@@ -39,6 +39,8 @@ import axios from "axios";
 import LocationSelector from "@/components/LocationSelector";
 import { locationsData } from "@/components/locationsData";
 import MonthlyRateSlider from "@/components/MonthlyRateSlider";
+import Modal from "@/components/Modal";
+import { useNavigate } from "react-router-dom";
 
 const TutorRegistrationForm = () => {
   const [mentorData, setFormData] = useState({
@@ -128,6 +130,7 @@ const TutorRegistrationForm = () => {
     mentorData.location.city,
     mentorData.location.area,
   ]);
+  const [showModal, setShowModal] = useState(true);
 
   // Hierarchical structure for teaching preferences
   const educationLevels = {
@@ -343,13 +346,14 @@ const TutorRegistrationForm = () => {
       },
     });
   };
-
+  const navigate = useNavigate()
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     axios
       .post("https://homentor-backend.onrender.com/api/mentor", mentorData)
       .then((res) => {
         console.log("Form submitted:", mentorData);
+        navigate('/');
       })
       .catch((err) => console.log(err));
   };
@@ -442,44 +446,83 @@ const TutorRegistrationForm = () => {
     updateFormData({ teachingPreferences: updatedPreferences });
   };
 
+  const handleDayTypeChange = (type: "weekdays" | "weekend") => {
+    setFormData((prev) => ({
+      ...prev,
+      dayType: type,
+    }));
+  };
+  const handleDaySelection = (day: string, selected: boolean) => {
+    setFormData((prev) => ({
+      ...prev,
+      availability: {
+        ...prev.availability,
+        [day]: {
+          ...prev.availability?.[day],
+          selected,
+          hours: selected ? prev.availability?.[day]?.hours || 1 : 0,
+        },
+      },
+    }));
+  };
+  const updateAvailabilityHours = (day: string, hours: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      availability: {
+        ...prev.availability,
+        [day]: {
+          ...prev.availability?.[day],
+          hours,
+        },
+      },
+    }));
+  };
+
   const handleSubjectChange = (
-    level: string,
+    levelId: string,
     classId: string,
-    subject: string,
+    subject: string | null, // null means "All Subjects"
     checked: boolean
   ) => {
-    const updatedPreferences = { ...mentorData.teachingPreferences };
+    const updated = { ...mentorData.teachingPreferences };
 
-    if (!updatedPreferences[level]) {
-      updatedPreferences[level] = {};
-    }
-    if (!updatedPreferences[level][classId]) {
-      updatedPreferences[level][classId] = [];
-    }
+    if (!updated[levelId]) updated[levelId] = {};
+    if (!updated[levelId][classId]) updated[levelId][classId] = [];
 
-    if (checked) {
-      updatedPreferences[level][classId] = [
-        ...updatedPreferences[level][classId],
-        subject,
-      ];
+    if (subject === null) {
+      // All subjects selected/deselected
+      if (checked) {
+        updated[levelId][classId] = [
+          ...educationLevels[levelId].classes[classId].subjects,
+        ];
+      } else {
+        updated[levelId][classId] = [];
+      }
     } else {
-      updatedPreferences[level][classId] = updatedPreferences[level][
-        classId
-      ].filter((s) => s !== subject);
+      const subjects = updated[levelId][classId];
+      if (checked) {
+        if (!subjects.includes(subject)) {
+          subjects.push(subject);
+        }
+      } else {
+        updated[levelId][classId] = subjects.filter((s) => s !== subject);
+      }
     }
 
-    updateFormData({ teachingPreferences: updatedPreferences });
+    setFormData({ ...mentorData, teachingPreferences: updated });
   };
 
   const isSubjectSelected = (
-    level: string,
+    levelId: string,
     classId: string,
-    subject: string
+    subject?: string
   ) => {
-    return (
-      mentorData.teachingPreferences[level]?.[classId]?.includes(subject) ||
-      false
-    );
+    const subjects = mentorData.teachingPreferences?.[levelId]?.[classId] || [];
+    if (!subject) {
+      const allSubjects = educationLevels[levelId].classes[classId].subjects;
+      return allSubjects.every((sub) => subjects.includes(sub));
+    }
+    return subjects.includes(subject);
   };
 
   const getSelectedSubjectsCount = (level: string, classId: string) => {
@@ -515,7 +558,7 @@ const TutorRegistrationForm = () => {
   const handleImageUpload = async (e, key) => {
     const file = e.target.files[0];
     if (!file) return;
-    setUploadingKey(key)
+    setUploadingKey(key);
     const isVideo = file.type.startsWith("video/");
     const uploadUrl = `https://api.cloudinary.com/v1_1/dpveehhtq/${
       isVideo ? "video" : "image"
@@ -535,19 +578,21 @@ const TutorRegistrationForm = () => {
       const data = await res.json();
       console.log(key);
       setFormData({ ...mentorData, [key]: data.secure_url });
-      
     } catch (err) {
       alert("Upload failed");
       console.error(err);
     } finally {
-      setUploadingKey("")
+      setUploadingKey("");
     }
   };
 
   console.log(mentorData);
   return (
     <div className="min-h-screen bg-gradient-to-br  from-mentor-blue-50 via-white to-mentor-yellow-50 py-8 lg:px-4 px-2">
+            
+
       <div className="max-w-4xl mx-auto">
+      
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-mentor-blue-600 to-mentor-yellow-500 bg-clip-text text-transparent mb-4">
@@ -719,7 +764,7 @@ const TutorRegistrationForm = () => {
                         htmlFor="mentorId"
                         className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-mentor-yellow-400 bg-gray-50 hover:bg-mentor-yellow-50 transition-colors"
                       >
-                         {uploadingKey === "mentorId" ? (
+                        {uploadingKey === "mentorId" ? (
                           <div className="flex flex-col items-center justify-center">
                             <Loader2 className="h-6 w-6 animate-spin text-mentor-yellow-500" />
                             <p className="text-sm text-gray-600 mt-2">
@@ -1290,6 +1335,30 @@ const TutorRegistrationForm = () => {
                                 ] &&
                                   expandedClasses[`${levelId}-${classId}`] && (
                                     <div className="ml-4 grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
+                                      <div className="flex items-center space-x-1">
+                                        <Checkbox
+                                          id={`subject-${levelId}-${classId}-all`}
+                                          checked={isSubjectSelected(
+                                            levelId,
+                                            classId
+                                          )} // no subject passed = check all
+                                          onCheckedChange={(checked) =>
+                                            handleSubjectChange(
+                                              levelId,
+                                              classId,
+                                              null,
+                                              checked as boolean
+                                            )
+                                          }
+                                          className="data-[state=checked]:bg-mentor-yellow-500 data-[state=checked]:border-mentor-yellow-500 h-3 w-3"
+                                        />
+                                        <Label
+                                          htmlFor={`subject-${levelId}-${classId}-all`}
+                                          className="text-xs cursor-pointer"
+                                        >
+                                          All Subjects
+                                        </Label>
+                                      </div>
                                       {classInfo.subjects.map((subject) => (
                                         <div
                                           key={subject}
@@ -1341,32 +1410,38 @@ const TutorRegistrationForm = () => {
                 Availability
               </CardTitle>
               <CardDescription className="text-mentor-yellow-100">
-                When are you available to teach?
+                Select your availability preferences
               </CardDescription>
             </CardHeader>
             <CardContent className="p-6 space-y-6">
-              <div>
+              {/* Week Type Selection */}
+              <div className="space-y-2">
                 <Label className="text-base font-medium">
-                  Available Days * (Select multiple)
+                  Available Days *
                 </Label>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-3">
-                  {days.map((day) => (
-                    <div key={day} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`day-${day}`}
-                        checked={mentorData.availableDays.includes(day)}
-                        onCheckedChange={(checked) =>
-                          handleDayChange(day, checked as boolean)
-                        }
-                        className="data-[state=checked]:bg-mentor-blue-500 data-[state=checked]:border-mentor-blue-500"
-                      />
-                      <Label htmlFor={`day-${day}`} className="text-sm">
-                        {day}
-                      </Label>
-                    </div>
-                  ))}
+                <div className="flex gap-3">
+                  <Button
+                    type="button"
+                    variant={
+                      mentorData.dayType === "weekdays" ? "default" : "outline"
+                    }
+                    onClick={() => updateFormData({ dayType: "weekdays" })}
+                  >
+                    Weekdays
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={
+                      mentorData.dayType === "weekend" ? "default" : "outline"
+                    }
+                    onClick={() => updateFormData({ dayType: "weekend" })}
+                  >
+                    Weekend
+                  </Button>
                 </div>
               </div>
+
+              {/* Common hours per day */}
               <div className="space-y-2">
                 <Label htmlFor="daily-hours" className="text-sm font-medium">
                   Hours available per day *
@@ -1374,11 +1449,13 @@ const TutorRegistrationForm = () => {
                 <Input
                   id="daily-hours"
                   type="number"
-                  min="1"
-                  max="12"
-                  step="0.5"
-                  // value={dailyHours}
-                  // onChange={(e) => onDailyHoursChange(e.target.value)}
+                  min={1}
+                  max={12}
+                  step={0.5}
+                  value={mentorData.dailyHours || ""}
+                  onChange={(e) =>
+                    updateFormData({ dailyHours: e.target.value })
+                  }
                   placeholder="e.g. 4"
                   className="w-32"
                 />
@@ -1386,22 +1463,24 @@ const TutorRegistrationForm = () => {
                   Enter hours (1-12, in 0.5 hour increments)
                 </p>
               </div>
-              <div>
-                <Label htmlFor="startDate">When can you start? *</Label>
+
+              {/* Start immediately option */}
+              <div className="space-y-2">
+                <Label className="text-base font-medium">
+                  Can Start Immediately? *
+                </Label>
                 <Select
-                  value={mentorData.startDate}
+                  value={mentorData.startImmediately}
                   onValueChange={(value) =>
-                    updateFormData({ startDate: value })
+                    updateFormData({ startImmediately: value })
                   }
                 >
                   <SelectTrigger className="mt-1 focus:ring-mentor-blue-400 focus:border-mentor-blue-400">
-                    <SelectValue placeholder="Select start date" />
+                    <SelectValue placeholder="Select option" />
                   </SelectTrigger>
                   <SelectContent className="bg-white border-mentor-yellow-200">
-                    <SelectItem value="immediately">Immediately</SelectItem>
-                    <SelectItem value="1week">Within 1 week</SelectItem>
-                    <SelectItem value="2weeks">Within 2 weeks</SelectItem>
-                    <SelectItem value="1month">Within 1 month</SelectItem>
+                    <SelectItem value="yes">Yes</SelectItem>
+                    <SelectItem value="no">No</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -1450,6 +1529,13 @@ const TutorRegistrationForm = () => {
             </p>
           </div>
         </form>
+        {/* <Modal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        title="Thank You!"
+      >
+        <p>Thank you for registration. Details will be shared with you soon.</p>
+      </Modal> */}
       </div>
     </div>
   );
