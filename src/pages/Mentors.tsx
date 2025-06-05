@@ -135,6 +135,29 @@ const Mentors = () => {
       setUserLocation({ lat: 22.7196, lon: 75.8577 }); // Default location
     }
   }, []);
+  const [locationName, setLocationName] = useState<string>("your area");
+
+  useEffect(() => {
+    // Step 1: Get user coordinates
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        console.log("Latitude:", latitude, "Longitude:", longitude);
+    
+        // Now reverse geocode to get address
+        const res = await fetch(
+          `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=AIzaSyAb6ZthJEvNAczmOeuvFrnwEcMJjhlNpUk`
+        );
+        const data = await res.json();
+        const fullAddress = data.results[0].formatted_address;
+        console.log("Your location:", fullAddress);
+        setLocationName(fullAddress)
+      },
+      (error) => {
+        console.error("Location access denied:", error.message);
+      }
+    );
+  }, []);
 
   // Step 2: Once location is available, fetch mentors
   useEffect(() => {
@@ -408,7 +431,7 @@ const Mentors = () => {
               Find Your Perfect Mentor
             </h1>
             <p className="text-xl text-gray-600 mt-2">
-              Search from our database of verified tutors {selectedClass}
+              Search from our database of verified tutors {locationName}
             </p>
           </div>
           <div className="space-y-3">
