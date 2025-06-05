@@ -135,26 +135,30 @@ const Mentors = () => {
       setUserLocation({ lat: 22.7196, lon: 75.8577 }); // Default location
     }
   }, []);
-  const [locationName, setLocationName] = useState<string>("your area");
+  const [locationName, setLocation] = useState<string>("your area");
 
   useEffect(() => {
-    // Step 1: Get user coordinates
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         const { latitude, longitude } = position.coords;
-        console.log("Latitude:", latitude, "Longitude:", longitude);
-    
-        // Now reverse geocode to get address
         const res = await fetch(
           `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=AIzaSyAb6ZthJEvNAczmOeuvFrnwEcMJjhlNpUk`
         );
         const data = await res.json();
-        const fullAddress = data.results[0].formatted_address;
-        console.log("Your location:", fullAddress);
-        setLocationName(fullAddress)
+        const components = data.results[0].address_components;
+
+        const area = components.find(c =>
+          c.types.includes("sublocality_level_1") || c.types.includes("locality")
+        )?.long_name;
+
+        const city = components.find(c =>
+          c.types.includes("administrative_area_level_2")
+        )?.long_name;
+
+        setLocation(`${area}, ${city}`);
       },
       (error) => {
-        console.error("Location access denied:", error.message);
+        setLocation("Location access denied");
       }
     );
   }, []);
