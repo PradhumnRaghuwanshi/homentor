@@ -1,139 +1,82 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useEffect, useState, useRef } from "react";
+import io from "socket.io-client";
 import axios from "axios";
 
-interface Message {
-  sender: string;
-  receiver: string;
-  message: string;
-  timestamp: string | Date;
-}
+const socket = io("http://localhost:5000"); // change if different
 
-const ChatPage: React.FC = () => {
-  // Read parentPhone and mentorPhone from URL params
-  const { parentPhone, mentorPhone } = useParams<{ parentPhone: string; mentorPhone: string }>();
-  
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [newMessage, setNewMessage] = useState("");
-  const [loading, setLoading] = useState(false);
+const ChatPage = ( ) => {
+  const [message, setMessage] = useState("");
+  const [chatMessages, setChatMessages] = useState([]);
+  const messagesEndRef = useRef(null);
+  const currentUserPhone = "9630709988"
+  const chatPartnerPhone = localStorage.getItem("mentorNumber")
 
   useEffect(() => {
-    if (!parentPhone || !mentorPhone) return;
+    // ✅ Register this user with socket
+    socket.emit("register", currentUserPhone);
 
-    const fetchChatHistory = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.post("http://localhost:5000/api/chat/history", {
-          user1: parentPhone,
-          user2: mentorPhone,
-        });
-        setMessages(response.data);
-      } catch (error) {
-        console.error("Failed to fetch chat history:", error);
-      } finally {
-        setLoading(false);
-      }
+    // ✅ Get chat history
+    axios
+      .post(`http://localhost:5000/api/chat/history`, {
+        user1: currentUserPhone,
+        user2 : chatPartnerPhone
+      })
+      .then((res) => setChatMessages(res.data))
+      .catch((err) => console.error("Failed to fetch chat history", err));
+
+    // ✅ Listen for incoming messages
+    socket.on("receive-message", (data) => {
+      setChatMessages((prev) => [...prev, { sender: data.sender, message: data.message }]);
+    });
+
+    return () => {
+      socket.off("receive-message");
+    };
+  }, [currentUserPhone, chatPartnerPhone]);
+
+  const sendMessage = () => {
+    if (!message.trim()) return;
+
+    const newMsg = {
+      sender: currentUserPhone,
+      receiver: chatPartnerPhone,
+      message,
     };
 
-    fetchChatHistory();
-  }, [parentPhone, mentorPhone]);
-
-  const sendMessage = async () => {
-    if (!newMessage.trim() || !parentPhone || !mentorPhone) return;
-
-    try {
-      await axios.post("http://localhost:5000/api/chat/store", {
-        sender: "parentPhone",
-        receiver: "mentorPhone",
-        message: "newMessage",
-        time: 123
-      });
-
-      setMessages((prev) => [
-        ...prev,
-        { sender: parentPhone, receiver: mentorPhone, message: newMessage, timestamp: new Date() },
-      ]);
-      setNewMessage("");
-    } catch (error) {
-      console.error("Failed to send message:", error);
-    }
+    socket.emit("send-message", newMsg);
+    setChatMessages((prev) => [...prev, newMsg]);
+    setMessage("");
   };
 
-  return (
-    <div style={{ maxWidth: 600, margin: "auto", padding: 20, border: "1px solid #ccc", borderRadius: 8 }}>
-      <h2 style={{ textAlign: "center" }}>Chat with Mentor</h2>
-      <div
-        style={{
-          height: 400,
-          overflowY: "auto",
-          border: "1px solid #ddd",
-          padding: 10,
-          marginBottom: 10,
-          backgroundColor: "#f9f9f9",
-          borderRadius: 6,
-        }}
-      >
-        {loading && <p>Loading chat history...</p>}
-        {!loading && messages.length === 0 && <p>No messages yet. Say hi!</p>}
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chatMessages]);
 
-        {messages.map((msg, idx) => (
+  return (
+    <div className="max-w-xl mx-auto p-4 bg-white rounded shadow mt-8">
+      <div className="h-96 overflow-y-auto p-4 border border-gray-200 rounded">
+        {chatMessages.map((msg, index) => (
           <div
-            key={idx}
-            style={{
-              textAlign: msg.sender === parentPhone ? "right" : "left",
-              marginBottom: 12,
-            }}
+            key={index}
+            className={`p-2 my-1 rounded ${
+              msg.sender === currentUserPhone ? "bg-blue-200 text-right ml-auto" : "bg-gray-100 text-left mr-auto"
+            } max-w-[70%]`}
           >
-            <div
-              style={{
-                display: "inline-block",
-                backgroundColor: msg.sender === parentPhone ? "#DCF8C6" : "#E5E5EA",
-                padding: "8px 12px",
-                borderRadius: 20,
-                maxWidth: "70%",
-                wordWrap: "break-word",
-              }}
-            >
-              {msg.message}
-              <div style={{ fontSize: "0.7em", color: "#555", marginTop: 4 }}>
-                {new Date(msg.timestamp).toLocaleTimeString()}
-              </div>
-            </div>
+            {msg.message}
           </div>
         ))}
+        <div ref={messagesEndRef} />
       </div>
-
-      <div style={{ display: "flex" }}>
+      <div className="flex mt-4">
         <input
           type="text"
-          placeholder="Type your message..."
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          style={{
-            flexGrow: 1,
-            padding: "10px",
-            borderRadius: 20,
-            border: "1px solid #ccc",
-            outline: "none",
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              sendMessage();
-            }
-          }}
+          className="flex-1 border px-4 py-2 rounded-l"
+          value={message}
+          placeholder="Type your message"
+          onChange={(e) => setMessage(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
         />
-        <button
-          onClick={sendMessage}
-          style={{
-            marginLeft: 8,
-            padding: "10px 20px",
-            borderRadius: 20,
-            border: "none",
-            backgroundColor: "#007bff",
-            color: "white",
-            cursor: "pointer",
-          }}
-        >
+        <button className="bg-blue-500 text-white px-4 py-2 rounded-r" onClick={sendMessage}>
           Send
         </button>
       </div>

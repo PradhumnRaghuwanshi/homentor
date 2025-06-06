@@ -1,2 +1,6 @@
+// socket.js or socket.ts
 import { io } from "socket.io-client";
-export const socket = io("http://localhost:5000");
+
+const socket = io("http://localhost:5000"); // Make sure this matches your backend URL
+
+export default socket;

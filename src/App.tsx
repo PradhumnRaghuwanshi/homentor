@@ -17,12 +17,15 @@ import AboutUs from "./pages/AboutUs";
 import ContactUs from "./pages/ContactUs";
 import TutorApplicationForm from "./pages/TutorApplicationForm";
 import ChatPage from "./pages/ChatPage";
+import { LoadScript } from '@react-google-maps/api';
+
 
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
+     <LoadScript googleMapsApiKey="AIzaSyAb6ZthJEvNAczmOeuvFrnwEcMJjhlNpUk" libraries={['places']}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
@@ -45,6 +48,7 @@ const App = () => (
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
+    </LoadScript>
   </QueryClientProvider>
 );
 

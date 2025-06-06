@@ -16,7 +16,7 @@ import SVGFilter from "@/components/SVGFilter";
 import SearchBar from "@/components/SearchBar";
 import AnimatedSelect from "@/components/AnimatedSelect";
 import axios from "axios";
-
+import StateData from "../StateData.json";
 
 const classSubjects = {
   "1": ["English", "Math", "EVS", "Hindi"],
@@ -24,30 +24,9 @@ const classSubjects = {
   "3": ["English", "Math", "EVS", "Hindi"],
   "4": ["English", "Math", "Science", "Social Studies", "Hindi"],
   "5": ["English", "Math", "Science", "Social Studies", "Hindi"],
-  "6": [
-    "English",
-    "Math",
-    "Science",
-    "Social Studies",
-    "Hindi",
-    "Sanskrit",
-  ],
-  "7": [
-    "English",
-    "Math",
-    "Science",
-    "Social Studies",
-    "Hindi",
-    "Sanskrit",
-  ],
-  "8": [
-    "English",
-    "Math",
-    "Science",
-    "Social Studies",
-    "Hindi",
-    "Sanskrit",
-  ],
+  "6": ["English", "Math", "Science", "Social Studies", "Hindi", "Sanskrit"],
+  "7": ["English", "Math", "Science", "Social Studies", "Hindi", "Sanskrit"],
+  "8": ["English", "Math", "Science", "Social Studies", "Hindi", "Sanskrit"],
   "9": [
     "English",
     "Mathematics",
@@ -113,7 +92,10 @@ const Mentors = () => {
   const [selectedClass, setSelectedClass] = useState<string | undefined>(
     undefined
   );
-  const [shake, setShake] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState("");
+
+
+  const allStates = Object.keys(StateData);
 
   // Step 1: Get user location
   useEffect(() => {
@@ -147,14 +129,17 @@ const Mentors = () => {
         const data = await res.json();
         const components = data.results[0].address_components;
 
-        const area = components.find(c =>
-          c.types.includes("sublocality_level_1") || c.types.includes("locality")
+        const area = components.find(
+          (c) =>
+            c.types.includes("sublocality_level_1") ||
+            c.types.includes("locality")
         )?.long_name;
 
-        const city = components.find(c =>
-          c.types.includes("administrative_area_level_2")
+        const city = components.find((c) =>
+          c.types.includes("administrative_area_level_3")
         )?.long_name;
 
+        console.log("components", components);
         setLocation(`${area}, ${city}`);
       },
       (error) => {
@@ -174,7 +159,6 @@ const Mentors = () => {
   useEffect(() => {
     applyFilters();
   }, [
-    // mentorsData,
     searchTerm,
     selectedSubject,
     priceRange,
@@ -212,6 +196,31 @@ const Mentors = () => {
       setLoader(false);
     }
   };
+
+  const getLatLonFromAddress = async (area: string, city: string, state: string, apiKey: string) => {
+    const address = `${area}, ${city}, ${state}, India`;
+    const response = await fetch(
+      `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`
+    );
+    const data = await response.json();
+  
+    if (data.status === 'OK') {
+      const location = data.results[0].geometry.location;
+      console.log("Selected Area - ", location.lat, location.lng)
+      setUserLocation({ lat: location.lat, lon: location.lat }); // Default location
+      return {
+        lat: location.lat,
+        lon: location.lng
+      };
+    } else {
+      throw new Error('Unable to get location for: ' + address);
+    }
+  };
+  useEffect(()=>{
+    if(selectedLocation){
+      getLatLonFromAddress(selectedLocation, selectedCity, selectedState, 'AIzaSyAb6ZthJEvNAczmOeuvFrnwEcMJjhlNpUk')
+    }
+  },[selectedLocation])
 
   const filterAndSortMentors = (mentors, parentLocation) => {
     if (!mentors || !Array.isArray(mentors)) {
@@ -286,30 +295,28 @@ const Mentors = () => {
   const applyFilters = () => {
     let result = [...mentorsData];
     console.log("result");
-    // Filter by search term
-    // if (selectedClass) {
-    //   result = result.filter((mentor) => {
-    //     const schoolClasses = Object.keys(
-    //       mentor?.teachingPreferences?.school || {}
-    //     );
+    // Filter by Class
+    if (selectedClass) {
+      result = result.filter((mentor) => {
+        const schoolClasses = Object.keys(
+          mentor?.teachingPreferences?.school || {}
+        );
 
-    //     return schoolClasses.some((key) => {
-    //       const match = key.match(/\d+/g); // extract all numbers from keys like "class-9-10"
-    //       if (!match) return false;
-    //       const numbers = match.map(Number); // convert to [9, 10] or [12]
+        return schoolClasses.some((key) => {
+          const match = key.match(/\d+/g); // extract all numbers from keys like "class-9-10"
+          if (!match) return false;
+          const numbers = match.map(Number); // convert to [9, 10] or [12]
 
-    //       // if the class is in a range like class-9-10, check if selectedClass is in range
-    //       if (numbers.length === 2) {
-    //         return +selectedClass >= numbers[0] && +selectedClass <= numbers[1];
-    //       }
+          // if the class is in a range like class-9-10, check if selectedClass is in range
+          if (numbers.length === 2) {
+            return +selectedClass >= numbers[0] && +selectedClass <= numbers[1];
+          }
 
-    //       // if single class like class-12
-    //       return numbers[0] === +selectedClass;
-    //     });
-    //   });
-    // }
-
-    console.log(result);
+          // if single class like class-12
+          return numbers[0] === +selectedClass;
+        });
+      });
+    }
 
     // Filter by search term
     if (searchTerm) {
@@ -344,7 +351,6 @@ const Mentors = () => {
         );
       });
     }
-    let output = 1
     // Filter by subject
     if (selectedSubject.length > 0) {
       result = result.filter((mentor) => {
@@ -353,7 +359,7 @@ const Mentors = () => {
 
         if (!schoolPrefs) return false; // If no school preferences, skip this mentor
         // const allSubjects: string[] = [];
-        console.log(schoolPrefs)    
+        console.log(schoolPrefs);
 
         // // Combine all subjects from different classes safely
         // Object.values(schoolPrefs).forEach((subjectArray) => {
@@ -364,13 +370,11 @@ const Mentors = () => {
 
         // // If no subjects listed, skip mentor
         // if (allSubjects.length === 0) return false;
-    
+
         // // Check if at least one selected subject is taught by the mentor
         // return selectedSubject.some((subject) => allSubjects.includes(subject));
       });
     }
-    
-    console.log(selectedSubject)
     // Filter by city
     if (selectedCity) {
       result = result.filter(
@@ -380,20 +384,8 @@ const Mentors = () => {
     }
 
     // Filter by area
-    if (selectedArea) {
-      result = result.filter(
-        (mentor) =>
-          mentor.location?.area?.toLowerCase() === selectedArea.toLowerCase()
-      );
-    }
-
-    // Sort results
-    if (sortBy === "rating") {
-      result = result.sort((a, b) => (b.rating || 0) - (a.rating || 0));
-    } else if (sortBy === "priceAsc") {
-      result = result.sort((a, b) => (a.hourlyRate || 0) - (b.hourlyRate || 0));
-    } else if (sortBy === "priceDesc") {
-      result = result.sort((a, b) => (b.hourlyRate || 0) - (a.hourlyRate || 0));
+    if (selectedLocation) {
+      result = filterAndSortMentors(result, userLocation)
     }
 
     console.log("Filtered mentors:", result);
@@ -403,7 +395,7 @@ const Mentors = () => {
   // Reset filters
   const resetFilters = () => {
     setSearchTerm("");
-    setSelectedSubject(undefined);
+    setSelectedSubject([]);
     setPriceRange([0, 100]);
     setSortBy("rating");
     setInPersonOnly(false);
@@ -412,8 +404,64 @@ const Mentors = () => {
     setSelectedClass(undefined);
   };
 
+  const [locationInput, setLocationInput] = useState("");
+  const [locationDetails, setLocationDetails] = useState(null);
+
+  const handlePlaceSelect = () => {
+    const autocomplete = new window.google.maps.places.Autocomplete(
+      document.getElementById("autocomplete-input"),
+      { types: ["(regions)"] }
+    );
+    autocomplete.setFields(["address_components", "formatted_address"]);
+    autocomplete.addListener("place_changed", () => {
+      const place = autocomplete.getPlace();
+      setLocationInput(place.formatted_address);
+      setLocationDetails(place);
+    });
+  };
+
+  useEffect(() => {
+    handlePlaceSelect();
+  }, []);
+
   const ref = useRef();
   const [visible, setVisible] = useState(false);
+
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const [details, setDetails] = useState<any>(null);
+
+  useEffect(() => {
+    if (!selectedCity || !window.google || !inputRef.current) return;
+
+    // Get coordinates of the selected city (you can use a fixed map or Geocoder API)
+    const cityBounds = {
+      // Example for Indore
+      north: 22.85,
+      south: 22.6,
+      east: 75.95,
+      west: 75.7,
+    };
+
+    const autocomplete = new window.google.maps.places.Autocomplete(
+      inputRef.current,
+      {
+        types: ["geocode"],
+        componentRestrictions: { country: "in" },
+        bounds: new window.google.maps.LatLngBounds(
+          new window.google.maps.LatLng(cityBounds.south, cityBounds.west),
+          new window.google.maps.LatLng(cityBounds.north, cityBounds.east)
+        ),
+        strictBounds: true,
+      }
+    );
+
+    autocomplete.addListener("place_changed", () => {
+      const place = autocomplete.getPlace();
+      console.log(place)
+      setSelectedLocation(place['address_components'][3].long_name || "");
+      setDetails(place);
+    });
+  }, [selectedCity]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -468,7 +516,9 @@ const Mentors = () => {
               </AnimatedSelect>
 
               <AnimatedSelect
-                onValueChange={(value)=> {setSelectedSubject([...selectedSubject, value])}}
+                onValueChange={(value) => {
+                  setSelectedSubject([...selectedSubject, value]);
+                }}
                 placeholder="Select Subject"
               >
                 {subjects.map((subject) => (
@@ -480,24 +530,34 @@ const Mentors = () => {
             </div>
 
             <div className="flex gap-4 items-center">
-              <Select onValueChange={setSelectedCity}>
+              <Select onValueChange={setSelectedState}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select City" />
+                  <SelectValue placeholder="Select State" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Indore">Indore</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select onValueChange={setSelectedArea}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Area" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Vijay Nagar">Vijay Nagar</SelectItem>
+                  {allStates.map((state) => (
+                    <SelectItem value={`${state}`}>{state}</SelectItem>
+                  ))}
                   <SelectItem value="Palasia">Palasia</SelectItem>
                   <SelectItem value="Bhawarkuan">Bhawarkuan</SelectItem>
                 </SelectContent>
               </Select>
+
+              <Select
+                disabled={!selectedState} // disable until a state is selected
+                onValueChange={setSelectedCity}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select City" />
+                </SelectTrigger>
+                <SelectContent>
+                  {selectedState &&
+                    StateData[`${selectedState}`]?.map((city) => (
+                      <SelectItem value={`${city}`}>{city}</SelectItem>
+                    ))}
+                </SelectContent>
+              </Select>
+
               <Button
                 variant="outline"
                 className="border-blue-500 text-blue-500 hover:bg-blue-50"
@@ -506,7 +566,21 @@ const Mentors = () => {
                 Reset
               </Button>
             </div>
-
+            <div className="space-y-2">
+              <label className="block font-medium text-sm">
+                Select Area in {selectedCity}
+              </label>
+              <input
+                ref={inputRef}
+                placeholder={`Type to search in ${selectedCity}`}
+                className="border px-3 py-2 rounded w-full"
+              />
+              {selectedLocation && (
+                <p className="text-xs text-gray-500">
+                  Selected: {selectedLocation}
+                </p>
+              )}
+            </div>
             <div className="px-2 py-1">
               <div className="flex items-center justify-between mt-2">
                 <span>₹{priceRange[0]}</span>
@@ -539,10 +613,6 @@ const Mentors = () => {
           <SVGFilter />
 
           <div className="mt-8">
-            <p className="text-sm text-gray-500 mb-4">
-              Total mentors loaded: {mentorsData.length}
-            </p>
-
             {loader ? (
               <div className="flex justify-center items-center py-16">
                 <div className="text-lg">Loading mentors...</div>

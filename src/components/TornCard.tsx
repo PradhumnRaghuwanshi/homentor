@@ -8,6 +8,7 @@ import axios from "axios";
 const TornCard = ({mentor}) => {
   const navigate = useNavigate()
   const handleChatClick = () => {
+    localStorage.setItem('mentorNumber', mentor.phone)
     const parentPhone = '8878084604';
     if (!parentPhone) return alert("Login required");
 
