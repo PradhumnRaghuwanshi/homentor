@@ -64,7 +64,7 @@ const classSubjects = {
   ],
 };
 
-const Mentors = () => {
+const SelectedMentors = () => {
   const [userLocation, setUserLocation] = useState<{
     lat: number;
     lon: number;
@@ -694,4 +694,4 @@ const Mentors = () => {
   );
 };
 
-export default Mentors;
+export default SelectedMentors;

@@ -43,7 +43,7 @@ import Modal from "@/components/Modal";
 import { useNavigate } from "react-router-dom";
 
 const TutorRegistrationForm = () => {
-  const [mentorData, setFormData] = useState({
+  const [mentorData, setMentorData] = useState(()=>({
     // Personal Information
     fullName: "",
     email: "",
@@ -88,7 +88,7 @@ const TutorRegistrationForm = () => {
 
     // Additional Information
     brief: "",
-  });
+  }));
   const states = Object.keys(locationsData);
   const cities = mentorData.location.state
     ? Object.keys(locationsData[mentorData.location.state])
@@ -98,39 +98,92 @@ const TutorRegistrationForm = () => {
     : [];
 
   const GOOGLE_API_KEY = "AIzaSyAb6ZthJEvNAczmOeuvFrnwEcMJjhlNpUk"; // secure this in .env for production
-  useEffect(() => {
-    const { state, city, area } = mentorData.location;
-    if (state && city && area) {
-      const address = `${area}, ${city}, ${state}`;
-      axios
-        .get(
-          `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
-            address
-          )}&key=${GOOGLE_API_KEY}`
-        )
-        .then((res) => {
-          console.log(res.data);
-          if (res.data.status === "OK") {
-            const location = res.data.results[0].geometry.location;
-            setFormData({
-              ...mentorData,
-              location: {
-                ...mentorData.location,
-                lat: location.lat,
-                lon: location.lng,
-              },
-            });
-          } else {
-            console.warn("Geocoding failed:", res.data.status);
-          }
-        });
-    }
-  }, [
-    mentorData.location.state,
-    mentorData.location.city,
-    mentorData.location.area,
-  ]);
+  // useEffect(() => {
+  //   const { state, city, area } = mentorData.location;
+  //   if (state && city && area) {
+  //     const address = `${area}, ${city}, ${state}`;
+  //     axios
+  //       .get(
+  //         `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+  //           address
+  //         )}&key=${GOOGLE_API_KEY}`
+  //       )
+  //       .then((res) => {
+  //         console.log(res.data);
+  //         if (res.data.status === "OK") {
+  //           const location = res.data.results[0].geometry.location;
+  //           setMentorData({
+  //             ...mentorData,
+  //             location: {
+  //               ...mentorData.location,
+  //               lat: location.lat,
+  //               lon: location.lng,
+  //             },
+  //           });
+  //         } else {
+  //           console.warn("Geocoding failed:", res.data.status);
+  //         }
+  //       });
+  //   }
+  // }, [
+  //   mentorData.location.state,
+  //   mentorData.location.city,
+  //   mentorData.location.area,
+  // ]);
   const [showModal, setShowModal] = useState(true);
+  const [userLocation, setUserLocation] = useState({ lat: "", lon: "" });
+
+ 
+
+  const [locationFetched, setLocationFetched] = useState(false);
+  const [currentLocation, setCurrentLocation] = useState({})
+const handleDetectLocation = () => {
+  // if (locationFetched) return;
+
+  if ("geolocation" in navigator) {
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+
+        try {
+          const res = await fetch(
+            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lon}&key=AIzaSyAb6ZthJEvNAczmOeuvFrnwEcMJjhlNpUk`
+          );
+          const data = await res.json();
+          const components = data.results[0].address_components;
+
+          const area = components.find(
+            (c) =>
+              c.types.includes("sublocality_level_1") ||
+              c.types.includes("locality")
+          )?.long_name;
+
+          const city = components.find((c) =>
+            c.types.includes("administrative_area_level_3")
+          )?.long_name;
+
+          const state = components.find((c) =>
+            c.types.includes("administrative_area_level_1")
+          )?.long_name;
+          setCurrentLocation( {area: area, city:city, state:state, lat:lat, lon:lon});
+
+          setLocationFetched(true); // Prevent future duplicate fetches
+        } catch (error) {
+          console.warn("Geocoding error:", error);
+        }
+      },
+      (error) => {
+        console.warn("Geolocation error:", error);
+      }
+    );
+  } else {
+    console.warn("Geolocation not available");
+  }
+};
+
+  // Step 1: Get user location
+  
 
   // Hierarchical structure for teaching preferences
   const educationLevels = {
@@ -334,11 +387,11 @@ const TutorRegistrationForm = () => {
   >({});
 
   const updateFormData = (updates: Partial<typeof mentorData>) => {
-    setFormData((prev) => ({ ...prev, ...updates }));
+    setMentorData((prev) => ({ ...prev, ...updates }));
   };
 
   const handleLocation = (key, value) => {
-    setFormData({
+    setMentorData({
       ...mentorData,
       location: {
         ...mentorData.location,
@@ -346,14 +399,14 @@ const TutorRegistrationForm = () => {
       },
     });
   };
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     axios
       .post("https://homentor-backend.onrender.com/api/mentor", mentorData)
       .then((res) => {
         console.log("Form submitted:", mentorData);
-        navigate('/');
+        navigate("/");
       })
       .catch((err) => console.log(err));
   };
@@ -447,13 +500,13 @@ const TutorRegistrationForm = () => {
   };
 
   const handleDayTypeChange = (type: "weekdays" | "weekend") => {
-    setFormData((prev) => ({
+    setMentorData((prev) => ({
       ...prev,
       dayType: type,
     }));
   };
   const handleDaySelection = (day: string, selected: boolean) => {
-    setFormData((prev) => ({
+    setMentorData((prev) => ({
       ...prev,
       availability: {
         ...prev.availability,
@@ -466,7 +519,7 @@ const TutorRegistrationForm = () => {
     }));
   };
   const updateAvailabilityHours = (day: string, hours: number) => {
-    setFormData((prev) => ({
+    setMentorData((prev) => ({
       ...prev,
       availability: {
         ...prev.availability,
@@ -509,7 +562,7 @@ const TutorRegistrationForm = () => {
       }
     }
 
-    setFormData({ ...mentorData, teachingPreferences: updated });
+    setMentorData({ ...mentorData, teachingPreferences: updated });
   };
 
   const isSubjectSelected = (
@@ -577,7 +630,7 @@ const TutorRegistrationForm = () => {
       });
       const data = await res.json();
       console.log(key);
-      setFormData({ ...mentorData, [key]: data.secure_url });
+      setMentorData({ ...mentorData, [key]: data.secure_url });
     } catch (err) {
       alert("Upload failed");
       console.error(err);
@@ -589,10 +642,7 @@ const TutorRegistrationForm = () => {
   console.log(mentorData);
   return (
     <div className="min-h-screen bg-gradient-to-br  from-mentor-blue-50 via-white to-mentor-yellow-50 py-8 lg:px-4 px-2">
-            
-
       <div className="max-w-4xl mx-auto">
-      
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-mentor-blue-600 to-mentor-yellow-500 bg-clip-text text-transparent mb-4">
@@ -907,7 +957,7 @@ const TutorRegistrationForm = () => {
                   <Select
                     value={mentorData.qualifications.highestQualification}
                     onValueChange={(value) =>
-                      setFormData({
+                      setMentorData({
                         ...mentorData,
                         qualifications: {
                           ...mentorData.qualifications,
@@ -937,7 +987,7 @@ const TutorRegistrationForm = () => {
                   <Input
                     value={mentorData.qualifications.specialization}
                     onChange={(e) =>
-                      setFormData({
+                      setMentorData({
                         ...mentorData,
                         qualifications: {
                           ...mentorData.qualifications,
@@ -953,7 +1003,7 @@ const TutorRegistrationForm = () => {
                     id="university"
                     value={mentorData.qualifications.university}
                     onChange={(e) =>
-                      setFormData({
+                      setMentorData({
                         ...mentorData,
                         qualifications: {
                           ...mentorData.qualifications,
@@ -969,7 +1019,7 @@ const TutorRegistrationForm = () => {
                   <Select
                     value={mentorData.qualifications.graduationYear}
                     onValueChange={(value) =>
-                      setFormData({
+                      setMentorData({
                         ...mentorData,
                         qualifications: {
                           ...mentorData.qualifications,
@@ -1030,23 +1080,23 @@ const TutorRegistrationForm = () => {
             <Button
               type="button"
               variant="outline"
-              // onClick={handleDetectLocation}
+              onClick={()=>handleDetectLocation()}
               className="w-full"
             >
               📍 Detect My Location
             </Button>
-
+            
             <CardContent className="p-6 space-y-4">
               {/* <LocationSelector
                 mentorsData={mentorData}
-                setFormData={setFormData}
+                setMentorData={setMentorData}
               ></LocationSelector> */}
               <div className="space-y-6">
                 {/* State */}
                 <div>
                   <Label htmlFor="state">State *</Label>
                   <Select
-                    value={mentorData.location.state}
+                    value={currentLocation ? currentLocation?.state : mentorData.location.state}
                     onValueChange={(value) => handleLocation("state", value)}
                   >
                     <SelectTrigger className="mt-1">
@@ -1066,9 +1116,9 @@ const TutorRegistrationForm = () => {
                 <div>
                   <Label htmlFor="city">City *</Label>
                   <Select
-                    value={mentorData.location.city}
+                    value={currentLocation ? currentLocation?.city : mentorData.location.city}
                     onValueChange={(value) => handleLocation("city", value)}
-                    disabled={!mentorData.location.state}
+                    // disabled={!mentorData.location.state}
                   >
                     <SelectTrigger className="mt-1">
                       <SelectValue placeholder="Select city" />
@@ -1087,7 +1137,7 @@ const TutorRegistrationForm = () => {
                 <div>
                   <Label htmlFor="area">Area *</Label>
                   <Select
-                    value={mentorData.location.area}
+                    value={currentLocation ? currentLocation?.area : mentorData.location.area}
                     onValueChange={(value) => handleLocation("area", value)}
                     disabled={!mentorData.location.city}
                   >

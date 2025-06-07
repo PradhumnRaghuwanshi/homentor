@@ -18,6 +18,7 @@ import ContactUs from "./pages/ContactUs";
 import TutorApplicationForm from "./pages/TutorApplicationForm";
 import ChatPage from "./pages/ChatPage";
 import { LoadScript } from '@react-google-maps/api';
+import SelectedMentors from "./pages/SelectedMentors";
 
 
 
@@ -35,6 +36,7 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/mentors" element={<Mentors />} />
+          <Route path="/selected-mentors/:id" element={<SelectedMentors />} />
           <Route path="/mentors/:id" element={<MentorProfile />} />
           <Route path="/dashboard/student" element={<StudentDashboard />} />
           <Route path="/dashboard/mentor" element={<MentorDashboard />} />

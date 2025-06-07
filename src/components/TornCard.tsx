@@ -5,34 +5,53 @@ import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const TornCard = ({mentor}) => {
-  const navigate = useNavigate()
+const TornCard = ({ mentor }) => {
+  const navigate = useNavigate();
   const handleChatClick = () => {
-    localStorage.setItem('mentorNumber', mentor.phone)
-    const parentPhone = '8878084604';
+    localStorage.setItem("mentorNumber", mentor.phone);
+    localStorage.setItem("mentor", JSON.stringify(mentor));
+    const parentPhone = "8878084604";
     if (!parentPhone) return alert("Login required");
 
-    navigate(`/chat/${mentor.phone}`);
+    navigate(`/chat/${mentor.fullName}`);
   };
   const makeCall = async () => {
-    console.log("Hi")
+    console.log("Hi");
     try {
-      const response = await axios.post('https://homentor-backend.onrender.com/api/call', {
-        parentNumber: '9630709988',  // Parent's phone number
-        mentorNumber: '8182858627'   // Mentor's real phone number
-      });
-  
+      const response = await axios.post(
+        "https://homentor-backend.onrender.com/api/call",
+        {
+          parentNumber: "9630709988", // Parent's phone number
+          mentorNumber: "8182858627", // Mentor's real phone number
+        }
+      );
+
       if (response.data.success) {
-        alert('Call initiated successfully!');
+        alert("Call initiated successfully!");
       } else {
-        alert('Failed to initiate call');
+        alert("Failed to initiate call");
       }
     } catch (error) {
-      console.error('Call error:', error);
-      alert('Something went wrong!');
+      console.error("Call error:", error);
+      alert("Something went wrong!");
     }
   };
-  
+
+  const handleSelectMentor = () => {
+    localStorage.setItem("mentor", JSON.stringify(mentor));
+    navigate(`/mentors/${mentor.fullName}`);
+  };
+
+  const formatSalary = (amount: number): string => {
+    if (amount >=5000){
+      return `${(amount+1000) / 1000}k`;
+    }
+    if (amount < 5000) {
+      return `${(amount+500) / 1000}k`;
+    }
+    return amount.toString();
+  };
+
   return (
     <div className="relative animate-shake origin-top w-[100%] flex overflow-hidden flex-col items-center bg-[papayawhip] rounded-lg  shadow-[0_0_20px_-5px_black]">
       {/* 📌 Pin (just like CSS :after) */}
@@ -65,11 +84,11 @@ const TornCard = ({mentor}) => {
       </div>
 
       <div className="lg:text-lg text-sm text-white lg:hidden font-bold mentor-content absolute z-[100] bottom-[8vh]">
-       {mentor.fullName}
+        {mentor.fullName}
       </div>
       <div className="absolute z-[1000] lg:flex hidden bg-red-500 gap-10 bottom-[10vh]">
         <Button
-          onClick={()=>handleChatClick()}
+          onClick={() => handleChatClick()}
           className="bg-gradient-to-r mentor-icons1  from-homentor-chat to-homentor-chatHover hover:from-homentor-chatHover hover:to-homentor-chat transition-all duration-300 flex items-center justify-center gap-1 group/icon overflow-hidden relative"
           title="Chat with mentor"
         >
@@ -78,41 +97,41 @@ const TornCard = ({mentor}) => {
           <span className=" absolute inset-0 bg-white/10 transform-gpu -translate-x-full group-hover/icon:translate-x-0 transition-transform duration-500"></span>
         </Button>
 
-        <Button 
-          
+        <Button
           className="bg-gradient-to-r mentor-icons2 from-homentor-call to-homentor-callHover hover:from-homentor-callHover hover:to-homentor-call transition-all duration-300 flex items-center justify-center gap-1 group/icon overflow-hidden relative"
           title="Call mentor"
         >
           <PhoneCall className="lg:w-4 lg:h-4 h-2 w-2 transition-transform duration-300 group-hover/icon:scale-110" />
-          <span className="inline lg:text-md text-[10px]">Call</span>
+          <a
+            href={`tel:${mentor.phone}`}
+            className="inline lg:text-md text-[10px]"
+          >
+            Call
+          </a>
         </Button>
       </div>
 
       <div className="absolute z-[100] lg:hidden flex justify-between w-full items-center  gap-1 bottom-[1vh] px-2">
         <button
-                  onClick={()=>handleChatClick()}
+          onClick={() => handleChatClick()}
           className="border bg-blue-opacity px-1 py-0.5 border-mentor-blue-500 rounded-[2px] bg-mentor-blue-500 text-white mentor-icons1-sm from-homentor-chat to-homentor-chatHover hover:from-homentor-chatHover hover:to-homentor-chat transition-all duration-300 flex items-center justify-center overflow-hidden "
           title="Chat with mentor"
         >
           <span className="inline lg:text-md text-[11px]">Chat</span>
         </button>
-        <Button className="bg-green-500 z-[100] bg-opacity px-1 py-0.5 gap-0 rounded-[2px] flex lg:hidden flex-col h-[auto]">
-          <div className="flex gap-2">
-            <CalendarPlus className="lg:w-4 lg:h-4 h-3 w-3 hidden lg:inline transition-transform duration-300 group-hover/icon:scale-110" />
-            <span className="text-[10px] sm:inline">Book Now</span>
+        <button className="bg-green-500 z-[100] bg-opacity px-1 py-0 gap-0 rounded-[2px] flex lg:hidden flex-col h-[auto]">
+          <span className="text-[10px] sm:inline text-white">Book Now</span>
+          <div className="lg:text-[12px] text-[11px]  text-white flex items-center">
+            ({formatSalary(+mentor?.teachingModes?.homeTuition?.monthlyPrice)}<span className="text-[9px] ">/month</span>)
           </div>
-          <div className="lg:text-[12px] text-[9px] mentor-content-2 text-white">
-            {/* {mentor.teachingModes.homeTuition.monthlyPrice} */}
-          </div>
-        </Button>
-        <button 
-        onClick={()=> makeCall()}
+        </button>
+        <button
+          // onClick={() => makeCall()}
           className="border bg-blue-opacity px-1 py-0.5 border-mentor-blue-500 rounded-[2px] bg-mentor-blue-500 text-white mentor-icons1-sm from-homentor-chat to-homentor-chatHover hover:from-homentor-chatHover hover:to-homentor-chat transition-all duration-300 flex items-center justify-center overflow-hidden "
           title="Chat with mentor"
         >
-          <span className="inline lg:text-md text-[11px]">Call</span>
+          <a href={`tel:${mentor.phone}`} className="inline lg:text-md text-[11px]">Call</a>
         </button>
-        
       </div>
 
       <Button className="absolute z-[100] bg-green-500 gap-0 lg:flex hidden flex-col bottom-[1vh] h-[auto]">
@@ -128,10 +147,14 @@ const TornCard = ({mentor}) => {
       {/* 🖼 Foreground content (not distorted) */}
       <div className="relative z-20 w-full lg:h-[60vh] h-[28vh]">
         <img
-          src={mentor.profilePhoto ? mentor.profilePhoto : "https://photosnow.org/wp-content/uploads/2024/04/indian-girl-photo_18.jpg"}
+          src={
+            mentor.profilePhoto
+              ? mentor.profilePhoto
+              : "https://photosnow.org/wp-content/uploads/2024/04/indian-girl-photo_18.jpg"
+          }
           alt="mentor"
           className="w-[98%] relative left-[01%] top-[1%] rounded-lg h-full object-cover"
-          onClick={()=> navigate('/mentors/prashant')}
+          onClick={() => handleSelectMentor()}
         />
 
         <div className="Card-wave wave-first"></div>

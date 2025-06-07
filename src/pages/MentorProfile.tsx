@@ -139,13 +139,15 @@ const teacherData = {
 };
 
 const MentorDetails = () => {
+  const mentorData = JSON.parse(localStorage.getItem('mentor'))
+  const subjects = [...new Set(Object.values(mentorData.teachingPreferences.school).flat()) ]
   const { id } = useParams();
   const [activeTab, setActiveTab] = useState("overview");
-
+  console.log(subjects)
   return (
     <Layout>
       <div className="min-h-screen bg-gray-50 mt-[7vh]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-8">
           {/* Teacher Header Section */}
           <Card className="mb-8 overflow-hidden shadow-xl border-0">
             <div className="bg-gradient-to-r from-slate-800 to-slate-900 h-32 relative">
@@ -155,11 +157,11 @@ const MentorDetails = () => {
               <div className="flex flex-col lg:flex-row items-start gap-6">
                 <Avatar className="h-32 w-32 border-4 border-white shadow-2xl">
                   <AvatarImage
-                    src={teacherData.avatar}
-                    alt={teacherData.name}
+                    src={mentorData.profilePhoto}
+                    alt={mentorData.fullName}
                   />
                   <AvatarFallback className="text-2xl bg-gradient-to-br from-blue-500 to-yellow-500 text-white">
-                    {teacherData.name
+                    {mentorData.fullName
                       .split(" ")
                       .map((n) => n[0])
                       .join("")}
@@ -170,41 +172,39 @@ const MentorDetails = () => {
                   <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between">
                     <div>
                       <h1 className="text-3xl font-bold text-slate-900 mb-2">
-                        {teacherData.name}
+                        {mentorData.fullName}
                       </h1>
                       {/* <p className="text-xl text-blue-700 mb-2 font-semibold">{teacherData.title}</p> */}
                       <p className="text-lg text-slate-600 mb-2">
                         {teacherData.qualification}
                       </p>
                       <div className="flex items-center gap-2 mb-4">
+                      {Object.keys(mentorData.teachingModes).map((i)=>
                         <div className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1">
                           <Home className="h-4 w-4" />
-                          Home Tutoring Available
-                        </div>
+                          
+                          {i}
+
+                        </div>)}
                       </div>
 
                       <div className="flex flex-wrap items-center gap-4 text-sm text-slate-600 mb-4">
                         <div className="flex items-center gap-1">
                           <MapPin className="h-4 w-4 text-blue-600" />
-                          {teacherData.location}
+                          {mentorData.location.area}, {mentorData.location.city}, {mentorData.location.state}
                         </div>
                         <div className="flex items-center gap-1">
                           <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                          {teacherData.rating} ({teacherData.totalReviews}{" "}
-                          reviews)
+                          {mentorData.rating} 
                         </div>
                         <div className="flex items-center gap-1">
                           <GraduationCap className="h-4 w-4 text-blue-600" />
                           {teacherData.totalStudents} classes taught
                         </div>
-                        {/* <div className="flex items-center gap-1">
-                  <Clock className="h-4 w-4 text-blue-600" />
-                  {teacherData.responseTime} response
-                </div> */}
                       </div>
 
                       <div className="flex flex-wrap gap-2 mb-6">
-                        {teacherData.subjects.slice(0, 4).map((subject) => (
+                        {subjects.map((subject) => (
                           <Badge
                             key={subject}
                             className="bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-200"
@@ -212,7 +212,7 @@ const MentorDetails = () => {
                             {subject}
                           </Badge>
                         ))}
-                        {teacherData.subjects.length > 4 && (
+                        {subjects.length > 4 && (
                           <Badge
                             variant="outline"
                             className="border-yellow-400 text-yellow-700"
@@ -226,16 +226,16 @@ const MentorDetails = () => {
                     <div className="flex flex-col gap-3 lg:min-w-[200px]">
                       <div className="text-right lg:text-left">
                         <p className="text-3xl font-bold text-yellow-600">
-                          ${teacherData.hourlyRate}
+                          Rs. {mentorData.teachingModes.homeTuition.monthlyPrice}
                         </p>
-                        <p className="text-sm text-slate-600">per hour</p>
+                        <p className="text-sm text-slate-600">per month</p>
                       </div>
                       <Button
                         size="lg"
                         className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white shadow-lg"
                       >
                         <Calendar className="h-4 w-4 mr-2" />
-                        Book Home Session
+                        Book Now
                       </Button>
                       <Button
                         variant="outline"
@@ -266,7 +266,7 @@ const MentorDetails = () => {
             onValueChange={setActiveTab}
             className="space-y-6"
           >
-            <TabsList className="grid w-full grid-cols-5 bg-white border shadow-sm">
+            <TabsList className="flex bg-white border shadow-sm">
               <TabsTrigger
                 value="overview"
                 className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
@@ -279,12 +279,12 @@ const MentorDetails = () => {
               >
                 Experience
               </TabsTrigger>
-              <TabsTrigger
+              {/* <TabsTrigger
                 value="reviews"
                 className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
               >
                 Reviews
-              </TabsTrigger>
+              </TabsTrigger> */}
               <TabsTrigger
                 value="availability"
                 className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
@@ -311,7 +311,7 @@ const MentorDetails = () => {
                     </CardHeader>
                     <CardContent className="p-6 bg-white">
                       <p className="text-slate-700 leading-relaxed mb-4">
-                        {teacherData.bio}
+                        {mentorData.brief}
                       </p>
                       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                         <h4 className="font-semibold text-yellow-800 mb-2">
@@ -335,7 +335,7 @@ const MentorDetails = () => {
                     </CardHeader>
                     <CardContent className="p-6 bg-white">
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {teacherData.subjects.map((subject) => (
+                        {subjects.map((subject) => (
                           <div
                             key={subject}
                             className="flex items-center gap-2 p-3 bg-slate-50 rounded-lg border border-slate-200 hover:bg-blue-50 transition-colors"
