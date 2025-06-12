@@ -17,6 +17,7 @@ const Login = () => {
   const [userType, setUserType] = useState<'student' | 'mentor'>('student');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [number, setNumber] = useState('')
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   
@@ -38,9 +39,9 @@ const Login = () => {
       
       // Redirect based on user type
       if (userType === 'student') {
-        navigate('/dashboard/student');
+        navigate('/mentors');
       } else {
-        navigate('/dashboard/mentor');
+        navigate('/');
       }
     } catch (error) {
       toast({
@@ -79,12 +80,12 @@ const Login = () => {
                   <div className="space-y-2">
                     <Label htmlFor="student-email">Mobile Number</Label>
                     <Input 
-                      id="student-email" 
-                      type="email" 
+                      id="student-phone" 
+                      type="text" 
                       placeholder="" 
                       required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      value={number}
+                      onChange={(e) => setNumber(e.target.value)}
                     />
                   </div>
                 
