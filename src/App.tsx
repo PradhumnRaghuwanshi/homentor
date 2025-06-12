@@ -19,6 +19,8 @@ import TutorApplicationForm from "./pages/TutorApplicationForm";
 import ChatPage from "./pages/ChatPage";
 import { LoadScript } from '@react-google-maps/api';
 import SelectedMentors from "./pages/SelectedMentors";
+import TermsCondition from "./pages/TermsCondition";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 
 
@@ -43,6 +45,8 @@ const App = () => (
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/contact-us" element={<ContactUs />} />
+          <Route path="/terms-conditions" element={<TermsCondition />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/chat/:mentorPhone" element={<ChatPage/>} />
 
           {/* <Route path="/TutorApplicationForm" element={<TutorApplicationForm />} /> */}

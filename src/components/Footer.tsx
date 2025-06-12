@@ -115,22 +115,12 @@ const Footer = () => {
             <h3 className="font-medium text-gray-900 mb-4">Company</h3>
             <ul className="space-y-3">
               <li>
-                <Link to="/about" className="text-gray-600 hover:text-homentor-blue transition-colors">
+                <Link to="/about-us" className="text-gray-600 hover:text-homentor-blue transition-colors">
                   About Us
                 </Link>
               </li>
               <li>
-                <Link to="/careers" className="text-gray-600 hover:text-homentor-blue transition-colors">
-                  Careers
-                </Link>
-              </li>
-              <li>
-                <Link to="/blog" className="text-gray-600 hover:text-homentor-blue transition-colors">
-                  Blog
-                </Link>
-              </li>
-              <li>
-                <Link to="/contact" className="text-gray-600 hover:text-homentor-blue transition-colors">
+                <Link to="/contact-us" className="text-gray-600 hover:text-homentor-blue transition-colors">
                   Contact Us
                 </Link>
               </li>
@@ -140,18 +130,13 @@ const Footer = () => {
             <h3 className="font-medium text-gray-900 mb-4">Legal</h3>
             <ul className="space-y-3">
               <li>
-                <Link to="/terms" className="text-gray-600 hover:text-homentor-blue transition-colors">
+                <Link to="/terms-conditions" className="text-gray-600 hover:text-homentor-blue transition-colors">
                   Terms of Service
                 </Link>
               </li>
               <li>
-                <Link to="/privacy" className="text-gray-600 hover:text-homentor-blue transition-colors">
+                <Link to="/privacy-policy" className="text-gray-600 hover:text-homentor-blue transition-colors">
                   Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link to="/cookies" className="text-gray-600 hover:text-homentor-blue transition-colors">
-                  Cookie Policy
                 </Link>
               </li>
             </ul>

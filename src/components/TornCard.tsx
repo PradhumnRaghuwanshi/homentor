@@ -52,6 +52,18 @@ const TornCard = ({ mentor }) => {
     return amount.toString();
   };
 
+  const initiatePayment = async () => {
+    const res = await axios.post('http://localhost:5000/api/phonepe/pay', {
+      name: 'Pradhumn',
+      email: 'user@example.com',
+      phone: '9630709988',
+      amount: 500
+    });
+  
+    if (res.data.redirectUrl) {
+      window.location.href = res.data.redirectUrl;
+    }
+  };
   return (
     <div className="relative animate-shake origin-top w-[100%] flex overflow-hidden flex-col items-center bg-[papayawhip] rounded-lg  shadow-[0_0_20px_-5px_black]">
       {/* 📌 Pin (just like CSS :after) */}
@@ -134,7 +146,7 @@ const TornCard = ({ mentor }) => {
         </button>
       </div>
 
-      <Button className="absolute z-[100] bg-green-500 gap-0 lg:flex hidden flex-col bottom-[1vh] h-[auto]">
+      <Button onClick={()=> initiatePayment()} className="absolute z-[100] bg-green-500 gap-0 lg:flex hidden flex-col bottom-[1vh] h-[auto]">
         <div className="flex gap-2">
           <CalendarPlus className="lg:w-4 lg:h-4 h-3 w-3 hidden lg:inline transition-transform duration-300 group-hover/icon:scale-110" />
           <span className="text-[10px] sm:inline">Book Now</span>

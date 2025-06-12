@@ -153,7 +153,7 @@ const MentorDetails = () => {
             <div className="bg-gradient-to-r from-slate-800 to-slate-900 h-32 relative">
               <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-yellow-500/20"></div>
             </div>
-            <CardContent className="p-8 -mt-16 relative bg-white">
+            <CardContent className="lg:p-8 p-4 -mt-16 relative bg-white">
               <div className="flex flex-col lg:flex-row items-start gap-6">
                 <Avatar className="h-32 w-32 border-4 border-white shadow-2xl">
                   <AvatarImage
@@ -176,42 +176,35 @@ const MentorDetails = () => {
                       </h1>
                       {/* <p className="text-xl text-blue-700 mb-2 font-semibold">{teacherData.title}</p> */}
                       <p className="text-lg text-slate-600 mb-2">
-                        {teacherData.qualification}
+                        {mentorData?.qualifications?.specialization}
                       </p>
-                      <div className="flex items-center gap-2 mb-4">
-                      {Object.keys(mentorData.teachingModes).map((i)=>
-                        <div className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1">
-                          <Home className="h-4 w-4" />
-                          
-                          {i}
-
-                        </div>)}
-                      </div>
+                      
 
                       <div className="flex flex-wrap items-center gap-4 text-sm text-slate-600 mb-4">
-                        <div className="flex items-center gap-1">
-                          <MapPin className="h-4 w-4 text-blue-600" />
-                          {mentorData.location.area}, {mentorData.location.city}, {mentorData.location.state}
-                        </div>
+                        
                         <div className="flex items-center gap-1">
                           <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                           {mentorData.rating} 
                         </div>
-                        <div className="flex items-center gap-1">
-                          <GraduationCap className="h-4 w-4 text-blue-600" />
-                          {teacherData.totalStudents} classes taught
-                        </div>
+                        <div className="flex items-center gap-2">
+                      {Object.keys(mentorData.teachingModes).map((i)=>
+                        <div className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1">
+                          <Home className="h-4 w-4" />
+                          {i}
+                        </div>)}
+                      </div>
+                        
                       </div>
 
-                      <div className="flex flex-wrap gap-2 mb-6">
-                        {subjects.map((subject) => (
+                      <div className="flex flex-wrap gap-2 mb-3 ">
+                        {subjects.map((subject, index) => index<3 && 
                           <Badge
                             key={subject}
                             className="bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-200"
                           >
                             {subject}
                           </Badge>
-                        ))}
+                        )}
                         {subjects.length > 4 && (
                           <Badge
                             variant="outline"
@@ -222,7 +215,15 @@ const MentorDetails = () => {
                         )}
                       </div>
                     </div>
-
+                    <div className="bg-blue-50 border flex-col gap-2 mb-2 border-blue-200 flex items-center py-2 rounded-[10px] justify-center">
+                    <CardTitle className="text-slate-800 text-md flex items-center gap-2 w-[90%]">
+                        <Home className="h-4 w-4 text-blue-600" />
+                        About {mentorData.fullName.split(" ")[0]} {mentorData.gender == "female" ? "mam" : "sir"}
+                      </CardTitle>
+                    <p className="text-slate-700 leading-relaxed  w-[90%] text-sm">
+                        {teacherData.bio}
+                      </p>
+                    </div>
                     <div className="flex flex-col gap-3 lg:min-w-[200px]">
                       <div className="text-right lg:text-left">
                         <p className="text-3xl font-bold text-yellow-600">
@@ -237,6 +238,7 @@ const MentorDetails = () => {
                         <Calendar className="h-4 w-4 mr-2" />
                         Book Now
                       </Button>
+                      <div className="flex justify-between">
                       <Button
                         variant="outline"
                         size="lg"
@@ -253,6 +255,7 @@ const MentorDetails = () => {
                         <MessageCircle className="h-4 w-4 mr-2" />
                         Call
                       </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -309,9 +312,9 @@ const MentorDetails = () => {
                         About Our Home Tutor
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className="p-6 bg-white">
+                    <CardContent className="lg:p-6 bg-white">
                       <p className="text-slate-700 leading-relaxed mb-4">
-                        {mentorData.brief}
+                        {teacherData.bio}
                       </p>
                       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                         <h4 className="font-semibold text-yellow-800 mb-2">
