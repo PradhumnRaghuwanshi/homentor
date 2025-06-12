@@ -4,7 +4,7 @@ import { CalendarPlus, MessageCircle, PhoneCall, Star } from "lucide-react";
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import LoginPopup from "./LoginPopUp";
+import LoginPopup from "./LoginPopup";
 
 
 const TornCard = ({ mentor }) => {
