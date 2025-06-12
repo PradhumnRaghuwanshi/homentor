@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import TutorApplicationForm from '@/pages/TutorApplicationForm';
@@ -6,6 +6,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { CheckCircle, ShieldCheck, Users } from 'lucide-react';
 
 const TutorApplicationPage: React.FC = () => {
+  useEffect(() => {
+      window.scrollTo(0, 0);
+    }, []);
   const [showForm, setShowForm] = useState(false);
 
   return (

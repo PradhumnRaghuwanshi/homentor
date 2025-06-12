@@ -17,13 +17,13 @@ const Footer = () => {
             Join thousands of students who have found academic success through Homentor.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Link to="/signup">
+            <Link to="/login">
               <Button className="bg-homentor-gold text-homentor-charcoal hover:bg-homentor-darkGold text-lg px-8 py-6 shadow-lg hover:shadow-xl transition-all">
                 Sign Up as a Student
               </Button>
             </Link>
-            <Link to="/become-mentor">
-              <Button variant="outline" className="border-2 border-white text-white hover:bg-white/10 text-lg px-8 py-6">
+            <Link to="/signup">
+              <Button variant="outline" className="border-2 border-white text-white bg-white/10 text-lg px-8 py-6">
                 Become a Mentor
               </Button>
             </Link>
@@ -56,7 +56,7 @@ const Footer = () => {
               </div>
               <div className="flex items-center">
                 <MapPin className="h-5 w-5 text-homentor-blue mr-2 flex-shrink-0" />
-                <span className="text-gray-700">123 Education Street, Learning City, 10001</span>
+                <span className="text-gray-700">22 - Scheme no. 54, PU - 4, Vijay Nagar, Indore- 452010, MP</span>
               </div>
             </div>
             <div className="flex space-x-4 pt-2">
@@ -95,20 +95,20 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/become-mentor" className="text-gray-600 hover:text-homentor-blue transition-colors">
+                <Link to="/signup" className="text-gray-600 hover:text-homentor-blue transition-colors">
                   Become a Mentor
                 </Link>
               </li>
-              <li>
+              {/* <li>
                 <Link to="/how-it-works" className="text-gray-600 hover:text-homentor-blue transition-colors">
                   How It Works
                 </Link>
-              </li>
-              <li>
+              </li> */}
+              {/* <li>
                 <Link to="/pricing" className="text-gray-600 hover:text-homentor-blue transition-colors">
                   Pricing
                 </Link>
-              </li>
+              </li> */}
             </ul>
           </div>
           <div>

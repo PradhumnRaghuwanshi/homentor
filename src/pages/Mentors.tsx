@@ -65,6 +65,9 @@ const classSubjects = {
 };
 
 const Mentors = () => {
+  useEffect(() => {
+      window.scrollTo(0, 0);
+    }, []);
   const [userLocation, setUserLocation] = useState<{
     lat: number;
     lon: number;
