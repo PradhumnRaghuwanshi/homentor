@@ -1,11 +1,15 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Badge } from "./ui/badge";
 import { CalendarPlus, MessageCircle, PhoneCall, Star } from "lucide-react";
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import LoginPopup from "./LoginPopUp";
+
 
 const TornCard = ({ mentor }) => {
+
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
   const navigate = useNavigate();
   const handleChatClick = () => {
     localStorage.setItem("mentorNumber", mentor.phone);
@@ -53,6 +57,8 @@ const TornCard = ({ mentor }) => {
   };
 
   const initiatePayment = async () => {
+    const userNumber = localStorage.getItem('usernumber')
+    setIsLoginOpen(true)
     const res = await axios.post('http://localhost:5000/api/phonepe/pay', {
       name: 'Pradhumn',
       email: 'user@example.com',
@@ -66,6 +72,7 @@ const TornCard = ({ mentor }) => {
   };
   return (
     <div className="relative animate-shake origin-top w-[100%] flex overflow-hidden flex-col items-center bg-[papayawhip] rounded-lg  shadow-[0_0_20px_-5px_black]">
+     
       {/* 📌 Pin (just like CSS :after) */}
       <div
         className="absolute z-30"
@@ -123,6 +130,12 @@ const TornCard = ({ mentor }) => {
         </Button>
       </div>
 
+      {/* Login Popup */}
+      <LoginPopup 
+        isOpen={isLoginOpen} 
+        onClose={() => setIsLoginOpen(false)} 
+      />
+
       <div className="absolute z-[100] lg:hidden flex justify-between w-full items-center  gap-1 bottom-[1vh] px-2">
         <button
           onClick={() => handleChatClick()}
@@ -131,7 +144,7 @@ const TornCard = ({ mentor }) => {
         >
           <span className="inline lg:text-md text-[11px]">Chat</span>
         </button>
-        <button className="bg-green-500 z-[100] bg-opacity px-1 py-0 gap-0 rounded-[2px] flex lg:hidden flex-col h-[auto]">
+        <button onClick={()=> initiatePayment()} className="bg-green-500 z-[100] bg-opacity px-1 py-0 gap-0 rounded-[2px] flex lg:hidden flex-col h-[auto]">
           <span className="text-[10px] sm:inline text-white">Book Now</span>
           <div className="lg:text-[12px] text-[11px]  text-white flex items-center">
             ({formatSalary(+mentor?.teachingModes?.homeTuition?.monthlyPrice)}<span className="text-[9px] ">/month</span>)

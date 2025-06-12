@@ -482,7 +482,9 @@ const Mentors = () => {
 
   return (
     <Layout>
+      
       <div className="bg-gray-50 py-16">
+     
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-xl text-center text-mentor-yellow-500 my-2 font-bold">
             Top Tutors's of {locationName}
