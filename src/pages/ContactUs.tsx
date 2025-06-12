@@ -39,7 +39,7 @@ function ContactUs() {
             <strong >Homentorindia@gmail.com</strong>
 
              <div  className='mt-3' >Address:
-              <strong>3rd Floor,SN Arcade,sch No.78,opposite Prestige College,indore(M,P)</strong>
+              <strong>22 - Scheme No. 54, PU-4, Vijay Nagar, Indore - 452010, MP</strong>
              </div>
          
             </div>
