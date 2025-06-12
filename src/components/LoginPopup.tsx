@@ -13,6 +13,7 @@ export type LoginStep = 'phone' | 'otp';
 const LoginPopup: React.FC<LoginPopupProps> = ({ isOpen, onClose }) => {
   const [step, setStep] = useState<LoginStep>('phone');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const[check, setCheck] = useState("")
 
   const handlePhoneSubmit = (phone: string) => {
     setPhoneNumber(phone);

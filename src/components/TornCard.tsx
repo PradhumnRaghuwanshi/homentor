@@ -8,9 +8,9 @@ import LoginPopup from "./LoginPopUp";
 
 
 const TornCard = ({ mentor }) => {
+  const navigate = useNavigate();
 
   const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const navigate = useNavigate();
   const handleChatClick = () => {
     localStorage.setItem("mentorNumber", mentor.phone);
     localStorage.setItem("mentor", JSON.stringify(mentor));
