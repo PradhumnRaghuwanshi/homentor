@@ -126,11 +126,11 @@ const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
                 </p>
                 <div className="flex items-center">
                   <div className="w-12 h-12 rounded-full bg-gray-200 overflow-hidden mr-4 border-2 border-white shadow-md">
-                    <img 
+                    {/* <img 
                       src={testimonial.avatar} 
                       alt={`${testimonial.author} avatar`}
                       className="w-full h-full object-cover"
-                    />
+                    /> */}
                   </div>
                   <div>
                     <p className="font-medium text-gray-900">{testimonial.author}</p>
