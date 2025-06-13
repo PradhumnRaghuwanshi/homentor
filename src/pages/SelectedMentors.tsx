@@ -16,7 +16,7 @@ import SearchBar from "@/components/SearchBar";
 import AnimatedSelect from "@/components/AnimatedSelect";
 import axios from "axios";
 import StateData from "../StateData.json";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 
 const classSubjects = {
   "1": ["English", "Math", "EVS", "Hindi"],
@@ -67,8 +67,30 @@ const classSubjects = {
 
 
 const SelectedMentors = () => {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const idParam = queryParams.get("id");
+  const ids = idParam?.split(",") || [];
   const [searchParams] = useSearchParams();
   const [mentorsData, setMentorsData] = useState([]);
+  useEffect(() => {
+    if (ids.length === 0) return;
+
+    const fetchMentors = async () => {
+      try {
+        const res = await axios.get(
+          `https://homentor-backend.onrender.com/api/mentor/selected-mentors?id=${ids.join(",")}`
+        );
+        setMentorsData(res.data);
+      } catch (err) {
+        console.error("Error fetching mentors:", err);
+      } finally {
+        // setLoading(false);
+      }
+    };
+
+    fetchMentors();
+  }, [ids]);
 
   useEffect(() => {
     const ids = searchParams.get("id");
