@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, Star, GraduationCap, School, Users } from "lucide-react";
 import AnimatedSpheres from "@/components/AnimatedSpheres";
@@ -36,6 +36,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
   // Logo colors
   const logoBlue = "#1E90FF";
   const logoGold = "#FFD700";
+  const navigate = useNavigate()
 
   return (
     <section className="relative overflow-hidden min-h-[100vh] flex items-center">
@@ -88,6 +89,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
               {description}
             </p>
             <div
+             onClick={()=> navigate('/mentors')}
               className="flex flex-col sm:flex-row gap-4 pt-4 animate-fade-in"
               style={{ animationDelay: "0.4s" }}
             >
