@@ -166,10 +166,10 @@ function PrivacyPolicy() {
             Policy to reflect changes to our information practices. We may alert
             / notify you about the significant changes to the Privacy Policy, in
             the manner as may be required under applicable laws. Grievance
-            Officer – Name of the Office: Designation: Director Address-
+            Officer – PRADHUMN RAGHUWANSHI: Director: Director Address-
             WEBBOLSTER Private Limited, 2 - Scheme No. 54, PU-4, Vijay Nagar,
             Indore - 452010, MP Contact us: Contact number :7748833998 Email id
-            :Homentorindia@gmail.com Monday – Friday – 10:00 – 20:00 Saturday –
+            :homentorindia@gmail.com Monday – Friday – 10:00 – 20:00 Saturday –
             10:00 – 18:00 Sunday – 10:00 – 18:00
           </div>
         </div>

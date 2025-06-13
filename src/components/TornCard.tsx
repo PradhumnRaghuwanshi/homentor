@@ -105,7 +105,7 @@ const TornCard = ({ mentor }) => {
       <div className="lg:text-lg text-sm text-white lg:hidden font-bold mentor-content absolute z-[100] bottom-[8vh]">
         {mentor.fullName}
       </div>
-      <div className="absolute z-[1000] lg:flex hidden bg-red-500 gap-10 bottom-[10vh]">
+      <div className="absolute z-[1000] lg:flex hidden gap-10 bottom-[10vh]">
         <Button
           onClick={() => handleChatClick()}
           className="bg-gradient-to-r mentor-icons1  from-homentor-chat to-homentor-chatHover hover:from-homentor-chatHover hover:to-homentor-chat transition-all duration-300 flex items-center justify-center gap-1 group/icon overflow-hidden relative"
@@ -175,7 +175,7 @@ const TornCard = ({ mentor }) => {
           src={
             mentor.profilePhoto
               ? mentor.profilePhoto
-              : "https://photosnow.org/wp-content/uploads/2024/04/indian-girl-photo_18.jpg"
+              : ""
           }
           alt="mentor"
           className="w-[98%] relative left-[01%] top-[1%] rounded-lg h-full object-cover"
