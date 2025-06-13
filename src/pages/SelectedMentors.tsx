@@ -71,42 +71,32 @@ const SelectedMentors = () => {
   const queryParams = new URLSearchParams(location.search);
   const idParam = queryParams.get("id");
   const ids = idParam?.split(",") || [];
-  const [searchParams] = useSearchParams();
   const [mentorsData, setMentorsData] = useState([]);
+  const [filteredMentors, setFilteredMentors] = useState([]);
+
   useEffect(() => {
     if (ids.length === 0) return;
-
     const fetchMentors = async () => {
       try {
         const res = await axios.get(
           `https://homentor-backend.onrender.com/api/mentor/selected-mentors?id=${ids.join(",")}`
         );
-        setMentorsData(res.data);
+        console.log(res.data.mentors)
+        setFilteredMentors(res.data.mentors);
       } catch (err) {
         console.error("Error fetching mentors:", err);
       } finally {
         // setLoading(false);
       }
     };
-
     fetchMentors();
-  }, [ids]);
-
-  useEffect(() => {
-    const ids = searchParams.get("id");
-    console.log(ids)
-    if (ids) {
-      axios
-        .get(`https://homentor-backend.onrender.com/api/mentor/selected-mentors?id=${ids}`)
-        .then((res) => setMentorsData(res.data.mentors))
-        .catch((err) => console.error("Error fetching mentors", err));
-    }
   }, []);
+
+  
   const [userLocation, setUserLocation] = useState<{
     lat: number;
     lon: number;
   } | null>(null);
-  const [filteredMentors, setFilteredMentors] = useState([]);
   const [loader, setLoader] = useState(false);
 
   // Filter states
@@ -132,25 +122,25 @@ const SelectedMentors = () => {
   const allStates = Object.keys(StateData);
 
   // Step 1: Get user location
-  useEffect(() => {
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const lat = position.coords.latitude;
-          const lon = position.coords.longitude;
-          console.log("User location:", lat, lon);
-          setUserLocation({ lat, lon });
-        },
-        (error) => {
-          console.warn("Geolocation error:", error);
-          setUserLocation({ lat: 22.7196, lon: 75.8577 }); // Indore coordinates as fallback
-        }
-      );
-    } else {
-      console.warn("Geolocation not available");
-      setUserLocation({ lat: 22.7196, lon: 75.8577 }); // Default location
-    }
-  }, []);
+  // useEffect(() => {
+  //   if ("geolocation" in navigator) {
+  //     navigator.geolocation.getCurrentPosition(
+  //       (position) => {
+  //         const lat = position.coords.latitude;
+  //         const lon = position.coords.longitude;
+  //         console.log("User location:", lat, lon);
+  //         setUserLocation({ lat, lon });
+  //       },
+  //       (error) => {
+  //         console.warn("Geolocation error:", error);
+  //         setUserLocation({ lat: 22.7196, lon: 75.8577 }); // Indore coordinates as fallback
+  //       }
+  //     );
+  //   } else {
+  //     console.warn("Geolocation not available");
+  //     setUserLocation({ lat: 22.7196, lon: 75.8577 }); // Default location
+  //   }
+  // }, []);
   const [locationName, setLocation] = useState<string>("your area");
 
 
@@ -162,17 +152,17 @@ const SelectedMentors = () => {
   }, [userLocation]);
 
   // Step 3: Apply filters whenever mentorsData or filter states change
-  useEffect(() => {
-    applyFilters();
-  }, [
-    searchTerm,
-    selectedSubject,
-    priceRange,
-    sortBy,
-    selectedCity,
-    selectedArea,
-    selectedClass,
-  ]);
+  // useEffect(() => {
+  //   applyFilters();
+  // }, [
+  //   searchTerm,
+  //   selectedSubject,
+  //   priceRange,
+  //   sortBy,
+  //   selectedCity,
+  //   selectedArea,
+  //   selectedClass,
+  // ]);
 
   const fetchMentors = async () => {
     setLoader(true);
