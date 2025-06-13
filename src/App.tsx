@@ -21,6 +21,7 @@ import { LoadScript } from '@react-google-maps/api';
 import SelectedMentors from "./pages/SelectedMentors";
 import TermsCondition from "./pages/TermsCondition";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import Refund from "./pages/Refund";
 
 
 
@@ -46,6 +47,7 @@ const App = () => (
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/contact-us" element={<ContactUs />} />
           <Route path="/terms-conditions" element={<TermsCondition />} />
+          <Route path="/refund" element={<Refund />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/chat/:mentorPhone" element={<ChatPage/>} />
 

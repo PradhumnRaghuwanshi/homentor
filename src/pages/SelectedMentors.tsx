@@ -16,6 +16,7 @@ import SearchBar from "@/components/SearchBar";
 import AnimatedSelect from "@/components/AnimatedSelect";
 import axios from "axios";
 import StateData from "../StateData.json";
+import { useSearchParams } from "react-router-dom";
 
 const classSubjects = {
   "1": ["English", "Math", "EVS", "Hindi"],
@@ -64,12 +65,25 @@ const classSubjects = {
   ],
 };
 
+
 const SelectedMentors = () => {
+  const [searchParams] = useSearchParams();
+  const [mentorsData, setMentorsData] = useState([]);
+
+  useEffect(() => {
+    const ids = searchParams.get("id");
+    console.log(ids)
+    if (ids) {
+      axios
+        .get(`https://homentor-backend.onrender.com/api/mentor/selected-mentors?id=${ids}`)
+        .then((res) => setMentorsData(res.data.mentors))
+        .catch((err) => console.error("Error fetching mentors", err));
+    }
+  }, []);
   const [userLocation, setUserLocation] = useState<{
     lat: number;
     lon: number;
   } | null>(null);
-  const [mentorsData, setMentorsData] = useState([]);
   const [filteredMentors, setFilteredMentors] = useState([]);
   const [loader, setLoader] = useState(false);
 
@@ -117,34 +131,6 @@ const SelectedMentors = () => {
   }, []);
   const [locationName, setLocation] = useState<string>("your area");
 
-  useEffect(() => {
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const { latitude, longitude } = position.coords;
-        const res = await fetch(
-          `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=AIzaSyAb6ZthJEvNAczmOeuvFrnwEcMJjhlNpUk`
-        );
-        const data = await res.json();
-        const components = data.results[0].address_components;
-
-        const area = components.find(
-          (c) =>
-            c.types.includes("sublocality_level_1") ||
-            c.types.includes("locality")
-        )?.long_name;
-
-        const city = components.find((c) =>
-          c.types.includes("administrative_area_level_3")
-        )?.long_name;
-
-        console.log("components", components);
-        setLocation(`${area}, ${city}`);
-      },
-      (error) => {
-        setLocation("Location access denied");
-      }
-    );
-  }, []);
 
   // Step 2: Once location is available, fetch mentors
   useEffect(() => {
@@ -221,16 +207,6 @@ const SelectedMentors = () => {
       throw new Error("Unable to get location for: " + address);
     }
   };
-  useEffect(() => {
-    if (selectedLocation) {
-      getLatLonFromAddress(
-        selectedLocation,
-        selectedCity,
-        selectedState,
-        "AIzaSyAb6ZthJEvNAczmOeuvFrnwEcMJjhlNpUk"
-      );
-    }
-  }, [selectedLocation]);
 
   const filterAndSortMentors = (mentors, parentLocation) => {
     if (!mentors || !Array.isArray(mentors)) {
@@ -423,9 +399,6 @@ const SelectedMentors = () => {
     });
   };
 
-  useEffect(() => {
-    handlePlaceSelect();
-  }, []);
 
   const ref = useRef();
   const [visible, setVisible] = useState(false);
