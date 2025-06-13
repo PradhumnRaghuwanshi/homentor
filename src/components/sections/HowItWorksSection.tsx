@@ -93,7 +93,7 @@ const HowItWorksSection = () => {
           </ScrollReveal>
         </div>
         
-        <div className="text-center mt-12">
+        {/* <div className="text-center mt-12">
           <ScrollReveal delay={0.4}>
             <Link to="/how-it-works">
               <Button variant="outline" className="border-homentor-blue text-homentor-blue hover:bg-homentor-lightBlue transform transition-all duration-300 hover:-translate-y-1">
@@ -101,7 +101,7 @@ const HowItWorksSection = () => {
               </Button>
             </Link>
           </ScrollReveal>
-        </div>
+        </div> */}
       </div>
       
       {/* SVG wave divider - bottom */}
