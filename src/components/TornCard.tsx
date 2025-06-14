@@ -59,7 +59,7 @@ const TornCard = ({ mentor }) => {
   const initiatePayment = async () => {
     const userNumber = localStorage.getItem('usernumber')
     setIsLoginOpen(true)
-    const res = await axios.post('http://localhost:5000/api/phonepe/pay', {
+    const res = await axios.post('http://localhost:5000/api/create-order', {
       name: 'Pradhumn',
       email: 'user@example.com',
       phone: '9630709988',
