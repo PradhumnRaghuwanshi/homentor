@@ -65,6 +65,9 @@ const TornCard = ({ mentor }) => {
       phone: '9630709988',
       amount: 500
     });
+
+    console.log("PhonePe Pay Response:", res);
+
   
     if (res.data.redirectUrl) {
       window.location.href = res.data.redirectUrl;
