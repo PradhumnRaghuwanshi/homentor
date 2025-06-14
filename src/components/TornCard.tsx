@@ -59,14 +59,14 @@ const TornCard = ({ mentor }) => {
   const initiatePayment = async () => {
     // const userNumber = localStorage.getItem('usernumber')
     // setIsLoginOpen(true)
-    const res = await axios.post('https://homentor.onrender.com/api/create-order', {
+    const res = await axios.post('https://homentor-backend.onrender.com/api/create-order', {
       name: 'Pradhumn',
       email: 'user@example.com',
       phone: '9630709988',
       amount: 500
     });
 
-    console.log("PhonePe Pay Response:", res.data);
+    console.log("PhonePe Pay Response:", res);
 
   
     if (res.data.redirectUrl) {
