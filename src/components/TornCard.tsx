@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import LoginPopup from "./LoginPopup";
 
-
 const TornCard = ({ mentor }) => {
   const navigate = useNavigate();
 
@@ -47,11 +46,11 @@ const TornCard = ({ mentor }) => {
   };
 
   const formatSalary = (amount: number): string => {
-    if (amount >=5000){
-      return `${(amount+1000) / 1000}k`;
+    if (amount >= 5000) {
+      return `${(amount + 1000) / 1000}k`;
     }
     if (amount < 5000) {
-      return `${(amount+500) / 1000}k`;
+      return `${(amount + 500) / 1000}k`;
     }
     return amount.toString();
   };
@@ -59,23 +58,30 @@ const TornCard = ({ mentor }) => {
   const initiatePayment = async () => {
     // const userNumber = localStorage.getItem('usernumber')
     // setIsLoginOpen(true)
-    const res = await axios.post('https://homentor-backend.onrender.com/api/create-order', {
-      name: 'Pradhumn',
-      email: 'user@example.com',
-      phone: '9630709988',
-      amount: 500
-    });
-
-    console.log("PhonePe Pay Response:", res);
-
-  
-    if (res.data.redirectUrl) {
-      window.location.href = res.data.redirectUrl;
-    }
+    const res = await fetch(
+      "https://homentor-backend.onrender.com/api/create-order",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: "Pradhumn",
+          email: "user@example.com",
+          phone: "9630709988",
+          amount: 500,
+        }),
+      }
+    );
+     const data = await res.json();
+    console.log("PhonePe Pay Response:", data);
+    const token = data.token
+    if (data.success && data.redirectUrl) {
+      window.PhonePeCheckout.transact({token})
+    // ✅ Redirect to PhonePe hosted page
+    // window.location.href = data.redirectUrl;
+  } 
   };
   return (
     <div className="relative animate-shake origin-top w-[100%] flex overflow-hidden flex-col items-center bg-[papayawhip] rounded-lg  shadow-[0_0_20px_-5px_black]">
-     
       {/* 📌 Pin (just like CSS :after) */}
       <div
         className="absolute z-30"
@@ -134,10 +140,7 @@ const TornCard = ({ mentor }) => {
       </div>
 
       {/* Login Popup */}
-      <LoginPopup 
-        isOpen={isLoginOpen} 
-        onClose={() => setIsLoginOpen(false)} 
-      />
+      <LoginPopup isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
 
       <div className="absolute z-[100] lg:hidden flex justify-between w-full items-center  gap-1 bottom-[1vh] px-2">
         <button
@@ -147,10 +150,14 @@ const TornCard = ({ mentor }) => {
         >
           <span className="inline lg:text-md text-[11px]">Chat</span>
         </button>
-        <button onClick={()=> initiatePayment()} className="bg-green-500 z-[100] bg-opacity px-1 py-0 gap-0 rounded-[2px] flex lg:hidden flex-col h-[auto]">
+        <button
+          onClick={() => initiatePayment()}
+          className="bg-green-500 z-[100] bg-opacity px-1 py-0 gap-0 rounded-[2px] flex lg:hidden flex-col h-[auto]"
+        >
           <span className="text-[10px] sm:inline text-white">Book Now</span>
           <div className="lg:text-[12px] text-[11px]  text-white flex items-center">
-            ({formatSalary(+mentor?.teachingModes?.homeTuition?.monthlyPrice)}<span className="text-[9px] ">/month</span>)
+            ({formatSalary(+mentor?.teachingModes?.homeTuition?.monthlyPrice)}
+            <span className="text-[9px] ">/month</span>)
           </div>
         </button>
         <button
@@ -158,11 +165,19 @@ const TornCard = ({ mentor }) => {
           className="border bg-blue-opacity px-1 py-0.5 border-mentor-blue-500 rounded-[2px] bg-mentor-blue-500 text-white mentor-icons1-sm from-homentor-chat to-homentor-chatHover hover:from-homentor-chatHover hover:to-homentor-chat transition-all duration-300 flex items-center justify-center overflow-hidden "
           title="Chat with mentor"
         >
-          <a href={`tel:${mentor.phone}`} className="inline lg:text-md text-[11px]">Call</a>
+          <a
+            href={`tel:${mentor.phone}`}
+            className="inline lg:text-md text-[11px]"
+          >
+            Call
+          </a>
         </button>
       </div>
 
-      <Button onClick={()=> initiatePayment()} className="absolute z-[100] bg-green-500 gap-0 lg:flex hidden flex-col bottom-[1vh] h-[auto]">
+      <Button
+        onClick={() => initiatePayment()}
+        className="absolute z-[100] bg-green-500 gap-0 lg:flex hidden flex-col bottom-[1vh] h-[auto]"
+      >
         <div className="flex gap-2">
           <CalendarPlus className="lg:w-4 lg:h-4 h-3 w-3 hidden lg:inline transition-transform duration-300 group-hover/icon:scale-110" />
           <span className="text-[10px] sm:inline">Book Now</span>
@@ -175,11 +190,7 @@ const TornCard = ({ mentor }) => {
       {/* 🖼 Foreground content (not distorted) */}
       <div className="relative z-20 w-full lg:h-[60vh] h-[28vh]">
         <img
-          src={
-            mentor.profilePhoto
-              ? mentor.profilePhoto
-              : ""
-          }
+          src={mentor.profilePhoto ? mentor.profilePhoto : ""}
           alt="mentor"
           className="w-[98%] relative left-[01%] top-[1%] rounded-lg h-full object-cover"
           onClick={() => handleSelectMentor()}
