@@ -56,31 +56,20 @@ const TornCard = ({ mentor }) => {
   };
 
   const initiatePayment = async () => {
-    const handlePayNow = () => {
-      window.location.href = "https://homentor-backend.onrender.com/api/pay-now"; // Redirects to PhonePe
-    };
-    // const userNumber = localStorage.getItem('usernumber')
-    // setIsLoginOpen(true)
-    // const res = await fetch(
-    //   "https://homentor-backend.onrender.com/api/create-order",
-    //   {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify({
-    //       name: "Pradhumn",
-    //       email: "user@example.com",
-    //       phone: "9630709988",
-    //       amount: 500,
-    //     }),
-    //   }
-    // );
-    //  const data = await res.json();
-    // console.log("PhonePe Pay Response:", data);
-    // const token = data.token
-    // if (data.success && data.redirectUrl) {
-    // // ✅ Redirect to PhonePe hosted page
-    // window.location.href = data.redirectUrl;
-    // }
+    const res = await axios.post('https://homentor-backend.onrender.com/api/create-order', {
+      name: 'Pradhumn',
+      email: 'user@example.com',
+      phone: '9999999999',
+      amount: 100 // ₹100
+    });
+
+    const { success, data } = res.data;
+    if (success && data?.instrumentResponse?.redirectInfo?.url) {
+      window.location.href = data.instrumentResponse.redirectInfo.url;
+    } else {
+      alert("Payment failed to initialize.");
+    }
+    
   };
   return (
     <div className="relative animate-shake origin-top w-[100%] flex overflow-hidden flex-col items-center bg-[papayawhip] rounded-lg  shadow-[0_0_20px_-5px_black]">
