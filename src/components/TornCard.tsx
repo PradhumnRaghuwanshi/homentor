@@ -55,6 +55,16 @@ const TornCard = ({ mentor }) => {
     return amount.toString();
   };
 
+  const redirectToPhonePe = (redirectUrl) => {
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = redirectUrl;
+  form.style.display = 'none';
+
+  document.body.appendChild(form);
+  form.submit();
+};
+
   const initiatePayment = async () => {
     const res = await axios.post('https://homentor-backend.onrender.com/api/create-order', {
       name: 'Pradhumn',
@@ -64,13 +74,9 @@ const TornCard = ({ mentor }) => {
     });
 
     console.log("PhonPe response", res.data)
-
-    const { success, data } = res.data;
-    if (success && data?.instrumentResponse?.redirectInfo?.url) {
-      window.location.href = data.instrumentResponse.redirectInfo.url;
-    } else {
-      alert("Payment failed to initialize.");
-    }
+    const redirectUrl = res.data.redirectUrl;
+    // window.location.href = redirectUrl
+  // redirectToPhonePe(redirectUrl);
     
   };
   const payNow = async () => {
@@ -82,13 +88,11 @@ const TornCard = ({ mentor }) => {
     });
 
     console.log("PhonPe response", res.data)
+    window.location.href = res.data; // ← This tries to redirect after axios call
 
-    const { success, data } = res.data;
-    if (success && data?.instrumentResponse?.redirectInfo?.url) {
-      window.location.href = data.instrumentResponse.redirectInfo.url;
-    } else {
-      alert("Payment failed to initialize.");
-    }
+
+  //   const redirectUrl = res.data.redirectUrl;
+  // redirectToPhonePe(redirectUrl);
     
   };
   return (
@@ -185,7 +189,7 @@ const TornCard = ({ mentor }) => {
         </button>
       </div>
 
-      <Button
+      {/* <Button
         onClick={() => initiatePayment()}
         className="absolute z-[100] bg-green-500 gap-0 lg:flex hidden flex-col bottom-[1vh] h-[auto]"
       >
@@ -196,7 +200,7 @@ const TornCard = ({ mentor }) => {
         <div className="lg:text-[12px] text-[9px] mentor-content-2 text-white">
           (6k/month)
         </div>
-      </Button>
+      </Button> */}
 
       {/* 🖼 Foreground content (not distorted) */}
       <div className="relative z-20 w-full lg:h-[60vh] h-[28vh]">
