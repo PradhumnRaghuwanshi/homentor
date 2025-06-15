@@ -63,6 +63,8 @@ const TornCard = ({ mentor }) => {
       amount: 100 // ₹100
     });
 
+    console.log("PhonPe response", res.data)
+
     const { success, data } = res.data;
     if (success && data?.instrumentResponse?.redirectInfo?.url) {
       window.location.href = data.instrumentResponse.redirectInfo.url;
