@@ -73,6 +73,24 @@ const TornCard = ({ mentor }) => {
     }
     
   };
+  const payNow = async () => {
+    const res = await axios.post('https://homentor-backend.onrender.com/api/pay-now', {
+      name: 'Pradhumn',
+      email: 'user@example.com',
+      phone: '9999999999',
+      amount: 100 // ₹100
+    });
+
+    console.log("PhonPe response", res.data)
+
+    const { success, data } = res.data;
+    if (success && data?.instrumentResponse?.redirectInfo?.url) {
+      window.location.href = data.instrumentResponse.redirectInfo.url;
+    } else {
+      alert("Payment failed to initialize.");
+    }
+    
+  };
   return (
     <div className="relative animate-shake origin-top w-[100%] flex overflow-hidden flex-col items-center bg-[papayawhip] rounded-lg  shadow-[0_0_20px_-5px_black]">
       {/* 📌 Pin (just like CSS :after) */}
@@ -144,7 +162,7 @@ const TornCard = ({ mentor }) => {
           <span className="inline lg:text-md text-[11px]">Chat</span>
         </button>
         <button
-          onClick={() => initiatePayment()}
+          onClick={() => payNow()}
           className="bg-green-500 z-[100] bg-opacity px-1 py-0 gap-0 rounded-[2px] flex lg:hidden flex-col h-[auto]"
         >
           <span className="text-[10px] sm:inline text-white">Book Now</span>
