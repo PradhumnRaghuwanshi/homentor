@@ -408,7 +408,7 @@ const Mentors = () => {
     try {
       console.log("Fetching mentors...");
       const res = await axios.get(
-        "https://homentor-backend.onrender.com/api/mentor"
+        "https://homentor-backend.onrender.com/api/mentor/visible-mentors"
       );
       console.log("API Response:", res.data);
 
@@ -714,6 +714,11 @@ const Mentors = () => {
     };
   }, []);
 
+  // const [priceRange, setPriceRange] = useState<[number, number]>([1000, 5000]);
+const [minLocked, setMinLocked] = useState(false);
+const [maxLocked, setMaxLocked] = useState(false);
+
+
   return (
     <Layout>
       
@@ -734,6 +739,7 @@ const Mentors = () => {
               <AnimatedSelect
                 onValueChange={handleClassChange}
                 placeholder="Select Class"
+                value={selectedClass}
               >
                 {[
                   "1",
@@ -756,6 +762,7 @@ const Mentors = () => {
               <AnimatedSelect
                 onValueChange={(value) => {
                   setSelectedSubject([...selectedSubject, value]);
+
                 }}
                 placeholder="Select Subject"
               >
@@ -864,7 +871,7 @@ const Mentors = () => {
                 className="mt-4"
               />
             </div>
-          </div>
+
 
           <div className="w-full mb-8">
             {/* <MentorCarousel mentors={filteredMentors} /> */}
@@ -926,6 +933,7 @@ const Mentors = () => {
             )}
           </div>
         </div>
+      </div>
       </div>
     </Layout>
   );
