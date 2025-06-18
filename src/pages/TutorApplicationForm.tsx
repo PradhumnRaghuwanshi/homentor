@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 
 import {
@@ -41,9 +41,17 @@ import { locationsData } from "@/components/locationsData";
 import MonthlyRateSlider from "@/components/MonthlyRateSlider";
 import Modal from "@/components/Modal";
 import { useNavigate } from "react-router-dom";
+import StateData from "../StateData.json";
 
 const TutorRegistrationForm = () => {
-  const [mentorData, setMentorData] = useState(()=>({
+  useEffect(() => {
+        window.scrollTo(0, 0);
+      }, []);
+    
+  const [selectedLocation, setSelectedLocation] = useState("");
+
+  const allStates = Object.keys(StateData);
+  const [mentorData, setMentorData] = useState(() => ({
     // Personal Information
     fullName: "",
     email: "",
@@ -89,6 +97,84 @@ const TutorRegistrationForm = () => {
     // Additional Information
     brief: "",
   }));
+
+  const getLatLonFromAddress = async (area: string, apiKey: string) => {
+    const address = `${area}, ${mentorData.location.city}, ${mentorData.location.state}, India`;
+    const response = await fetch(
+      `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+        address
+      )}&key=${apiKey}`
+    );
+    const data = await response.json();
+
+    if (data.status === "OK") {
+      const location = data.results[0].geometry.location;
+      console.log("Selected Area - ", location.lat, location.lng);
+      setMentorData({
+        ...mentorData,
+        location: {
+          ...mentorData.location,
+          lat: location.lat,
+          lon: location.lat,
+        },
+      }); // Default location
+      return {
+        lat: location.lat,
+        lon: location.lng,
+      };
+    } else {
+      throw new Error("Unable to get location for: " + address);
+    }
+  };
+
+  useEffect(() => {
+    if (!mentorData.location.city || !window.google || !inputRef.current)
+      return;
+
+    // Get coordinates of the selected city (you can use a fixed map or Geocoder API)
+    const cityBounds = {
+      // Example for Indore
+      north: 22.85,
+      south: 22.6,
+      east: 75.95,
+      west: 75.7,
+    };
+
+    const autocomplete = new window.google.maps.places.Autocomplete(
+      inputRef.current,
+      {
+        types: ["geocode"],
+        componentRestrictions: { country: "in" },
+        bounds: new window.google.maps.LatLngBounds(
+          new window.google.maps.LatLng(cityBounds.south, cityBounds.west),
+          new window.google.maps.LatLng(cityBounds.north, cityBounds.east)
+        ),
+        strictBounds: true,
+      }
+    );
+
+    autocomplete.addListener("place_changed", async () => {
+      const place = autocomplete.getPlace();
+      console.log(place);
+      setSelectedLocation(place["address_components"][2].long_name || "");
+      const { lat, lon } = await getLatLonFromAddress(
+        place["address_components"][2].long_name || "",
+        "AIzaSyAb6ZthJEvNAczmOeuvFrnwEcMJjhlNpUk"
+      );
+      setMentorData({
+        ...mentorData,
+        location: {
+          ...mentorData.location,
+          area: place["address_components"][2].long_name || "",
+          lat: lat,
+          lon: lon,
+        },
+      });
+
+      // setDetails(place);
+    });
+  }, [mentorData.location.city]);
+
   const states = Object.keys(locationsData);
   const cities = mentorData.location.state
     ? Object.keys(locationsData[mentorData.location.state])
@@ -98,92 +184,63 @@ const TutorRegistrationForm = () => {
     : [];
 
   const GOOGLE_API_KEY = "AIzaSyAb6ZthJEvNAczmOeuvFrnwEcMJjhlNpUk"; // secure this in .env for production
-  // useEffect(() => {
-  //   const { state, city, area } = mentorData.location;
-  //   if (state && city && area) {
-  //     const address = `${area}, ${city}, ${state}`;
-  //     axios
-  //       .get(
-  //         `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
-  //           address
-  //         )}&key=${GOOGLE_API_KEY}`
-  //       )
-  //       .then((res) => {
-  //         console.log(res.data);
-  //         if (res.data.status === "OK") {
-  //           const location = res.data.results[0].geometry.location;
-  //           setMentorData({
-  //             ...mentorData,
-  //             location: {
-  //               ...mentorData.location,
-  //               lat: location.lat,
-  //               lon: location.lng,
-  //             },
-  //           });
-  //         } else {
-  //           console.warn("Geocoding failed:", res.data.status);
-  //         }
-  //       });
-  //   }
-  // }, [
-  //   mentorData.location.state,
-  //   mentorData.location.city,
-  //   mentorData.location.area,
-  // ]);
+
   const [showModal, setShowModal] = useState(true);
   const [userLocation, setUserLocation] = useState({ lat: "", lon: "" });
-
- 
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   const [locationFetched, setLocationFetched] = useState(false);
-  const [currentLocation, setCurrentLocation] = useState({})
-const handleDetectLocation = () => {
-  // if (locationFetched) return;
+  const [currentLocation, setCurrentLocation] = useState({});
+  const handleDetectLocation = () => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          try {
+            const res = await fetch(
+              `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lon}&key=AIzaSyAb6ZthJEvNAczmOeuvFrnwEcMJjhlNpUk`
+            );
+            const data = await res.json();
+            const components = data.results[0].address_components;
+            const area = components.find(
+              (c) =>
+                c.types.includes("sublocality_level_1") ||
+                c.types.includes("locality")
+            )?.long_name;
 
-  if ("geolocation" in navigator) {
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const lat = position.coords.latitude;
-        const lon = position.coords.longitude;
+            const city = components.find((c) =>
+              c.types.includes("administrative_area_level_3")
+            )?.long_name;
 
-        try {
-          const res = await fetch(
-            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lon}&key=AIzaSyAb6ZthJEvNAczmOeuvFrnwEcMJjhlNpUk`
-          );
-          const data = await res.json();
-          const components = data.results[0].address_components;
-
-          const area = components.find(
-            (c) =>
-              c.types.includes("sublocality_level_1") ||
-              c.types.includes("locality")
-          )?.long_name;
-
-          const city = components.find((c) =>
-            c.types.includes("administrative_area_level_3")
-          )?.long_name;
-
-          const state = components.find((c) =>
-            c.types.includes("administrative_area_level_1")
-          )?.long_name;
-          setCurrentLocation( {area: area, city:city, state:state, lat:lat, lon:lon});
-
-          setLocationFetched(true); // Prevent future duplicate fetches
-        } catch (error) {
-          console.warn("Geocoding error:", error);
+            const state = components.find((c) =>
+              c.types.includes("administrative_area_level_1")
+            )?.long_name;
+            setMentorData({
+              ...mentorData,
+              location: {
+                area: area,
+                city: city,
+                state: state,
+                lat: lat,
+                lon: lon,
+              },
+            });
+            console.log(components);
+          } catch (error) {
+            console.warn("Geocoding error:", error);
+          }
+        },
+        (error) => {
+          console.warn("Geolocation error:", error);
         }
-      },
-      (error) => {
-        console.warn("Geolocation error:", error);
-      }
-    );
-  } else {
-    console.warn("Geolocation not available");
-  }
-};
+      );
+    } else {
+      console.warn("Geolocation not available");
+    }
+  };
 
   // Step 1: Get user location
-  
 
   // Hierarchical structure for teaching preferences
   const educationLevels = {
@@ -1080,33 +1137,27 @@ const handleDetectLocation = () => {
             <Button
               type="button"
               variant="outline"
-              onClick={()=>handleDetectLocation()}
+              onClick={() => handleDetectLocation()}
               className="w-full"
             >
               📍 Detect My Location
             </Button>
-            
+
             <CardContent className="p-6 space-y-4">
-              {/* <LocationSelector
-                mentorsData={mentorData}
-                setMentorData={setMentorData}
-              ></LocationSelector> */}
               <div className="space-y-6">
                 {/* State */}
                 <div>
                   <Label htmlFor="state">State *</Label>
                   <Select
-                    value={currentLocation ? currentLocation?.state : mentorData.location.state}
                     onValueChange={(value) => handleLocation("state", value)}
+                    value={mentorData.location.state}
                   >
-                    <SelectTrigger className="mt-1">
-                      <SelectValue placeholder="Select state" />
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select State" />
                     </SelectTrigger>
                     <SelectContent>
-                      {states.map((state) => (
-                        <SelectItem key={state} value={state}>
-                          {state}
-                        </SelectItem>
+                      {allStates.map((state) => (
+                        <SelectItem value={`${state}`}>{state}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -1116,19 +1167,21 @@ const handleDetectLocation = () => {
                 <div>
                   <Label htmlFor="city">City *</Label>
                   <Select
-                    value={currentLocation ? currentLocation?.city : mentorData.location.city}
+                    disabled={!mentorData.location.state} // disable until a state is selected
                     onValueChange={(value) => handleLocation("city", value)}
-                    // disabled={!mentorData.location.state}
+                                        value={mentorData.location.city}
+
                   >
-                    <SelectTrigger className="mt-1">
-                      <SelectValue placeholder="Select city" />
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select City" />
                     </SelectTrigger>
                     <SelectContent>
-                      {cities.map((city) => (
-                        <SelectItem key={city} value={city}>
-                          {city}
-                        </SelectItem>
-                      ))}
+                      {mentorData.location.state &&
+                        StateData[`${mentorData.location.state}`]?.map(
+                          (city) => (
+                            <SelectItem value={`${city}`}>{city}</SelectItem>
+                          )
+                        )}
                     </SelectContent>
                   </Select>
                 </div>
@@ -1136,22 +1189,15 @@ const handleDetectLocation = () => {
                 {/* Area */}
                 <div>
                   <Label htmlFor="area">Area *</Label>
-                  <Select
-                    value={currentLocation ? currentLocation?.area : mentorData.location.area}
-                    onValueChange={(value) => handleLocation("area", value)}
-                    disabled={!mentorData.location.city}
-                  >
-                    <SelectTrigger className="mt-1">
-                      <SelectValue placeholder="Select area" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {areas.map((area) => (
-                        <SelectItem key={area} value={area}>
-                          {area}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <div className="space-y-2">
+                    <input
+                                        value={mentorData.location.area}
+
+                      ref={inputRef}
+                      placeholder={`Type to search in ${mentorData.location.city}`}
+                      className="border px-3 py-2 rounded w-full"
+                    />
+                  </div>
                 </div>
               </div>
               <div>

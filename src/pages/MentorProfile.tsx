@@ -139,11 +139,13 @@ const teacherData = {
 };
 
 const MentorDetails = () => {
-  const mentorData = JSON.parse(localStorage.getItem('mentor'))
-  const subjects = [...new Set(Object.values(mentorData.teachingPreferences.school).flat()) ]
+  const mentorData = JSON.parse(localStorage.getItem("mentor"));
+  const subjects = [
+    ...new Set(Object.values(mentorData.teachingPreferences.school).flat()),
+  ];
   const { id } = useParams();
   const [activeTab, setActiveTab] = useState("overview");
-  console.log(subjects)
+  console.log(subjects);
   return (
     <Layout>
       <div className="min-h-screen bg-gray-50 mt-[7vh]">
@@ -155,55 +157,76 @@ const MentorDetails = () => {
             </div>
             <CardContent className="lg:p-8 p-4 -mt-16 relative bg-white">
               <div className="flex flex-col lg:flex-row items-start gap-6">
-                <Avatar className="h-32 w-32 border-4 border-white shadow-2xl">
-                  <AvatarImage
-                    src={mentorData.profilePhoto}
-                    alt={mentorData.fullName}
-                  />
-                  <AvatarFallback className="text-2xl bg-gradient-to-br from-blue-500 to-yellow-500 text-white">
-                    {mentorData.fullName
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
-                  </AvatarFallback>
-                </Avatar>
-
+                <div className="flex justify-between w-[100%]">
+                  <Avatar className="h-32 w-32 border-4 border-white shadow-2xl">
+                    <AvatarImage
+                      src={mentorData.profilePhoto}
+                      alt={mentorData.fullName}
+                    />
+                    <AvatarFallback className="text-2xl bg-gradient-to-br from-blue-500 to-yellow-500 text-white">
+                      {mentorData.fullName
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex flex-col lg:hidden justify-center gap-4">
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      className="border-blue-500 text-blue-600 hover:bg-blue-50"
+                    >
+                      <MessageCircle className="h-4 w-4 mr-2" />
+                      Send Message
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      className="border-blue-500 text-blue-600 hover:bg-blue-50"
+                    >
+                      <MessageCircle className="h-4 w-4 mr-2" />
+                      Call
+                    </Button>
+                  </div>
+                </div>
                 <div className="flex-1">
                   <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between">
                     <div>
-                      <h1 className="text-3xl font-bold text-slate-900 mb-2">
+                      <h1 className="lg:text-3xl text-2xl font-bold text-slate-900 mb-2 text-nowrap">
                         {mentorData.fullName}
                       </h1>
                       {/* <p className="text-xl text-blue-700 mb-2 font-semibold">{teacherData.title}</p> */}
                       <p className="text-lg text-slate-600 mb-2">
                         {mentorData?.qualifications?.specialization}
                       </p>
-                      
 
                       <div className="flex flex-wrap items-center gap-4 text-sm text-slate-600 mb-4">
-                        
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-1 bg-blue-50 border text-blue-700 hover:bg-blue-100 border-blue-500 py-1 px-2 rounded-[10px]">
+                          <label>Rating -</label>
                           <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                          {mentorData.rating} 
+                          {mentorData.rating}
                         </div>
                         <div className="flex items-center gap-2">
-                      {Object.keys(mentorData.teachingModes).map((i)=>
-                        <div className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1">
-                          <Home className="h-4 w-4" />
-                          {i}
-                        </div>)}
-                      </div>
-                        
+                          {Object.keys(mentorData.teachingModes).map((i) => (
+                            <div className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1">
+                              <Home className="h-4 w-4" />
+                              {i}
+                            </div>
+                          ))}
+                        </div>
                       </div>
 
                       <div className="flex flex-wrap gap-2 mb-3 ">
-                        {subjects.map((subject, index) => index<3 && 
-                          <Badge
-                            key={subject}
-                            className="bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-200"
-                          >
-                            {subject}
-                          </Badge>
+                        {subjects.map(
+                          (subject, index) =>
+                            index < 3 && (
+                              <Badge
+                                key={subject}
+                                className="bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-200"
+                              >
+                                {subject}
+                              </Badge>
+                            )
                         )}
                         {subjects.length > 4 && (
                           <Badge
@@ -216,18 +239,20 @@ const MentorDetails = () => {
                       </div>
                     </div>
                     <div className="bg-blue-50 border flex-col gap-2 mb-2 border-blue-200 flex items-center py-2 rounded-[10px] justify-center">
-                    <CardTitle className="text-slate-800 text-md flex items-center gap-2 w-[90%]">
+                      <CardTitle className="text-slate-800 text-md flex items-center gap-2 w-[90%]">
                         <Home className="h-4 w-4 text-blue-600" />
-                        About {mentorData.fullName.split(" ")[0]} {mentorData.gender == "female" ? "mam" : "sir"}
+                        About {mentorData.fullName.split(" ")[0]}{" "}
+                        {mentorData.gender == "female" ? "mam" : "sir"}
                       </CardTitle>
-                    <p className="text-slate-700 leading-relaxed  w-[90%] text-sm">
+                      <p className="text-slate-700 leading-relaxed  w-[90%] text-sm">
                         {teacherData.bio}
                       </p>
                     </div>
                     <div className="flex flex-col gap-3 lg:min-w-[200px]">
                       <div className="text-right lg:text-left">
                         <p className="text-3xl font-bold text-yellow-600">
-                          Rs. {mentorData.teachingModes.homeTuition.monthlyPrice}
+                          Rs.{" "}
+                          {mentorData.teachingModes.homeTuition.monthlyPrice}
                         </p>
                         <p className="text-sm text-slate-600">per month</p>
                       </div>
@@ -238,23 +263,23 @@ const MentorDetails = () => {
                         <Calendar className="h-4 w-4 mr-2" />
                         Book Now
                       </Button>
-                      <div className="flex justify-between">
-                      <Button
-                        variant="outline"
-                        size="lg"
-                        className="border-blue-500 text-blue-600 hover:bg-blue-50"
-                      >
-                        <MessageCircle className="h-4 w-4 mr-2" />
-                        Send Message
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="lg"
-                        className="border-blue-500 text-blue-600 hover:bg-blue-50"
-                      >
-                        <MessageCircle className="h-4 w-4 mr-2" />
-                        Call
-                      </Button>
+                      <div className="lg:flex hidden justify-between">
+                        <Button
+                          variant="outline"
+                          size="lg"
+                          className="border-blue-500 text-blue-600 hover:bg-blue-50"
+                        >
+                          <MessageCircle className="h-4 w-4 mr-2" />
+                          Send Message
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="lg"
+                          className="border-blue-500 text-blue-600 hover:bg-blue-50"
+                        >
+                          <MessageCircle className="h-4 w-4 mr-2" />
+                          Call
+                        </Button>
                       </div>
                     </div>
                   </div>

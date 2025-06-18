@@ -16,12 +16,13 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ isOpen, onClose }) => {
   const[check, setCheck] = useState("")
 
   const handlePhoneSubmit = (phone: string) => {
+    console.log(phone)
     setPhoneNumber(phone);
     setStep('otp');
   };
 
   const handleOtpVerify = (otp: string) => {
-    localStorage.setItem("usernumber", phoneNumber.slice(3))
+    localStorage.setItem("usernumber", phoneNumber)
     console.log('OTP verified:', otp, 'for phone:', phoneNumber);
     // Here you would typically verify the OTP with your backend
     onClose();
@@ -79,6 +80,7 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ isOpen, onClose }) => {
               phoneNumber={phoneNumber} 
               onVerify={handleOtpVerify} 
               onResend={() => console.log('Resending OTP to:', phoneNumber)}
+              
             />
           )}
         </div>

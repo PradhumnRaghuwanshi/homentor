@@ -22,6 +22,7 @@ import SelectedMentors from "./pages/SelectedMentors";
 import TermsCondition from "./pages/TermsCondition";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Refund from "./pages/Refund";
+import PaymentSuccessful from "./pages/PaymentSuccessful";
 
 
 
@@ -47,6 +48,7 @@ const App = () => (
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/contact-us" element={<ContactUs />} />
           <Route path="/terms-conditions" element={<TermsCondition />} />
+          <Route path="/payment-successful" element={<PaymentSuccessful />} />
           <Route path="/refund" element={<Refund />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/chat/:mentorPhone" element={<ChatPage/>} />

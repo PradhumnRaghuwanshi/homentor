@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
+import axios from 'axios';
 
 interface OtpInputProps {
   phoneNumber: string;
@@ -79,11 +80,11 @@ const OtpInput: React.FC<OtpInputProps> = ({ phoneNumber, onVerify, onResend }) 
     }
   };
 
+ 
+
   const handleVerify = async (otpCode: string) => {
     setIsLoading(true);
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    localStorage.setItem("usernumber", phoneNumber)
     
     onVerify(otpCode);
     setIsLoading(false);

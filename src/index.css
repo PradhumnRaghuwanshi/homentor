@@ -569,7 +569,7 @@ svg#curve {
   border-radius: 42.5%;
 }
 .wave-first {
-  background: rgba(87, 116, 184, 0.535);
+  background: rgba(3, 3, 3, 0.535);
   -webkit-animation: waves 3s linear;
   animation: waves 1s 1s both linear;
 }
@@ -607,6 +607,7 @@ svg#curve {
   overflow: hidden;
   text-align: center;
   white-space: nowrap;
+  background-color: rgba(0, 0, 0, 0.534);
 }
 @keyframes slide-in {
   0% {

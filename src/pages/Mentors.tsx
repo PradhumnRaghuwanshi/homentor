@@ -562,9 +562,7 @@ const Mentors = () => {
                   {allStates.map((state) => (
                     <SelectItem value={`${state}`}>{state}</SelectItem>
                   ))}
-                  <SelectItem value="Palasia">Palasia</SelectItem>
-                  <SelectItem value="Bhawarkuan">Bhawarkuan</SelectItem>
-                </SelectContent>
+                 </SelectContent>
               </Select>
 
               <Select

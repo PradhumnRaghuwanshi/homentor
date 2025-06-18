@@ -56,48 +56,56 @@ const TornCard = ({ mentor }) => {
   };
 
   const redirectToPhonePe = (redirectUrl) => {
-  const form = document.createElement('form');
-  form.method = 'POST';
-  form.action = redirectUrl;
-  form.style.display = 'none';
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = redirectUrl;
+    form.style.display = "none";
 
-  document.body.appendChild(form);
-  form.submit();
-};
+    document.body.appendChild(form);
+    form.submit();
+  };
 
   const initiatePayment = async () => {
-    const res = await axios.post('https://homentor-backend.onrender.com/api/create-order', {
-      name: 'Pradhumn',
-      email: 'user@example.com',
-      phone: '9999999999',
-      amount: 100 // ₹100
-    });
+    const res = await axios.post(
+      "https://homentor-backend.onrender.com/api/create-order",
+      {
+        name: "Pradhumn",
+        email: "user@example.com",
+        phone: "9999999999",
+        amount: 100, // ₹100
+      }
+    );
 
-    console.log("PhonPe response", res.data)
+    console.log("PhonPe response", res.data);
     const redirectUrl = res.data.redirectUrl;
     // window.location.href = redirectUrl
-  // redirectToPhonePe(redirectUrl);
-    
+    // redirectToPhonePe(redirectUrl);
   };
-  const payNow = async () => {
-    const res = await axios.post('https://homentor-backend.onrender.com/api/pay-now', {
-      name: 'Pradhumn',
-      email: 'user@example.com',
-      phone: '9999999999',
-      amount: 100 // ₹100
-    });
+  const [loginWait, setLoginWait] = useState(false)
+  const userNumber = localStorage.getItem("usernumber");
+  const payNow = async (fees) => {
+    if (!userNumber) {
+      setIsLoginOpen(true);
+    } else {
+      const res = await axios.post(
+        "https://homentor-backend.onrender.com/api/pay-now",
+        {
+          phone: userNumber,
+          amount: fees,
+        }
+      );
 
-    console.log("PhonPe response", res.data)
-    window.location.href = res.data; // ← This tries to redirect after axios call
+      console.log("PhonPe response", res.data);
+      window.location.href = res.data; // ← This tries to redirect after axios call
+    }
 
-
-  //   const redirectUrl = res.data.redirectUrl;
-  // redirectToPhonePe(redirectUrl);
-    
+    //   const redirectUrl = res.data.redirectUrl;
+    // redirectToPhonePe(redirectUrl);
   };
   return (
     <div className="relative animate-shake origin-top w-[100%] flex overflow-hidden flex-col items-center bg-[papayawhip] rounded-lg  shadow-[0_0_20px_-5px_black]">
       {/* 📌 Pin (just like CSS :after) */}
+
       <div
         className="absolute z-30"
         style={{
@@ -113,14 +121,14 @@ const TornCard = ({ mentor }) => {
         }}
       />
       {/* Star */}
-      <div className="absolute top-2 right-2 z-[100]">
+      <div className="absolute top-2 right-2 z-[30]">
         <Badge className="bg-white/90 backdrop-blur-sm text-black text-[10px] font-semibold px-2 py-1 flex items-center gap-1 shadow-lg transform-gpu transition-transform duration-300 hover:scale-110">
           <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
-          {/* {mentor.rating} */} 4.9
+          {mentor?.rating}
         </Badge>
       </div>
 
-      <div className="w-[100%] lg:block hidden h-[20vh] bg-blue-500 absolute z-[100] opacity-50 mentor-bg"></div>
+      <div className="w-[100%] lg:block hidden h-[20vh] bg-black absolute z-[100] opacity-30 mentor-bg"></div>
 
       <div className="lg:text-lg text-white text-sm lg:block hidden font-bold mentor-content absolute z-[100] bottom-[16vh]">
         {mentor.fullName}
@@ -166,12 +174,14 @@ const TornCard = ({ mentor }) => {
           <span className="inline lg:text-md text-[11px]">Chat</span>
         </button>
         <button
-          onClick={() => payNow()}
+          onClick={() =>
+            payNow(+mentor?.teachingModes?.homeTuition?.monthlyPrice)
+          }
           className="bg-green-500 z-[100] bg-opacity px-1 py-0 gap-0 rounded-[2px] flex lg:hidden flex-col h-[auto]"
         >
           <span className="text-[10px] sm:inline text-white">Book Now</span>
           <div className="lg:text-[12px] text-[11px]  text-white flex items-center">
-            ({formatSalary(+mentor?.teachingModes?.homeTuition?.monthlyPrice)}
+            ({+mentor?.teachingModes?.homeTuition?.monthlyPrice / 1000}k
             <span className="text-[9px] ">/month</span>)
           </div>
         </button>
@@ -189,8 +199,10 @@ const TornCard = ({ mentor }) => {
         </button>
       </div>
 
-      {/* <Button
-        onClick={() => initiatePayment()}
+      <Button
+        onClick={() =>
+          payNow(+mentor?.teachingModes?.homeTuition?.monthlyPrice)
+        }
         className="absolute z-[100] bg-green-500 gap-0 lg:flex hidden flex-col bottom-[1vh] h-[auto]"
       >
         <div className="flex gap-2">
@@ -198,9 +210,9 @@ const TornCard = ({ mentor }) => {
           <span className="text-[10px] sm:inline">Book Now</span>
         </div>
         <div className="lg:text-[12px] text-[9px] mentor-content-2 text-white">
-          (6k/month)
+          ({+mentor?.teachingModes?.homeTuition?.monthlyPrice / 1000}k/month)
         </div>
-      </Button> */}
+      </Button>
 
       {/* 🖼 Foreground content (not distorted) */}
       <div className="relative z-20 w-full lg:h-[60vh] h-[28vh]">

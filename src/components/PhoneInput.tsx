@@ -30,36 +30,13 @@ const PhoneInput: React.FC<PhoneInputProps> = ({ onSubmit }) => {
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
     
-    const fullPhoneNumber = `${selectedCountry.code}${phoneNumber}`;
-    onSubmit(fullPhoneNumber);
+    onSubmit(phoneNumber);
     setIsLoading(false);
   };
 
-  const formatPhoneNumber = (value: string) => {
-    // Remove all non-digits
-    const cleaned = value.replace(/\D/g, '');
-    
-    // Format based on country (simplified for demo)
-    if (selectedCountry.code === '+1') {
-      // US format: (123) 456-7890
-      const match = cleaned.match(/^(\d{0,3})(\d{0,3})(\d{0,4})$/);
-      if (match) {
-        return [match[1], match[2], match[3]]
-          .filter(Boolean)
-          .join('')
-          .replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3')
-          .replace(/(\d{3})(\d{1,3})/, '($1) $2')
-          .replace(/(\d{1,3})/, '($1');
-      }
-    }
-    
-    return cleaned;
-  };
-
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    const formatted = formatPhoneNumber(value);
-    setPhoneNumber(formatted);
+    const value = e.target.value;    
+    setPhoneNumber(value);
   };
 
   return (
@@ -76,39 +53,6 @@ const PhoneInput: React.FC<PhoneInputProps> = ({ onSubmit }) => {
             Mobile Number
           </label>
           <div className="flex">
-            {/* Country Selector */}
-            <div className="relative">
-              <button
-                type="button"
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex items-center gap-2 px-3 py-3 border border-r-0 border-gray-300 rounded-l-lg bg-gray-50 hover:bg-gray-100 transition-colors"
-              >
-                <span className="text-lg">{selectedCountry.flag}</span>
-                <span className="text-sm font-medium">{selectedCountry.code}</span>
-                <ChevronDown className="w-4 h-4 text-gray-400" />
-              </button>
-
-              {/* Dropdown */}
-              {isDropdownOpen && (
-                <div className="absolute top-full left-0 mt-1 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
-                  {countries.map((country) => (
-                    <button
-                      key={country.code}
-                      type="button"
-                      onClick={() => {
-                        setSelectedCountry(country);
-                        setIsDropdownOpen(false);
-                      }}
-                      className="w-full flex items-center gap-3 px-3 py-2 hover:bg-gray-50 transition-colors text-left"
-                    >
-                      <span className="text-lg">{country.flag}</span>
-                      <span className="text-sm">{country.name}</span>
-                      <span className="text-sm text-gray-500 ml-auto">{country.code}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
 
             {/* Phone Input */}
             <input
