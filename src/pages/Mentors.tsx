@@ -18,98 +18,114 @@ import axios from "axios";
 import StateData from "../StateData.json";
 
 const classSubjects = {
-  "1": ["Mathematics",
-            "English",
-            "Hindi",
-            "Science",
-            "Social Science",
-            "Computer Science"],
-  "2": ["Mathematics",
-            "English",
-            "Hindi",
-            "Science",
-            "Social Science",
-            "Computer Science"],
-  "3": ["Mathematics",
-            "English",
-            "Hindi",
-            "Science",
-            "Social Science",
-            "Computer Science"],
-  "4": ["Mathematics",
-            "English",
-            "Hindi",
-            "Science",
-            "Social Science",
-            "Computer Science"],
-  "5": ["Mathematics",
-            "English",
-            "Hindi",
-            "Science",
-            "Social Science",
-            "Computer Science"],
-  "6": ["Mathematics",
-            "English",
-            "Hindi",
-            "Science",
-            "Social Science",
-            "Computer Science"],
-  "7": ["Mathematics",
-            "English",
-            "Hindi",
-            "Science",
-            "Social Science",
-            "Computer Science"],
-  "8": ["Mathematics",
-            "English",
-            "Hindi",
-            "Science",
-            "Social Science",
-            "Computer Science"],
+  "1": [
+    "Mathematics",
+    "English",
+    "Hindi",
+    "Science",
+    "Social Science",
+    "Computer Science",
+  ],
+  "2": [
+    "Mathematics",
+    "English",
+    "Hindi",
+    "Science",
+    "Social Science",
+    "Computer Science",
+  ],
+  "3": [
+    "Mathematics",
+    "English",
+    "Hindi",
+    "Science",
+    "Social Science",
+    "Computer Science",
+  ],
+  "4": [
+    "Mathematics",
+    "English",
+    "Hindi",
+    "Science",
+    "Social Science",
+    "Computer Science",
+  ],
+  "5": [
+    "Mathematics",
+    "English",
+    "Hindi",
+    "Science",
+    "Social Science",
+    "Computer Science",
+  ],
+  "6": [
+    "Mathematics",
+    "English",
+    "Hindi",
+    "Science",
+    "Social Science",
+    "Computer Science",
+  ],
+  "7": [
+    "Mathematics",
+    "English",
+    "Hindi",
+    "Science",
+    "Social Science",
+    "Computer Science",
+  ],
+  "8": [
+    "Mathematics",
+    "English",
+    "Hindi",
+    "Science",
+    "Social Science",
+    "Computer Science",
+  ],
   "9": [
     "Mathematics",
-            "English",
-            "Hindi",
-            "Science",
-            "Social Science",
-            "Computer Science"
+    "English",
+    "Hindi",
+    "Science",
+    "Social Science",
+    "Computer Science",
   ],
   "10": [
     "Mathematics",
-            "English",
-            "Hindi",
-            "Science",
-            "Social Science",
-            "Computer Science"
+    "English",
+    "Hindi",
+    "Science",
+    "Social Science",
+    "Computer Science",
   ],
   "11": [
     "Mathematics",
-            "Physics",
-            "Chemistry",
-            "Biology",
-            "English",
-            "Economics",
-            "Accountancy",
-            "Business Studies",
-            "Computer Science",
+    "Physics",
+    "Chemistry",
+    "Biology",
+    "English",
+    "Economics",
+    "Accountancy",
+    "Business Studies",
+    "Computer Science",
   ],
   "12": [
     "Mathematics",
-            "Physics",
-            "Chemistry",
-            "Biology",
-            "English",
-            "Economics",
-            "Accountancy",
-            "Business Studies",
-            "Computer Science",
+    "Physics",
+    "Chemistry",
+    "Biology",
+    "English",
+    "Economics",
+    "Accountancy",
+    "Business Studies",
+    "Computer Science",
   ],
 };
 
 const Mentors = () => {
   useEffect(() => {
-      window.scrollTo(0, 0);
-    }, []);
+    window.scrollTo(0, 0);
+  }, []);
   const [userLocation, setUserLocation] = useState<{
     lat: number;
     lon: number;
@@ -600,7 +616,6 @@ const Mentors = () => {
     }
     // Filter by subject
     if (selectedSubject.length > 0) {
-     
       result = result.filter((mentor) => {
         // Safe check: teachingPreferences and school data exist
         const schoolPrefs = mentor.teachingPreferences?.school;
@@ -611,7 +626,9 @@ const Mentors = () => {
         const classWithSubjects = Object.entries(
           mentor.teachingPreferences?.school
         ).find((arr) => arr[0].includes(selectedClass));
-        return selectedSubject.every((subject) => classWithSubjects[1].includes(subject));
+        return selectedSubject.every((subject) =>
+          classWithSubjects[1].includes(subject)
+        );
       });
     }
     // Filter by city
@@ -627,7 +644,7 @@ const Mentors = () => {
       result = filterAndSortMentors(result, userLocation);
     }
 
-    console.log(priceRange)
+    console.log(priceRange);
     console.log("Filtered mentors:", result);
     setFilteredMentors(result);
   };
@@ -715,15 +732,12 @@ const Mentors = () => {
   }, []);
 
   // const [priceRange, setPriceRange] = useState<[number, number]>([1000, 5000]);
-const [minLocked, setMinLocked] = useState(false);
-const [maxLocked, setMaxLocked] = useState(false);
-
+  const [minLocked, setMinLocked] = useState(false);
+  const [maxLocked, setMaxLocked] = useState(false);
 
   return (
     <Layout>
-      
       <div className="bg-gray-50 py-16">
-     
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-xl text-center text-mentor-yellow-500 my-2 font-bold">
             Top Tutors's of {locationName}
@@ -760,29 +774,20 @@ const [maxLocked, setMaxLocked] = useState(false);
               </AnimatedSelect>
 
               <AnimatedSelect
-                onValueChange={(value) => {
-                  setSelectedSubject([...selectedSubject, value]);
-
+                onValueChange={(subject) => {
+                  if (selectedSubject.includes(subject)) {
+                    setSelectedSubject(
+                      selectedSubject.filter((item) => item !== subject)
+                    );
+                  } else {
+                    setSelectedSubject([...selectedSubject, subject]);
+                  }
                 }}
                 placeholder="Select Subject"
               >
                 {subjects.map((subject) => (
                   <div className="flex">
                     <input
-                      onChange={(e) => {
-                        if (selectedSubject.includes(subject)) {
-                          setSelectedSubject(
-                            selectedSubject.filter(
-                              (item) => item !== subject
-                            )
-                          );
-                        } else {
-                          setSelectedSubject([
-                            ...selectedSubject,
-                            subject,
-                          ]);
-                        }
-                      }}
                       type="checkbox"
                       checked={selectedSubject.includes(subject)}
                     ></input>
@@ -803,7 +808,7 @@ const [maxLocked, setMaxLocked] = useState(false);
                   {allStates.map((state) => (
                     <SelectItem value={`${state}`}>{state}</SelectItem>
                   ))}
-                 </SelectContent>
+                </SelectContent>
               </Select>
 
               <Select
@@ -872,68 +877,67 @@ const [maxLocked, setMaxLocked] = useState(false);
               />
             </div>
 
+            <div className="w-full mb-8">
+              {/* <MentorCarousel mentors={filteredMentors} /> */}
+            </div>
 
-          <div className="w-full mb-8">
-            {/* <MentorCarousel mentors={filteredMentors} /> */}
-          </div>
+            <SVGFilter />
 
-          <SVGFilter />
-
-          <div className="mt-8">
-            {loader ? (
-              <div className="flex justify-center items-center py-16">
-                <div className="text-lg">Loading mentors...</div>
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredMentors?.map((mentor, index) => (
-                  <TornCard
-                    key={mentor._id || mentor._id || index}
-                    mentor={mentor}
-                  />
-                ))}
-              </div>
-            )}
-
-            {!loader &&
-              filteredMentors.length === 0 &&
-              mentorsData.length > 0 && (
-                <div className="text-center py-16">
-                  <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                    No mentors found
-                  </h3>
-                  <p className="text-gray-600">
-                    Try adjusting your search filters or reset them to see all
-                    available mentors.
-                  </p>
-                  <Button
-                    className="mt-4 bg-blue-600 hover:bg-blue-700"
-                    onClick={resetFilters}
-                  >
-                    Reset Filters
-                  </Button>
+            <div className="mt-8">
+              {loader ? (
+                <div className="flex justify-center items-center py-16">
+                  <div className="text-lg">Loading mentors...</div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {filteredMentors?.map((mentor, index) => (
+                    <TornCard
+                      key={mentor._id || mentor._id || index}
+                      mentor={mentor}
+                    />
+                  ))}
                 </div>
               )}
 
-            {!loader && mentorsData.length === 0 && (
-              <div className="text-center py-16">
-                <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                  Unable to load mentors
-                </h3>
-                <p className="text-gray-600">
-                  Please check your internet connection and try again.
-                </p>
-                <Button
-                  className="mt-4 bg-blue-600 hover:bg-blue-700"
-                  onClick={fetchMentors}
-                >
-                  Retry
-                </Button>
-              </div>
-            )}
+              {!loader &&
+                filteredMentors.length === 0 &&
+                mentorsData.length > 0 && (
+                  <div className="text-center py-16">
+                    <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                      No mentors found
+                    </h3>
+                    <p className="text-gray-600">
+                      Try adjusting your search filters or reset them to see all
+                      available mentors.
+                    </p>
+                    <Button
+                      className="mt-4 bg-blue-600 hover:bg-blue-700"
+                      onClick={resetFilters}
+                    >
+                      Reset Filters
+                    </Button>
+                  </div>
+                )}
+
+              {!loader && mentorsData.length === 0 && (
+                <div className="text-center py-16">
+                  <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                    Unable to load mentors
+                  </h3>
+                  <p className="text-gray-600">
+                    Please check your internet connection and try again.
+                  </p>
+                  <Button
+                    className="mt-4 bg-blue-600 hover:bg-blue-700"
+                    onClick={fetchMentors}
+                  >
+                    Retry
+                  </Button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </div>
       </div>
     </Layout>
   );
