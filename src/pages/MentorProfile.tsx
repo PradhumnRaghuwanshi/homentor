@@ -22,6 +22,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import Layout from "@/components/Layout";
+import axios from "axios";
+import LoginPopup from "@/components/LoginPopup";
 
 // Mock teacher data for homentor platform
 const teacherData = {
@@ -146,6 +148,28 @@ const MentorDetails = () => {
   const { id } = useParams();
   const [activeTab, setActiveTab] = useState("overview");
   console.log(mentorData);
+
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const userNumber = localStorage.getItem("usernumber");
+
+  const payNow = async () => {
+    if (!userNumber) {
+      setIsLoginOpen(true);
+    } else {
+      const res = await axios.post(
+        "https://homentor-backend.onrender.com/api/pay-now",
+        {
+          phone: userNumber,
+          amount: +mentorData.teachingModes.homeTuition.monthlyPrice,
+        }
+      );
+      console.log("PhonPe response", res.data);
+      window.location.href = res.data; // ← This tries to redirect after axios call
+    }
+
+    //   const redirectUrl = res.data.redirectUrl;
+    // redirectToPhonePe(redirectUrl);
+  };
   return (
     <Layout>
       <div className="min-h-screen bg-gray-50 mt-[7vh]">
@@ -179,31 +203,38 @@ const MentorDetails = () => {
                       <MessageCircle className="h-4 w-4 mr-2" />
                       Send Message
                     </Button>
-                    <Button
-                      variant="outline"
-                      size="lg"
-                      className="border-blue-500 text-blue-600 hover:bg-blue-50"
+                    <a
+                      href={`tel:${mentorData?.phone}`}
+                      className=" lg:text-md text-[10px]"
                     >
-                      <MessageCircle className="h-4 w-4 mr-2" />
-                      Call
-                    </Button>
+                      <Button
+                        variant="outline"
+                        size="lg"
+                        className="border-blue-500 w-full text-blue-600 hover:bg-blue-50"
+                      >
+                        <MessageCircle className="h-4 w-4 mr-2" />
+                        Call
+                      </Button>
+                    </a>
                   </div>
                 </div>
-                <div className="flex-1">
+                <div className="flex-1  w-full">
                   <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between">
                     <div>
                       <h1 className="lg:text-3xl text-2xl font-bold text-slate-900 mb-2 text-nowrap">
                         {mentorData.fullName}
                       </h1>
                       {/* <p className="text-xl text-blue-700 mb-2 font-semibold">{teacherData.title}</p> */}
-                    
-                      {mentorData?.qualifications?.display ? 
+
+                      {mentorData?.qualifications?.display ? (
                         <p className="text-lg text-slate-600 mb-2">
-                          {mentorData?.qualifications?.specialization}
+                          Qualification - {mentorData?.qualifications?.specialization}
                         </p>
-                       : 
-                        <p className="text-lg text-slate-600 mb-2 capitalize">{mentorData?.qualifications?.highestQualification}</p>
-                      }
+                      ) : (
+                        <p className="text-lg text-slate-600 mb-2 capitalize">
+                         Qualification - {mentorData?.qualifications?.highestQualification}
+                        </p>
+                      )}
 
                       <div className="flex flex-wrap items-center gap-4 text-sm text-slate-600 mb-4">
                         <div className="flex items-center gap-1 bg-blue-50 border text-blue-700 hover:bg-blue-100 border-blue-500 py-1 px-2 rounded-[10px]">
@@ -249,19 +280,24 @@ const MentorDetails = () => {
                         About {mentorData.fullName.split(" ")[0]}{" "}
                         {mentorData.gender == "female" ? "mam" : "sir"}
                       </CardTitle>
+                      {!teacherData?.adminBriefVisible ? 
                       <p className="text-slate-700 leading-relaxed  w-[90%] text-sm">
-                        {teacherData.bio}
-                      </p>
+                        {teacherData?.brief}
+                      </p>:
+                      <p className="text-slate-700 leading-relaxed  w-[90%] text-sm">
+                        {teacherData?.adminBrief}
+                      </p>}
                     </div>
                     <div className="flex flex-col gap-3 lg:min-w-[200px]">
                       <div className="text-right lg:text-left">
                         <p className="text-3xl font-bold text-yellow-600">
                           Rs.{" "}
-                          {mentorData.teachingModes.homeTuition.monthlyPrice}
+                          {mentorData.teachingModes.homeTuition.monthlyPrice.toLocaleString()}
                         </p>
                         <p className="text-sm text-slate-600">per month</p>
                       </div>
                       <Button
+                      onClick={()=>payNow()}
                         size="lg"
                         className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white shadow-lg"
                       >
@@ -277,14 +313,19 @@ const MentorDetails = () => {
                           <MessageCircle className="h-4 w-4 mr-2" />
                           Send Message
                         </Button>
-                        <Button
-                          variant="outline"
-                          size="lg"
-                          className="border-blue-500 text-blue-600 hover:bg-blue-50"
+                        <a
+                          href={`tel:${mentorData.phone}`}
+                          className=" lg:text-md text-[10px]"
                         >
-                          <MessageCircle className="h-4 w-4 mr-2" />
-                          Call
-                        </Button>
+                          <Button
+                            variant="outline"
+                            size="lg"
+                            className="border-blue-500 text-blue-600 hover:bg-blue-50"
+                          >
+                            <MessageCircle className="h-4 w-4 mr-2" />
+                            Call
+                          </Button>
+                        </a>
                       </div>
                     </div>
                   </div>
@@ -292,7 +333,7 @@ const MentorDetails = () => {
               </div>
             </CardContent>
           </Card>
-
+           <LoginPopup isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
           {/* Main Content Tabs */}
           <Tabs
             value={activeTab}

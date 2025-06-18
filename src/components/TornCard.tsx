@@ -45,43 +45,6 @@ const TornCard = ({ mentor }) => {
     navigate(`/mentors/${mentor.fullName}`);
   };
 
-  const formatSalary = (amount: number): string => {
-    if (amount >= 5000) {
-      return `${(amount + 1000) / 1000}k`;
-    }
-    if (amount < 5000) {
-      return `${(amount + 500) / 1000}k`;
-    }
-    return amount.toString();
-  };
-
-  const redirectToPhonePe = (redirectUrl) => {
-    const form = document.createElement("form");
-    form.method = "POST";
-    form.action = redirectUrl;
-    form.style.display = "none";
-
-    document.body.appendChild(form);
-    form.submit();
-  };
-
-  const initiatePayment = async () => {
-    const res = await axios.post(
-      "https://homentor-backend.onrender.com/api/create-order",
-      {
-        name: "Pradhumn",
-        email: "user@example.com",
-        phone: "9999999999",
-        amount: 100, // ₹100
-      }
-    );
-
-    console.log("PhonPe response", res.data);
-    const redirectUrl = res.data.redirectUrl;
-    // window.location.href = redirectUrl
-    // redirectToPhonePe(redirectUrl);
-  };
-  const [loginWait, setLoginWait] = useState(false)
   const userNumber = localStorage.getItem("usernumber");
   const payNow = async (fees) => {
     if (!userNumber) {
