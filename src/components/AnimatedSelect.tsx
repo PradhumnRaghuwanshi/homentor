@@ -23,9 +23,10 @@ const AnimatedSelect: React.FC<AnimatedSelectProps> = ({
   };
 
   return (
-    <Select value={value} onValueChange={handleValueChange}>
+    <Select  onValueChange={handleValueChange}>
       <SelectTrigger>
         <SelectValue 
+          
           placeholder={
             !hasValue ? (
               <AnimatedSelectPlaceholder text={placeholder} />

@@ -130,11 +130,11 @@ const TornCard = ({ mentor }) => {
 
       <div className="w-[100%] lg:block hidden h-[20vh] bg-black absolute z-[100] opacity-30 mentor-bg"></div>
 
-      <div className="lg:text-lg text-white text-sm lg:block hidden font-bold mentor-content absolute z-[10] bottom-[16vh]">
+      <div className="lg:text-lg text-white text-sm lg:block hidden font-bold mentor-content absolute z-[40] bottom-[16vh]">
         {mentor.fullName}
       </div>
 
-      <div className="lg:text-lg text-sm text-white lg:hidden font-bold mentor-content absolute z-[10] bottom-[8vh]">
+      <div className="lg:text-lg text-sm text-white lg:hidden font-bold mentor-content absolute z-[40] bottom-[8vh]">
         {mentor.fullName}
       </div>
       <div className="absolute z-[1000] lg:flex hidden gap-10 bottom-[10vh]">

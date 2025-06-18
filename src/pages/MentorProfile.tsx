@@ -145,7 +145,7 @@ const MentorDetails = () => {
   ];
   const { id } = useParams();
   const [activeTab, setActiveTab] = useState("overview");
-  console.log(subjects);
+  console.log(mentorData);
   return (
     <Layout>
       <div className="min-h-screen bg-gray-50 mt-[7vh]">
@@ -196,9 +196,14 @@ const MentorDetails = () => {
                         {mentorData.fullName}
                       </h1>
                       {/* <p className="text-xl text-blue-700 mb-2 font-semibold">{teacherData.title}</p> */}
-                      <p className="text-lg text-slate-600 mb-2">
-                        {mentorData?.qualifications?.specialization}
-                      </p>
+                    
+                      {mentorData?.qualifications?.display ? 
+                        <p className="text-lg text-slate-600 mb-2">
+                          {mentorData?.qualifications?.specialization}
+                        </p>
+                       : 
+                        <p className="text-lg text-slate-600 mb-2 capitalize">{mentorData?.qualifications?.highestQualification}</p>
+                      }
 
                       <div className="flex flex-wrap items-center gap-4 text-sm text-slate-600 mb-4">
                         <div className="flex items-center gap-1 bg-blue-50 border text-blue-700 hover:bg-blue-100 border-blue-500 py-1 px-2 rounded-[10px]">
