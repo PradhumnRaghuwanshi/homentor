@@ -130,11 +130,11 @@ const TornCard = ({ mentor }) => {
 
       <div className="w-[100%] lg:block hidden h-[20vh] bg-black absolute z-[100] opacity-30 mentor-bg"></div>
 
-      <div className="lg:text-lg text-white text-sm lg:block hidden font-bold mentor-content absolute z-[100] bottom-[16vh]">
+      <div className="lg:text-lg text-white text-sm lg:block hidden font-bold mentor-content absolute z-[10] bottom-[16vh]">
         {mentor.fullName}
       </div>
 
-      <div className="lg:text-lg text-sm text-white lg:hidden font-bold mentor-content absolute z-[100] bottom-[8vh]">
+      <div className="lg:text-lg text-sm text-white lg:hidden font-bold mentor-content absolute z-[10] bottom-[8vh]">
         {mentor.fullName}
       </div>
       <div className="absolute z-[1000] lg:flex hidden gap-10 bottom-[10vh]">
@@ -165,7 +165,7 @@ const TornCard = ({ mentor }) => {
       {/* Login Popup */}
       <LoginPopup isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
 
-      <div className="absolute z-[100] lg:hidden flex justify-between w-full items-center  gap-1 bottom-[1vh] px-2">
+      <div className="absolute z-[30] lg:hidden flex justify-between w-full items-center  gap-1 bottom-[1vh] px-2">
         <button
           onClick={() => handleChatClick()}
           className="border bg-blue-opacity px-1 py-0.5 border-mentor-blue-500 rounded-[2px] bg-mentor-blue-500 text-white mentor-icons1-sm from-homentor-chat to-homentor-chatHover hover:from-homentor-chatHover hover:to-homentor-chat transition-all duration-300 flex items-center justify-center overflow-hidden "
