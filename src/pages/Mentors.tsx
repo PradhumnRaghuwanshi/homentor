@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
+
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -16,6 +17,7 @@ import SearchBar from "@/components/SearchBar";
 import AnimatedSelect from "@/components/AnimatedSelect";
 import axios from "axios";
 import StateData from "../StateData.json";
+import PriceSlider from "@/components/PriceSlider";
 
 const classSubjects = {
   "1": [
@@ -123,6 +125,7 @@ const classSubjects = {
 };
 
 const Mentors = () => {
+  
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -137,7 +140,7 @@ const Mentors = () => {
   // Filter states
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSubject, setSelectedSubject] = useState([]);
-  const [priceRange, setPriceRange] = useState([0, 100]);
+  const [priceRange, setPriceRange] = useState([0, 20000]);
   const [sortBy, setSortBy] = useState("rating");
   const [inPersonOnly, setInPersonOnly] = useState(false);
   const [selectedState, setSelectedState] = useState<string | undefined>(
@@ -667,7 +670,7 @@ const Mentors = () => {
   const resetFilters = () => {
     setSearchTerm("");
     setSelectedSubject([]);
-    setPriceRange([0, 100]);
+    setPriceRange([0, 20000]);
     setSortBy("rating");
     setInPersonOnly(false);
     setSelectedCity(undefined);
@@ -745,7 +748,7 @@ const Mentors = () => {
     };
   }, []);
 
-  // const [priceRange, setPriceRange] = useState<[number, number]>([1000, 5000]);
+  // const [priceRange, setPriceRange] = useState<[number, number]>([1000, 20000]);
   const [minLocked, setMinLocked] = useState(false);
   const [maxLocked, setMaxLocked] = useState(false);
 
@@ -872,7 +875,7 @@ const Mentors = () => {
             )}
 
             <div className="px-4 py-3 bg-white rounded-xl shadow-sm border mt-4">
-              <div className="flex items-center justify-between">
+              {/* <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-700 font-medium">
                   ₹{priceRange[0]}
                 </span>
@@ -882,18 +885,9 @@ const Mentors = () => {
                 <span className="text-sm text-gray-700 font-medium">
                   ₹{priceRange[1]}
                 </span>
-              </div>
-
-              <Slider
-                value={priceRange}
-                onValueChange={(value) =>
-                  setPriceRange(value as [number, number])
-                }
-                min={0}
-                max={10000}
-                step={100}
-                className="mt-4"
-              />
+              </div> */}
+ <PriceSlider value={priceRange} onChange={setPriceRange} />
+              
             </div>
 
             <div className="w-full mb-8">
