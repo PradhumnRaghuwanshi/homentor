@@ -20,6 +20,8 @@ import StateData from "../StateData.json";
 import PriceSlider from "@/components/PriceSlider";
 import StateSelector from "@/components/StateSelector";
 import MultiSubjectSelect from "@/comp/MultiSubjectSelect ";
+import ClassSelect from "@/comp/ClassSelect";
+import StateSelect from "@/comp/StateSelect";
 
 const classSubjects = {
   "1": [
@@ -726,6 +728,7 @@ const Mentors = () => {
     setSortBy("rating");
     setInPersonOnly(false);
     setSelectedCity(undefined);
+    setSelectedState(undefined)
     setSelectedArea(undefined);
     setSelectedClass(undefined);
   };
@@ -821,7 +824,7 @@ const Mentors = () => {
               />
 
               {/* Class */}
-              
+              <ClassSelect selectedSubjects={selectedClass} handleClassChange={handleClassChange}></ClassSelect>
               {/* <AnimatedSelect
                 onValueChange={handleClassChange}
                 placeholder="Select Class"
@@ -845,6 +848,7 @@ const Mentors = () => {
                 ))}
               </AnimatedSelect> */}
 
+              
               {/* Subject */}
               <MultiSubjectSelect
                 selectedSubjects={selectedSubject}
@@ -878,12 +882,8 @@ const Mentors = () => {
             </div>
 
             <div className="flex gap-4 items-center">
-              {/* <select>
-                {allStates.map((state) =>
-                <option>{state}</option>
-                )}
-              </select> */}
-
+              
+              <StateSelect selectedState={selectedState} allStates={allStates} setSelectedState={setSelectedState}></StateSelect>
               {/* <Select  onValueChange={setSelectedState}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select State" />
