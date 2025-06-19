@@ -280,12 +280,12 @@ const MentorDetails = () => {
                         About {mentorData.fullName.split(" ")[0]}{" "}
                         {mentorData.gender == "female" ? "mam" : "sir"}
                       </CardTitle>
-                      {!teacherData?.adminBriefVisible ? 
+                      {!mentorData?.adminBriefVisible ? 
                       <p className="text-slate-700 leading-relaxed  w-[90%] text-sm">
-                        {teacherData?.brief}
+                        {mentorData?.brief}
                       </p>:
                       <p className="text-slate-700 leading-relaxed  w-[90%] text-sm">
-                        {teacherData?.adminBrief}
+                        {mentorData?.adminBrief}
                       </p>}
                     </div>
                     <div className="flex flex-col gap-3 lg:min-w-[200px]">

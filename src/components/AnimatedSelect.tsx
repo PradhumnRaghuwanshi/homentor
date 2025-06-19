@@ -36,6 +36,7 @@ const AnimatedSelect: React.FC<AnimatedSelectProps> = ({
       <SelectContent>
         {children}
       </SelectContent>
+      
     </Select>
   );
 };

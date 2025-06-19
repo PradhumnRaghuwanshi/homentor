@@ -18,6 +18,8 @@ import AnimatedSelect from "@/components/AnimatedSelect";
 import axios from "axios";
 import StateData from "../StateData.json";
 import PriceSlider from "@/components/PriceSlider";
+import StateSelector from "@/components/StateSelector";
+import MultiSubjectSelect from "@/comp/MultiSubjectSelect ";
 
 const classSubjects = {
   "1": [
@@ -125,7 +127,6 @@ const classSubjects = {
 };
 
 const Mentors = () => {
-  
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -158,7 +159,58 @@ const Mentors = () => {
   const [selectedLocation, setSelectedLocation] = useState("");
 
   const allStates = Object.keys(StateData);
+  const CustomSelect = ({
+    options,
+    selected,
+    onChange,
+    placeholder = "Select State",
+  }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const selectRef = useRef(null);
 
+    // Close dropdown if clicked outside
+    useEffect(() => {
+      const handleClickOutside = (event) => {
+        if (selectRef.current && !selectRef.current.contains(event.target)) {
+          setIsOpen(false);
+        }
+      };
+      document.addEventListener("mousedown", handleClickOutside);
+      return () =>
+        document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    return (
+      <div className="relative w-full max-w-xs" ref={selectRef}>
+        <button
+          type="button"
+          className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white text-left focus:outline-none shadow-sm hover:border-blue-400 transition"
+          onClick={() => setIsOpen((prev) => !prev)}
+        >
+          {selected || <span className="text-gray-400">{placeholder}</span>}
+        </button>
+
+        {isOpen && (
+          <ul className="absolute mt-1 z-50 w-full bg-white border border-gray-300 rounded-lg shadow-md max-h-60 overflow-auto">
+            {options.map((state) => (
+              <li
+                key={state}
+                onClick={() => {
+                  onChange(state);
+                  setIsOpen(false);
+                }}
+                className={`px-4 py-2 cursor-pointer hover:bg-blue-100 ${
+                  selected === state ? "bg-blue-500 text-white" : ""
+                }`}
+              >
+                {state}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    );
+  };
   // Step 1: Get user location
   useEffect(() => {
     if ("geolocation" in navigator) {
@@ -762,12 +814,15 @@ const Mentors = () => {
 
           <div className="space-y-3">
             <div className="flex gap-4 items-center">
+              {/* 1 */}
               <SearchBar
                 setSearchTerm={setSearchTerm}
                 searchTerm={searchTerm}
               />
 
-              <AnimatedSelect
+              {/* Class */}
+              
+              {/* <AnimatedSelect
                 onValueChange={handleClassChange}
                 placeholder="Select Class"
                 value={selectedClass}
@@ -788,9 +843,15 @@ const Mentors = () => {
                 ].map((i) => (
                   <SelectItem value={`${i}`}>{`class ${i}`}</SelectItem>
                 ))}
-              </AnimatedSelect>
+              </AnimatedSelect> */}
 
-              <AnimatedSelect
+              {/* Subject */}
+              <MultiSubjectSelect
+                selectedSubjects={selectedSubject}
+                subjects={subjects}
+                setSelectedSubjects={setSelectedSubject}
+              ></MultiSubjectSelect>
+              {/* <AnimatedSelect
                 onValueChange={(subject) => {
                   if (selectedSubject.includes(subject)) {
                     setSelectedSubject(
@@ -813,7 +874,7 @@ const Mentors = () => {
                     </SelectItem>
                   </div>
                 ))}
-              </AnimatedSelect>
+              </AnimatedSelect> */}
             </div>
 
             <div className="flex gap-4 items-center">
@@ -822,7 +883,8 @@ const Mentors = () => {
                 <option>{state}</option>
                 )}
               </select> */}
-              <Select onValueChange={setSelectedState}>
+
+              {/* <Select  onValueChange={setSelectedState}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select State" />
                 </SelectTrigger>
@@ -831,7 +893,7 @@ const Mentors = () => {
                     <SelectItem value={`${state}`}>{state}</SelectItem>
                   ))}
                 </SelectContent>
-              </Select>
+              </Select> */}
 
               <Select
                 disabled={!selectedState} // disable until a state is selected
@@ -886,8 +948,7 @@ const Mentors = () => {
                   ₹{priceRange[1]}
                 </span>
               </div> */}
- <PriceSlider value={priceRange} onChange={setPriceRange} />
-              
+              <PriceSlider value={priceRange} onChange={setPriceRange} />
             </div>
 
             <div className="w-full mb-8">
