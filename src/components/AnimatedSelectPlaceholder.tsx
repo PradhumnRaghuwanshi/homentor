@@ -10,7 +10,8 @@ const AnimatedSelectPlaceholder: React.FC<AnimatedSelectPlaceholderProps> = ({
   text, 
   className = "" 
 }) => {
-  const animatedText = useTypingAnimation(text, 150, 5000);
+
+const animatedText = useTypingAnimation(text, 150, 5000);
   
   return (
     <span className={`${className}`}>

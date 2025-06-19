@@ -11,7 +11,7 @@ interface AnimatedSelectProps {
 
 const AnimatedSelect: React.FC<AnimatedSelectProps> = ({ 
   onValueChange, 
-  placeholder = "Select Class",
+  placeholder,
   value,
   children 
 }) => {
@@ -23,13 +23,12 @@ const AnimatedSelect: React.FC<AnimatedSelectProps> = ({
   };
 
   return (
-    <Select  onValueChange={handleValueChange}>
+    <Select value={value} onValueChange={handleValueChange}>
       <SelectTrigger>
         <SelectValue 
-          
           placeholder={
-            !hasValue ? (
-              <AnimatedSelectPlaceholder text={placeholder} />
+            !value ? (
+              <AnimatedSelectPlaceholder  key={Date.now()} text={placeholder} />
             ) : undefined
           } 
         />

@@ -559,7 +559,7 @@ const Mentors = () => {
     let result = [...mentorsData];
     console.log(selectedSubject);
     // Filter by Class
-    if (selectedClass) {
+    if (selectedClass && selectedSubject.length == 0) {
       result = result.filter((mentor) => {
         const schoolClasses = Object.keys(
           mentor?.teachingPreferences?.school || {}
@@ -617,20 +617,34 @@ const Mentors = () => {
     // Filter by subject
     if (selectedSubject.length > 0) {
       result = result.filter((mentor) => {
-        // Safe check: teachingPreferences and school data exist
         const schoolPrefs = mentor.teachingPreferences?.school;
+        if (!schoolPrefs) return false;
 
-        if (!schoolPrefs) return false; // If no school preferences, skip this mentor
-        // const allSubjects: string[] = [];
-        let subLength = selectedSubject.length;
-        const classWithSubjects = Object.entries(
-          mentor.teachingPreferences?.school
-        ).find((arr) => arr[0].includes(selectedClass));
+        let subjectsForSelectedClass = [];
+
+        // Loop through all class keys
+        for (const [key, subjects] of Object.entries(schoolPrefs)) {
+          const match = key.match(/\d+/g);
+          if (!match) continue;
+
+          const numbers = match.map(Number);
+          const min = numbers[0];
+          const max = numbers[1] || numbers[0];
+
+          // Check if selectedClass falls within this range
+          if (+selectedClass >= min && +selectedClass <= max) {
+            subjectsForSelectedClass = subjects;
+            break; // Found the matching class range, no need to check more
+          }
+        }
+
+        // Check if all selected subjects are present in the found subjects
         return selectedSubject.every((subject) =>
-          classWithSubjects[1].includes(subject)
+          subjectsForSelectedClass.includes(subject)
         );
       });
     }
+
     // Filter by city
     if (selectedCity) {
       result = result.filter(
@@ -800,6 +814,11 @@ const Mentors = () => {
             </div>
 
             <div className="flex gap-4 items-center">
+              {/* <select>
+                {allStates.map((state) =>
+                <option>{state}</option>
+                )}
+              </select> */}
               <Select onValueChange={setSelectedState}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select State" />
