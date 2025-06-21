@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import {
   Star,
@@ -170,6 +170,10 @@ const MentorDetails = () => {
     //   const redirectUrl = res.data.redirectUrl;
     // redirectToPhonePe(redirectUrl);
   };
+  const targetDivRef = useRef(null);
+  const handleScroll = () => {
+    targetDivRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
   return (
     <Layout>
       <div className="min-h-screen bg-gray-50 mt-[7vh]">
@@ -228,11 +232,13 @@ const MentorDetails = () => {
 
                       {mentorData?.qualifications?.display ? (
                         <p className="text-lg text-slate-600 mb-2">
-                          Qualification - {mentorData?.qualifications?.specialization}
+                          Qualification -{" "}
+                          {mentorData?.qualifications?.specialization}
                         </p>
                       ) : (
                         <p className="text-lg text-slate-600 mb-2 capitalize">
-                         Qualification - {mentorData?.qualifications?.highestQualification}
+                          Qualification -{" "}
+                          {mentorData?.qualifications?.highestQualification}
                         </p>
                       )}
 
@@ -241,6 +247,11 @@ const MentorDetails = () => {
                           <label>Rating -</label>
                           <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                           {mentorData.rating}
+                        </div>
+                        <div className="flex items-center gap-1 bg-blue-50 border text-blue-700 hover:bg-blue-100 border-blue-500 py-1 px-2 rounded-[10px]">
+                          <label>Experience -</label>
+
+                          {mentorData.experience}
                         </div>
                         <div className="flex items-center gap-2">
                           {Object.keys(mentorData.teachingModes).map((i) => (
@@ -266,6 +277,7 @@ const MentorDetails = () => {
                         )}
                         {subjects.length > 4 && (
                           <Badge
+                            onClick={handleScroll}
                             variant="outline"
                             className="border-yellow-400 text-yellow-700"
                           >
@@ -274,19 +286,21 @@ const MentorDetails = () => {
                         )}
                       </div>
                     </div>
-                    <div className="bg-blue-50 border flex-col gap-2 mb-2 border-blue-200 flex items-center py-2 rounded-[10px] justify-center">
+                    <div className="bg-blue-50 border flex-col lg:hidden gap-2 mb-2 border-blue-200 flex items-center py-2 rounded-[10px] justify-center">
                       <CardTitle className="text-slate-800 text-md flex items-center gap-2 w-[90%]">
                         <Home className="h-4 w-4 text-blue-600" />
                         About {mentorData.fullName.split(" ")[0]}{" "}
                         {mentorData.gender == "female" ? "mam" : "sir"}
                       </CardTitle>
-                      {!mentorData?.adminBriefVisible ? 
-                      <p className="text-slate-700 leading-relaxed  w-[90%] text-sm">
-                        {mentorData?.brief}
-                      </p>:
-                      <p className="text-slate-700 leading-relaxed  w-[90%] text-sm">
-                        {mentorData?.adminBrief}
-                      </p>}
+                      {!mentorData?.adminBriefVisible ? (
+                        <p className="text-slate-700 leading-relaxed  w-[90%] text-sm">
+                          {mentorData?.brief}
+                        </p>
+                      ) : (
+                        <p className="text-slate-700 leading-relaxed  w-[90%] text-sm">
+                          {mentorData?.adminBrief}
+                        </p>
+                      )}
                     </div>
                     <div className="flex flex-col gap-3 lg:min-w-[200px]">
                       <div className="text-right lg:text-left">
@@ -297,7 +311,7 @@ const MentorDetails = () => {
                         <p className="text-sm text-slate-600">per month</p>
                       </div>
                       <Button
-                      onClick={()=>payNow()}
+                        onClick={() => payNow()}
                         size="lg"
                         className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white shadow-lg"
                       >
@@ -333,7 +347,10 @@ const MentorDetails = () => {
               </div>
             </CardContent>
           </Card>
-           <LoginPopup isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
+          <LoginPopup
+            isOpen={isLoginOpen}
+            onClose={() => setIsLoginOpen(false)}
+          />
           {/* Main Content Tabs */}
           <Tabs
             value={activeTab}
@@ -401,7 +418,7 @@ const MentorDetails = () => {
                     </CardContent>
                   </Card>
 
-                  <Card className="shadow-lg border-0">
+                  <Card ref={targetDivRef} className="shadow-lg border-0">
                     <CardHeader className="bg-white border-b border-slate-100">
                       <CardTitle className="text-slate-800">
                         Subjects & Specializations
