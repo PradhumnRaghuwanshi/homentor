@@ -6,14 +6,11 @@ const PriceSlider = ({ value, onChange }: {
   onChange: (val: number[]) => void;
 }) => {
   return (
-    <div className="w-full max-w-md mx-auto px-4 py-4">
-      <label className="block mb-2 font-semibold text-gray-700">
-        Filter by Price: ₹{value[0]} - ₹{value[1]}
-      </label>
+    <div className="w-full max-w-md mx-auto ">
       <Slider.Root
         className="relative flex items-center select-none touch-none w-full h-6"
         min={0}
-        max={5000}
+        max={20000}
         step={100}
         value={value}
         onValueChange={onChange}

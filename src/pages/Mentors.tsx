@@ -626,35 +626,29 @@ const Mentors = () => {
           const match = key.match(/\d+/g); // extract all numbers from keys like "class-9-10"
           if (!match) return false;
           const numbers = match.map(Number); // convert to [9, 10] or [12]
-
           // if the class is in a range like class-9-10, check if selectedClass is in range
           if (numbers.length === 2) {
             return +selectedClass >= numbers[0] && +selectedClass <= numbers[1];
           }
-
           // if single class like class-12
           return numbers[0] === +selectedClass;
         });
       });
     }
-
     // Filter by search term
     if (searchTerm) {
       const terms = searchTerm.toLowerCase().trim().split(/\s+/);
-
       result = result.filter((mentor) => {
         const name = mentor.fullName?.toLowerCase() || "";
         const city = mentor.location?.city?.toLowerCase() || "";
         const area = mentor.location?.area?.toLowerCase() || "";
         const state = mentor.location?.state?.toLowerCase() || "";
-
         // Gather all subjects from all classes into a flat list
         const subjects = Object.values(
           mentor?.teachingPreferences?.school || {}
         )
           .flat()
           .map((subject) => subject.toLowerCase());
-
         // Also extract class keys to match class numbers like "9", "10", "12"
         const classKeys = Object.keys(
           mentor?.teachingPreferences?.school || {}
@@ -701,7 +695,6 @@ const Mentors = () => {
         );
       });
     }
-
     // Filter by city
     if (selectedCity) {
       result = result.filter(
@@ -709,10 +702,24 @@ const Mentors = () => {
           mentor.location?.city?.toLowerCase() === selectedCity.toLowerCase()
       );
     }
-
     // Filter by area
     if (selectedLocation) {
       result = filterAndSortMentors(result, userLocation);
+    }
+
+    // --- ✅ New: Monthly Price Filter ---
+    if (priceRange[0] != 0 && priceRange[1] != 20000) {
+      result = result.filter((mentor) => {
+        const price = parseInt(
+          mentor?.teachingModes?.homeTuition?.monthlyPrice || "0",
+          10
+        );
+        return (
+          mentor?.teachingModes?.homeTuition?.selected &&
+          price >= priceRange[0] &&
+          price <= priceRange[1]
+        );
+      });
     }
 
     console.log(priceRange);
@@ -728,7 +735,7 @@ const Mentors = () => {
     setSortBy("rating");
     setInPersonOnly(false);
     setSelectedCity(undefined);
-    setSelectedState(undefined)
+    setSelectedState(undefined);
     setSelectedArea(undefined);
     setSelectedClass(undefined);
   };
@@ -803,7 +810,6 @@ const Mentors = () => {
     };
   }, []);
 
-  // const [priceRange, setPriceRange] = useState<[number, number]>([1000, 20000]);
   const [minLocked, setMinLocked] = useState(false);
   const [maxLocked, setMaxLocked] = useState(false);
 
@@ -811,10 +817,6 @@ const Mentors = () => {
     <Layout>
       <div className="bg-gray-50 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-xl text-center text-mentor-yellow-500 my-2 font-bold">
-            Top Tutors's of {locationName}
-          </p>
-
           <div className="space-y-3">
             <div className="flex gap-4 items-center">
               {/* 1 */}
@@ -824,76 +826,25 @@ const Mentors = () => {
               />
 
               {/* Class */}
-              <ClassSelect selectedSubjects={selectedClass} handleClassChange={handleClassChange}></ClassSelect>
-              {/* <AnimatedSelect
-                onValueChange={handleClassChange}
-                placeholder="Select Class"
-                value={selectedClass}
-              >
-                {[
-                  "1",
-                  "2",
-                  "3",
-                  "4",
-                  "5",
-                  "6",
-                  "7",
-                  "8",
-                  "9",
-                  "10",
-                  "11",
-                  "12",
-                ].map((i) => (
-                  <SelectItem value={`${i}`}>{`class ${i}`}</SelectItem>
-                ))}
-              </AnimatedSelect> */}
+              <ClassSelect
+                selectedSubjects={selectedClass}
+                handleClassChange={handleClassChange}
+              ></ClassSelect>
 
-              
               {/* Subject */}
               <MultiSubjectSelect
                 selectedSubjects={selectedSubject}
                 subjects={subjects}
                 setSelectedSubjects={setSelectedSubject}
               ></MultiSubjectSelect>
-              {/* <AnimatedSelect
-                onValueChange={(subject) => {
-                  if (selectedSubject.includes(subject)) {
-                    setSelectedSubject(
-                      selectedSubject.filter((item) => item !== subject)
-                    );
-                  } else {
-                    setSelectedSubject([...selectedSubject, subject]);
-                  }
-                }}
-                placeholder="Select Subject"
-              >
-                {subjects.map((subject) => (
-                  <div className="flex">
-                    <input
-                      type="checkbox"
-                      checked={selectedSubject.includes(subject)}
-                    ></input>
-                    <SelectItem key={subject} value={subject}>
-                      {subject}
-                    </SelectItem>
-                  </div>
-                ))}
-              </AnimatedSelect> */}
             </div>
 
             <div className="flex gap-4 items-center">
-              
-              <StateSelect selectedState={selectedState} allStates={allStates} setSelectedState={setSelectedState}></StateSelect>
-              {/* <Select  onValueChange={setSelectedState}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select State" />
-                </SelectTrigger>
-                <SelectContent>
-                  {allStates.map((state) => (
-                    <SelectItem value={`${state}`}>{state}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select> */}
+              <StateSelect
+                selectedState={selectedState}
+                allStates={allStates}
+                setSelectedState={setSelectedState}
+              ></StateSelect>
 
               <Select
                 disabled={!selectedState} // disable until a state is selected
@@ -937,7 +888,7 @@ const Mentors = () => {
             )}
 
             <div className="px-4 py-3 bg-white rounded-xl shadow-sm border mt-4">
-              {/* <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-700 font-medium">
                   ₹{priceRange[0]}
                 </span>
@@ -947,10 +898,13 @@ const Mentors = () => {
                 <span className="text-sm text-gray-700 font-medium">
                   ₹{priceRange[1]}
                 </span>
-              </div> */}
+              </div>
               <PriceSlider value={priceRange} onChange={setPriceRange} />
             </div>
 
+            <p className="text-xl text-center text-mentor-yellow-500 my-2 font-bold">
+              Top Tutors's of {locationName}
+            </p>
             <div className="w-full mb-8">
               {/* <MentorCarousel mentors={filteredMentors} /> */}
             </div>

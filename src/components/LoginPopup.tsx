@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, Phone, ArrowLeft } from 'lucide-react';
 import PhoneInput from './PhoneInput';
 import OtpInput from './OtpInput';
+import axios from 'axios';
 
 interface LoginPopupProps {
   isOpen: boolean;
@@ -14,14 +15,27 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ isOpen, onClose }) => {
   const [step, setStep] = useState<LoginStep>('phone');
   const [phoneNumber, setPhoneNumber] = useState('');
   const[check, setCheck] = useState("")
+  const [verificationId, setVerificationId] = useState("");
 
   const handlePhoneSubmit = (phone: string) => {
-    console.log(phone)
+    try {
+    axios.post('https://homentor-backend.onrender.com/api/otp/send-otp', { mobile : phone }).then((res)=>{
+    console.log(res.data)
+    setVerificationId(res.data.verificationId)
     setPhoneNumber(phone);
     setStep('otp');
+    })
+    } catch (error) {
+          console.error("Error sending OTP:", error);
+    }
   };
 
-  const handleOtpVerify = (otp: string) => {
+  const handleOtpVerify = async(otp: string) => {
+     const res = await axios.post("https://homentor-backend.onrender.com/api/otp/verify-otp", {
+      verificationId,
+      code: otp,
+      phone: phoneNumber,
+    });
     localStorage.setItem("usernumber", phoneNumber)
     console.log('OTP verified:', otp, 'for phone:', phoneNumber);
     // Here you would typically verify the OTP with your backend

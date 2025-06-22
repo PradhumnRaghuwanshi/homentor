@@ -24,6 +24,7 @@ import { Progress } from "@/components/ui/progress";
 import Layout from "@/components/Layout";
 import axios from "axios";
 import LoginPopup from "@/components/LoginPopup";
+import BookingCard from "@/comp/BookingCard";
 
 // Mock teacher data for homentor platform
 const teacherData = {
@@ -281,7 +282,7 @@ const MentorDetails = () => {
                             variant="outline"
                             className="border-yellow-400 text-yellow-700"
                           >
-                            +{teacherData.subjects.length - 4} more
+                            +{subjects.length - 4} more
                           </Badge>
                         )}
                       </div>
@@ -302,46 +303,8 @@ const MentorDetails = () => {
                         </p>
                       )}
                     </div>
-                    <div className="flex flex-col gap-3 lg:min-w-[200px]">
-                      <div className="text-right lg:text-left">
-                        <p className="text-3xl font-bold text-yellow-600">
-                          Rs.{" "}
-                          {mentorData.teachingModes.homeTuition.monthlyPrice.toLocaleString()}
-                        </p>
-                        <p className="text-sm text-slate-600">per month</p>
-                      </div>
-                      <Button
-                        onClick={() => payNow()}
-                        size="lg"
-                        className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white shadow-lg"
-                      >
-                        <Calendar className="h-4 w-4 mr-2" />
-                        Book Now
-                      </Button>
-                      <div className="lg:flex hidden justify-between">
-                        <Button
-                          variant="outline"
-                          size="lg"
-                          className="border-blue-500 text-blue-600 hover:bg-blue-50"
-                        >
-                          <MessageCircle className="h-4 w-4 mr-2" />
-                          Send Message
-                        </Button>
-                        <a
-                          href={`tel:${mentorData.phone}`}
-                          className=" lg:text-md text-[10px]"
-                        >
-                          <Button
-                            variant="outline"
-                            size="lg"
-                            className="border-blue-500 text-blue-600 hover:bg-blue-50"
-                          >
-                            <MessageCircle className="h-4 w-4 mr-2" />
-                            Call
-                          </Button>
-                        </a>
-                      </div>
-                    </div>
+                    <BookingCard mentorData={mentorData} payNow={payNow}></BookingCard>
+                    
                   </div>
                 </div>
               </div>
