@@ -45,9 +45,9 @@ import StateData from "../StateData.json";
 
 const TutorRegistrationForm = () => {
   useEffect(() => {
-        window.scrollTo(0, 0);
-      }, []);
-    
+    window.scrollTo(0, 0);
+  }, []);
+
   const [selectedLocation, setSelectedLocation] = useState("");
 
   const allStates = Object.keys(StateData);
@@ -128,6 +128,7 @@ const TutorRegistrationForm = () => {
   };
 
   useEffect(() => {
+    // if (locationFetched) return;
     if (!mentorData.location.city || !window.google || !inputRef.current)
       return;
 
@@ -186,13 +187,15 @@ const TutorRegistrationForm = () => {
   const GOOGLE_API_KEY = "AIzaSyAb6ZthJEvNAczmOeuvFrnwEcMJjhlNpUk"; // secure this in .env for production
 
   const [showModal, setShowModal] = useState(true);
-  const [userLocation, setUserLocation] = useState({ lat: "", lon: "" });
+  const [userLocation, setUserLocation] = useState();
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const [locationFetched, setLocationFetched] = useState(false);
   const [currentLocation, setCurrentLocation] = useState({});
   const handleDetectLocation = () => {
+
     if ("geolocation" in navigator) {
+      setLocationFetched(true)
       navigator.geolocation.getCurrentPosition(
         async (position) => {
           const lat = position.coords.latitude;
@@ -226,7 +229,14 @@ const TutorRegistrationForm = () => {
                 lon: lon,
               },
             });
-            console.log(components);
+            setCurrentLocation({
+              area,
+              city,
+              state,
+              lat,
+              lon,
+            });
+            console.log(currentLocation);
           } catch (error) {
             console.warn("Geocoding error:", error);
           }
@@ -556,38 +566,6 @@ const TutorRegistrationForm = () => {
     updateFormData({ teachingPreferences: updatedPreferences });
   };
 
-  const handleDayTypeChange = (type: "weekdays" | "weekend") => {
-    setMentorData((prev) => ({
-      ...prev,
-      dayType: type,
-    }));
-  };
-  const handleDaySelection = (day: string, selected: boolean) => {
-    setMentorData((prev) => ({
-      ...prev,
-      availability: {
-        ...prev.availability,
-        [day]: {
-          ...prev.availability?.[day],
-          selected,
-          hours: selected ? prev.availability?.[day]?.hours || 1 : 0,
-        },
-      },
-    }));
-  };
-  const updateAvailabilityHours = (day: string, hours: number) => {
-    setMentorData((prev) => ({
-      ...prev,
-      availability: {
-        ...prev.availability,
-        [day]: {
-          ...prev.availability?.[day],
-          hours,
-        },
-      },
-    }));
-  };
-
   const handleSubjectChange = (
     levelId: string,
     classId: string,
@@ -656,13 +634,6 @@ const TutorRegistrationForm = () => {
     });
   };
 
-  const handleDayChange = (day: string, checked: boolean) => {
-    updateFormData({
-      availableDays: checked
-        ? [...mentorData.availableDays, day]
-        : mentorData.availableDays.filter((d) => d !== day),
-    });
-  };
   // ---------------------------Image/Video Upload------------------------------
   const [uploadingKey, setUploadingKey] = useState(null);
   const handleImageUpload = async (e, key) => {
@@ -711,7 +682,7 @@ const TutorRegistrationForm = () => {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-8">
+        <div onSubmit={handleSubmit} className="space-y-8">
           {/* Personal Information */}
           <Card className="border-mentor-blue-200 shadow-lg">
             <CardHeader className="bg-gradient-to-r from-mentor-blue-500 to-mentor-blue-600 text-white rounded-t-lg">
@@ -1157,7 +1128,9 @@ const TutorRegistrationForm = () => {
                     </SelectTrigger>
                     <SelectContent>
                       {allStates.map((state) => (
-                        <SelectItem value={`${state}`}>{state}</SelectItem>
+                        <SelectItem key={state} value={`${state}`}>
+                          {state}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -1169,8 +1142,7 @@ const TutorRegistrationForm = () => {
                   <Select
                     disabled={!mentorData.location.state} // disable until a state is selected
                     onValueChange={(value) => handleLocation("city", value)}
-                                        value={mentorData.location.city}
-
+                    value={mentorData.location.city}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select City" />
@@ -1178,8 +1150,10 @@ const TutorRegistrationForm = () => {
                     <SelectContent>
                       {mentorData.location.state &&
                         StateData[`${mentorData.location.state}`]?.map(
-                          (city) => (
-                            <SelectItem value={`${city}`}>{city}</SelectItem>
+                          (city, index) => (
+                            <SelectItem key={index} value={`${city}`}>
+                              {city}
+                            </SelectItem>
                           )
                         )}
                     </SelectContent>
@@ -1190,13 +1164,19 @@ const TutorRegistrationForm = () => {
                 <div>
                   <Label htmlFor="area">Area *</Label>
                   <div className="space-y-2">
-                    <input
-                                        value={mentorData.location.area}
-
-                      ref={inputRef}
-                      placeholder={`Type to search in ${mentorData.location.city}`}
-                      className="border px-3 py-2 rounded w-full"
-                    />
+                    {!locationFetched ? (
+                      <input
+                        // value={mentorData.location.area}
+                        ref={inputRef}
+                        placeholder={`Type to search in ${mentorData.location.city}`}
+                        className="border px-3 py-2 rounded w-full"
+                      />
+                    ) : (
+                      <input
+                        className="border px-3 py-2 rounded w-full"
+                        value={mentorData.location.area}
+                      ></input>
+                    )}
                   </div>
                 </div>
               </div>
@@ -1624,14 +1604,7 @@ const TutorRegistrationForm = () => {
               privacy policy.
             </p>
           </div>
-        </form>
-        {/* <Modal
-        isOpen={showModal}
-        onClose={() => setShowModal(false)}
-        title="Thank You!"
-      >
-        <p>Thank you for registration. Details will be shared with you soon.</p>
-      </Modal> */}
+        </div>
       </div>
     </div>
   );

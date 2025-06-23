@@ -9,7 +9,7 @@ const TutorApplicationPage: React.FC = () => {
   useEffect(() => {
       window.scrollTo(0, 0);
     }, []);
-  const [showForm, setShowForm] = useState(false);
+  const [showForm, setShowForm] = useState(true);
 
   return (
     <Layout>
