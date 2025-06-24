@@ -475,8 +475,7 @@ const [showThankYouModal, setShowThankYouModal] = useState(false);
       .post("https://homentor-backend.onrender.com/api/mentor", mentorData)
       .then((res) => {
         console.log("Form submitted:", mentorData);
-            setShowThankYouModal(true); // ✅ Show thank-you modal
-
+        setShowThankYouModal(true); // ✅ Show thank-you modal
         setIsLoading(false);
       })
       .catch((err) => console.log(err));
@@ -1617,19 +1616,14 @@ const [showThankYouModal, setShowThankYouModal] = useState(false);
             </p>
           </div>
           {showThankYouModal && (
-            <Modal
-              isOpen={showThankYouModal}
-              onClose={() => {
-                setShowThankYouModal(false);
-                navigate("/"); // ✅ Redirect to homepage
-              }}
-              title="🎉 Thank You!"
-            >
-              <p className="text-center text-lg text-gray-700 my-4">
+           <div className="h-[100vh] w-[100%] fixed top-[-5%] left-0 z-[1000] flex items-center justify-center">
+            <div className="h-[100vh] w-[100%] top-0 left-0 bg-black opacity-50 fixed"></div>
+            <div className="bg-white z-[50] w-[90%] relative h-auto px-2 py-4 rounded-sm">
+               <p className="text-center text-lg text-gray-700 ">
                 Your application has been submitted successfully. We’ll contact
                 you soon.
               </p>
-              <div className="text-center">
+              <div className="text-center ">
                 <Button
                   onClick={() => {
                     setShowThankYouModal(false);
@@ -1640,8 +1634,10 @@ const [showThankYouModal, setShowThankYouModal] = useState(false);
                   Okay
                 </Button>
               </div>
-            </Modal>
+            </div>
+          </div>
           )}
+          
         </div>
       </div>
     </div>

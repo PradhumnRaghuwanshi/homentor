@@ -25,7 +25,7 @@ const Navbar = () => {
   }, []);
 
   return (
-    <header className={`fixed w-full top-0 z-[10] transition-all duration-300 ${
+    <header className={`fixed w-full top-0 z-[50] transition-all duration-300 ${
       scrolled ? 'bg-white shadow-md py-2' : 'bg-transparent py-4'
     }`}>
       <div className="container-tight flex items-center justify-between">
