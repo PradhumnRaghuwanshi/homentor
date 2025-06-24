@@ -767,36 +767,88 @@ const Mentors = () => {
   const [details, setDetails] = useState<any>(null);
 
   useEffect(() => {
-    if (!selectedCity || !window.google || !inputRef.current) return;
+    const initializeAutocomplete = async () => {
+      if (!selectedCity || !window.google || !inputRef.current) return;
+
+      const fullAddress = `${selectedCity}, ${selectedState}, India`;
+      try {
+        const response = await fetch(
+          `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+            fullAddress
+          )}&key=AIzaSyAb6ZthJEvNAczmOeuvFrnwEcMJjhlNpUk`
+        );
+        const data = await response.json();
+        if (data.status !== "OK") {
+          console.warn("Failed to get bounds for city:", data.status);
+          return;
+        }
+        const cityLocation = data.results[0].geometry;
+
+        const bounds = new window.google.maps.LatLngBounds(
+          new window.google.maps.LatLng(
+            cityLocation.bounds?.southwest.lat ||
+              cityLocation.location.lat - 0.1,
+            cityLocation.bounds?.southwest.lng ||
+              cityLocation.location.lng - 0.1
+          ),
+          new window.google.maps.LatLng(
+            cityLocation.bounds?.northeast.lat ||
+              cityLocation.location.lat + 0.1,
+            cityLocation.bounds?.northeast.lng ||
+              cityLocation.location.lng + 0.1
+          )
+        );
+
+        const autocomplete = new window.google.maps.places.Autocomplete(
+          inputRef.current,
+          {
+            types: ["geocode"],
+            componentRestrictions: { country: "in" },
+            bounds,
+            strictBounds: true,
+          }
+        );
+
+        autocomplete.addListener("place_changed", () => {
+          const place = autocomplete.getPlace();
+          console.log(place);
+          setSelectedLocation(place["address_components"][3]?.long_name || "");
+          setDetails(place);
+        });
+      } catch (error) {
+        console.error("Error fetching geocode data:", error);
+      }
+    };
+    initializeAutocomplete();
 
     // Get coordinates of the selected city (you can use a fixed map or Geocoder API)
-    const cityBounds = {
-      // Example for Indore
-      north: 22.85,
-      south: 22.6,
-      east: 75.95,
-      west: 75.7,
-    };
+    // const cityBounds = {
+    //   // Example for Indore
+    //   north: 22.85,
+    //   south: 22.6,
+    //   east: 75.95,
+    //   west: 75.7,
+    // };
 
-    const autocomplete = new window.google.maps.places.Autocomplete(
-      inputRef.current,
-      {
-        types: ["geocode"],
-        componentRestrictions: { country: "in" },
-        bounds: new window.google.maps.LatLngBounds(
-          new window.google.maps.LatLng(cityBounds.south, cityBounds.west),
-          new window.google.maps.LatLng(cityBounds.north, cityBounds.east)
-        ),
-        strictBounds: true,
-      }
-    );
+    // const autocomplete = new window.google.maps.places.Autocomplete(
+    //   inputRef.current,
+    //   {
+    //     types: ["geocode"],
+    //     componentRestrictions: { country: "in" },
+    //     bounds: new window.google.maps.LatLngBounds(
+    //       new window.google.maps.LatLng(cityBounds.south, cityBounds.west),
+    //       new window.google.maps.LatLng(cityBounds.north, cityBounds.east)
+    //     ),
+    //     strictBounds: true,
+    //   }
+    // );
 
-    autocomplete.addListener("place_changed", () => {
-      const place = autocomplete.getPlace();
-      console.log(place);
-      setSelectedLocation(place["address_components"][3].long_name || "");
-      setDetails(place);
-    });
+    // autocomplete.addListener("place_changed", () => {
+    //   const place = autocomplete.getPlace();
+    //   console.log(place);
+    //   setSelectedLocation(place["address_components"][3].long_name || "");
+    //   setDetails(place);
+    // });
   }, [selectedCity]);
 
   useEffect(() => {
