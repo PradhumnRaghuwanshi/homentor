@@ -166,7 +166,7 @@ const TutorRegistrationForm = () => {
         ...mentorData,
         location: {
           ...mentorData.location,
-          area: place["address_components"][2].long_name || "",
+          area: place["address_components"].find((i)=> i.types.includes("sublocality_level_1")).long_name || "",
           lat: lat,
           lon: lon,
         },
@@ -177,13 +177,7 @@ const TutorRegistrationForm = () => {
   }, [mentorData.location.city]);
 const [showThankYouModal, setShowThankYouModal] = useState(false);
 
-  const states = Object.keys(locationsData);
-  const cities = mentorData.location.state
-    ? Object.keys(locationsData[mentorData.location.state])
-    : [];
-  const areas = mentorData.location.city
-    ? locationsData[mentorData.location.state]?.[mentorData.location.city] || []
-    : [];
+  
 
   const GOOGLE_API_KEY = "AIzaSyAb6ZthJEvNAczmOeuvFrnwEcMJjhlNpUk"; // secure this in .env for production
 
