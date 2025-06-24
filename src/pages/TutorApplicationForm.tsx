@@ -175,6 +175,7 @@ const TutorRegistrationForm = () => {
       // setDetails(place);
     });
   }, [mentorData.location.city]);
+const [showThankYouModal, setShowThankYouModal] = useState(false);
 
   const states = Object.keys(locationsData);
   const cities = mentorData.location.state
@@ -193,9 +194,8 @@ const TutorRegistrationForm = () => {
   const [locationFetched, setLocationFetched] = useState(false);
   const [currentLocation, setCurrentLocation] = useState({});
   const handleDetectLocation = () => {
-
     if ("geolocation" in navigator) {
-      setLocationFetched(true)
+      setLocationFetched(true);
       navigator.geolocation.getCurrentPosition(
         async (position) => {
           const lat = position.coords.latitude;
@@ -467,13 +467,17 @@ const TutorRegistrationForm = () => {
     });
   };
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
   const handleSubmit = (e: React.FormEvent) => {
-    // e.preventDefault();
-    console.log("HI")
+    setIsLoading(true);
+    console.log("HI");
     axios
       .post("https://homentor-backend.onrender.com/api/mentor", mentorData)
       .then((res) => {
         console.log("Form submitted:", mentorData);
+            setShowThankYouModal(true); // ✅ Show thank-you modal
+
+        setIsLoading(false);
         navigate("/");
       })
       .catch((err) => console.log(err));
@@ -1594,18 +1598,51 @@ const TutorRegistrationForm = () => {
           {/* Submit Button */}
           <div className="text-center">
             <Button
-            onClick={()=> handleSubmit()}
+              onClick={() => handleSubmit()}
               type="submit"
               size="lg"
               className="bg-gradient-to-r from-mentor-blue-600 to-mentor-yellow-500 hover:from-mentor-blue-700 hover:to-mentor-yellow-600 text-white px-12 py-3 text-lg font-semibold rounded-lg shadow-lg transform transition-all duration-200 hover:scale-105"
             >
-              Submit Application
+              {isLoading ? (
+                <>
+                  <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                  Submitting...
+                </>
+              ) : (
+                "Submit Application"
+              )}
             </Button>
             <p className="text-sm text-gray-500 mt-4">
               By submitting this form, you agree to our terms and conditions and
               privacy policy.
             </p>
           </div>
+          {showThankYouModal && (
+            <Modal
+              isOpen={showThankYouModal}
+              onClose={() => {
+                setShowThankYouModal(false);
+                navigate("/"); // ✅ Redirect to homepage
+              }}
+              title="🎉 Thank You!"
+            >
+              <p className="text-center text-lg text-gray-700 my-4">
+                Your application has been submitted successfully. We’ll contact
+                you soon.
+              </p>
+              <div className="text-center">
+                <Button
+                  onClick={() => {
+                    setShowThankYouModal(false);
+                    navigate("/"); // ✅ On "Okay" click
+                  }}
+                  className="mt-4"
+                >
+                  Okay
+                </Button>
+              </div>
+            </Modal>
+          )}
         </div>
       </div>
     </div>
