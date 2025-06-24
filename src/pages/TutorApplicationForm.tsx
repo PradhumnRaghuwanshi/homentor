@@ -478,7 +478,6 @@ const [showThankYouModal, setShowThankYouModal] = useState(false);
             setShowThankYouModal(true); // ✅ Show thank-you modal
 
         setIsLoading(false);
-        navigate("/");
       })
       .catch((err) => console.log(err));
   };
