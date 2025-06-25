@@ -22,6 +22,7 @@ import StateSelector from "@/components/StateSelector";
 import MultiSubjectSelect from "@/comp/MultiSubjectSelect ";
 import ClassSelect from "@/comp/ClassSelect";
 import StateSelect from "@/comp/StateSelect";
+import { Input } from "@/components/ui/input";
 
 const classSubjects = {
   "1": [
@@ -820,35 +821,6 @@ const Mentors = () => {
       }
     };
     initializeAutocomplete();
-
-    // Get coordinates of the selected city (you can use a fixed map or Geocoder API)
-    // const cityBounds = {
-    //   // Example for Indore
-    //   north: 22.85,
-    //   south: 22.6,
-    //   east: 75.95,
-    //   west: 75.7,
-    // };
-
-    // const autocomplete = new window.google.maps.places.Autocomplete(
-    //   inputRef.current,
-    //   {
-    //     types: ["geocode"],
-    //     componentRestrictions: { country: "in" },
-    //     bounds: new window.google.maps.LatLngBounds(
-    //       new window.google.maps.LatLng(cityBounds.south, cityBounds.west),
-    //       new window.google.maps.LatLng(cityBounds.north, cityBounds.east)
-    //     ),
-    //     strictBounds: true,
-    //   }
-    // );
-
-    // autocomplete.addListener("place_changed", () => {
-    //   const place = autocomplete.getPlace();
-    //   console.log(place);
-    //   setSelectedLocation(place["address_components"][3].long_name || "");
-    //   setDetails(place);
-    // });
   }, [selectedCity]);
 
   useEffect(() => {
@@ -876,7 +848,8 @@ const Mentors = () => {
                 setSearchTerm={setSearchTerm}
                 searchTerm={searchTerm}
               />
-
+              <Input placeholder="Enter Here..." value={searchTerm} onChange={(e)=> setSearchTerm(e.target.value)}></Input>
+              
               {/* Class */}
               <ClassSelect
                 selectedSubjects={selectedClass}

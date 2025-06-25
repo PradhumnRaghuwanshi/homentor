@@ -41,14 +41,7 @@ const Navbar = () => {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-6">
-          {/* <Link 
-            to="/" 
-            className={`text-gray-700 hover:text-homentor-blue transition-colors font-medium ${
-              location.pathname === '/' ? 'text-homentor-blue' : ''
-            }`}
-          >
-            Home
-          </Link> */}
+         
           <div className="relative group">
             <button className="flex items-center text-gray-700 hover:text-homentor-blue transition-colors font-medium">
               <Link to='/mentors'>Find Tutors</Link>
@@ -72,14 +65,7 @@ const Navbar = () => {
               </Link>
             </div>
           </div>
-          {/* <Link 
-            to="/how-it-works" 
-            className={`text-gray-700 hover:text-homentor-blue transition-colors font-medium ${
-              location.pathname === '/how-it-works' ? 'text-homentor-blue' : ''
-            }`}
-          >
-            How It Works
-          </Link> */}
+          
           <Link 
             to="/about-us" 
             className={`text-gray-700 hover:text-homentor-blue transition-colors font-medium ${
@@ -139,23 +125,24 @@ const Navbar = () => {
             >
               Find Tutors
             </Link>
+           
             <Link 
-              to="/how-it-works" 
-              className={`block px-4 py-2 rounded-lg ${
-                location.pathname === '/how-it-works' ? 'bg-homentor-lightBlue text-homentor-blue' : 'text-gray-700 hover:bg-gray-50'
-              }`}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              How It Works
-            </Link>
-            <Link 
-              to="/about" 
+              to="/about-us" 
               className={`block px-4 py-2 rounded-lg ${
                 location.pathname === '/about' ? 'bg-homentor-lightBlue text-homentor-blue' : 'text-gray-700 hover:bg-gray-50'
               }`}
               onClick={() => setIsMenuOpen(false)}
             >
               About Us
+            </Link>
+            <Link 
+              to="/contact-us" 
+              className={`block px-4 py-2 rounded-lg ${
+                location.pathname === '/about' ? 'bg-homentor-lightBlue text-homentor-blue' : 'text-gray-700 hover:bg-gray-50'
+              }`}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Contact Us
             </Link>
             <div className="border-t border-gray-100 pt-4 flex flex-col space-y-2 mt-4">
               <Link 
@@ -170,7 +157,7 @@ const Navbar = () => {
                 className="block px-4 py-2 bg-homentor-blue text-white hover:bg-homentor-darkBlue rounded-lg text-center shadow-soft"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Sign up
+                Join as Mentor
               </Link>
             </div>
           </div>

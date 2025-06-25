@@ -3,7 +3,7 @@ import React from 'react'
 function SearchBar({setSearchTerm, searchTerm}) {
   return (
     
-          <div className="relative flex  flex-wrap items-center">
+          <div className="relative lg:hidden flex flex-wrap items-center">
               {/* <!--Search icon--> */}
               <input value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} type="text" className="search-click z-40" name="" placeholder="search here..." />
               <span

@@ -6,7 +6,7 @@ const PriceSlider = ({ value, onChange }: {
   onChange: (val: number[]) => void;
 }) => {
   return (
-    <div className="w-full max-w-md mx-auto ">
+    <div className="w-full ">
       <Slider.Root
         className="relative flex items-center select-none touch-none w-full h-6"
         min={0}

@@ -58,16 +58,10 @@ const faqItems = [
 ];
 
 const Index = () => {
-  const [scrollY, setScrollY] = useState(0);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrollY(window.scrollY);
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+   useEffect(() => {
+      window.scrollTo(0, 0);
+    }, []);
 
   return (
     <Layout fullWidth={true}>

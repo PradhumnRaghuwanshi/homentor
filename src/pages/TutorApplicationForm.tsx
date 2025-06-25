@@ -810,7 +810,7 @@ const [showThankYouModal, setShowThankYouModal] = useState(false);
                           <div className="text-center">
                             <Upload className="h-6 w-6 mx-auto mb-2 text-gray-400" />
                             <p className="text-sm text-gray-600">
-                              Click to upload video
+                              Click to upload photo
                             </p>
                           </div>
                         )}
