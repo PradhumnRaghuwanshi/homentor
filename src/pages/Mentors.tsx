@@ -23,7 +23,7 @@ import MultiSubjectSelect from "@/comp/MultiSubjectSelect ";
 import ClassSelect from "@/comp/ClassSelect";
 import StateSelect from "@/comp/StateSelect";
 import { Input } from "@/components/ui/input";
-import { Award, Badge } from "lucide-react";
+import { Award, Badge, Users } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -517,8 +517,9 @@ const Mentors = () => {
     try {
       console.log("Fetching mentors...");
       const res = await axios.get(
-        "https://homentor-backend.onrender.com/api/mentor/gold-mentors"
+        "https://homentor-backend.onrender.com/api/mentor/gold-mentor"
       );
+        console.log("Gold Mentors", res.data.data)
 
       if (res.data && res.data.data) {
         setGoldMentors(res.data.data);
@@ -1007,6 +1008,18 @@ const Mentors = () => {
                   )
               )}
             </div>
+            {/* Silver Mentors Section */}
+        <div>
+          <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8">
+            <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-gray-400 to-gray-500 rounded-full flex items-center justify-center flex-shrink-0">
+              <Users className="w-3 h-3 sm:w-5 sm:h-5 text-white" />
+            </div>
+            <h2 className="text-xl sm:text-3xl font-bold text-gray-900">Silver Mentors</h2>
+            <Badge className="bg-gradient-to-r from-gray-400 to-gray-500 text-white text-xs hidden sm:inline-flex">
+              Standard
+            </Badge>
+          </div>
+        </div>
             <Dialog open={showAllGold} onOpenChange={setShowAllGold}>
               <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto ">
                 <DialogHeader>
@@ -1016,7 +1029,7 @@ const Mentors = () => {
                   </DialogTitle>
                 </DialogHeader>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                <div className="grid grid-cols-2 md:grid-cols-2 gap-4 mt-6">
                   {goldMentors.map((mentor) => (
                     <TornCard key={mentor.id} mentor={mentor} />
                   ))}
