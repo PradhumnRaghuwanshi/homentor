@@ -23,6 +23,13 @@ import MultiSubjectSelect from "@/comp/MultiSubjectSelect ";
 import ClassSelect from "@/comp/ClassSelect";
 import StateSelect from "@/comp/StateSelect";
 import { Input } from "@/components/ui/input";
+import { Award, Badge } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const classSubjects = {
   "1": [
@@ -505,6 +512,29 @@ const Mentors = () => {
       setLoader(false);
     }
   };
+  const [goldMentors, setGoldMentors] = useState([]);
+  const fetchGoldMentors = async () => {
+    try {
+      console.log("Fetching mentors...");
+      const res = await axios.get(
+        "https://homentor-backend.onrender.com/api/mentor/gold-mentors"
+      );
+
+      if (res.data && res.data.data) {
+        setGoldMentors(res.data.data);
+      } else {
+        console.warn("No data found in API response");
+        setGoldMentors([]);
+      }
+    } catch (err) {
+      console.error("Error fetching mentors:", err);
+      setGoldMentors([]);
+    } finally {
+    }
+  };
+  useEffect(() => {
+    fetchGoldMentors();
+  }, []);
 
   const getLatLonFromAddress = async (
     area: string,
@@ -834,8 +864,7 @@ const Mentors = () => {
     };
   }, []);
 
-  const [minLocked, setMinLocked] = useState(false);
-  const [maxLocked, setMaxLocked] = useState(false);
+  const [showAllGold, setShowAllGold] = useState(false);
 
   return (
     <Layout>
@@ -848,8 +877,12 @@ const Mentors = () => {
                 setSearchTerm={setSearchTerm}
                 searchTerm={searchTerm}
               />
-              <Input placeholder="Enter Here..." value={searchTerm} onChange={(e)=> setSearchTerm(e.target.value)}></Input>
-              
+              <Input
+                placeholder="Enter Here..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              ></Input>
+
               {/* Class */}
               <ClassSelect
                 selectedSubjects={selectedClass}
@@ -935,7 +968,61 @@ const Mentors = () => {
             </div>
 
             <SVGFilter />
+            <div className="mb-12 sm:mb-16">
+              <div className="flex items-center justify-between mb-6 sm:mb-8 gap-3">
+                <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                  <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Award className="w-3 h-3 sm:w-5 sm:h-5 text-white" />
+                  </div>
+                  <h2 className="text-xl sm:text-3xl font-bold text-gray-900 truncate">
+                    Gold Mentors
+                  </h2>
+                  <Badge className="bg-gradient-to-r from-yellow-400 to-yellow-500 text-white text-xs hidden sm:inline-flex">
+                    Premium
+                  </Badge>
+                </div>
 
+                {/* View More Button - Responsive positioning */}
+                {/* {isMobile && hiddenGoldMentors.length > 0 && ( */}
+                <Button
+                  onClick={() => setShowAllGold(true)}
+                  variant="outline"
+                  className="border-yellow-400 text-yellow-600 hover:bg-yellow-50 text-xs px-3 py-2 h-8 flex-shrink-0"
+                >
+                  <span className="">View More </span>
+                  {/* ({hiddenGoldMentors.length}) */}
+                </Button>
+                {/* )} */}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {goldMentors?.map(
+                (mentor, index) =>
+                  index <= 1 && (
+                    <TornCard
+                      key={mentor._id || mentor._id || index}
+                      mentor={mentor}
+                    />
+                  )
+              )}
+            </div>
+            <Dialog open={showAllGold} onOpenChange={setShowAllGold}>
+              <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto ">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2 text-xl sm:text-2xl">
+                    <Award className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-500" />
+                    More Gold Mentors
+                  </DialogTitle>
+                </DialogHeader>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                  {goldMentors.map((mentor) => (
+                    <TornCard key={mentor.id} mentor={mentor} />
+                  ))}
+                </div>
+              </DialogContent>
+            </Dialog>
             <div className="mt-8">
               {loader ? (
                 <div className="flex justify-center items-center py-16">
