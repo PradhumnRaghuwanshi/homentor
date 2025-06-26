@@ -1010,7 +1010,7 @@ const Mentors = () => {
             </div>
             {/* Silver Mentors Section */}
         <div>
-          <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8">
+          <div className="flex items-center gap-2 sm:gap-3 mt-6 sm:mb-8">
             <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-gray-400 to-gray-500 rounded-full flex items-center justify-center flex-shrink-0">
               <Users className="w-3 h-3 sm:w-5 sm:h-5 text-white" />
             </div>

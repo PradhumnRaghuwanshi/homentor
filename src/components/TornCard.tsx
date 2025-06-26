@@ -59,7 +59,7 @@ const TornCard = ({ mentor }) => {
       );
 
       console.log("PhonPe response", res.data);
-      window.location.href = res.data; // ← This tries to redirect after axios call
+      window.location.href = res.data.url; // ← This tries to redirect after axios call
     }
 
     //   const redirectUrl = res.data.redirectUrl;
