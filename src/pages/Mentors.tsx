@@ -740,7 +740,7 @@ const Mentors = () => {
     }
 
     // --- ✅ New: Monthly Price Filter ---
-    if (priceRange[0] != 0 && priceRange[1] != 20000) {
+    if ( priceRange[1] != 20000) {
       result = result.filter((mentor) => {
         const price = parseInt(
           mentor?.teachingModes?.homeTuition?.monthlyPrice || "0",
@@ -879,6 +879,7 @@ const Mentors = () => {
                 searchTerm={searchTerm}
               />
               <Input
+              className="hidden lg:block"
                 placeholder="Enter Here..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}

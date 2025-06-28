@@ -65,6 +65,13 @@ const TornCard = ({ mentor }) => {
     //   const redirectUrl = res.data.redirectUrl;
     // redirectToPhonePe(redirectUrl);
   };
+  const sendCallRequest = ()=>{
+    axios.post("https://homentor-backend.onrender.com/api/mentor-call", {
+      name: mentor.fullName,
+      phone: mentor.phone,
+      date : Date.now
+    })
+  }
   return (
     <div className="relative animate-shake origin-top w-[100%] flex overflow-hidden flex-col items-center bg-[papayawhip] rounded-lg  shadow-[0_0_20px_-5px_black]">
       {/* 📌 Pin (just like CSS :after) */}
@@ -117,6 +124,7 @@ const TornCard = ({ mentor }) => {
         >
           <PhoneCall className="lg:w-4 lg:h-4 h-2 w-2 transition-transform duration-300 group-hover/icon:scale-110" />
           <a
+            onClick={()=> sendCallRequest()}
             href={`tel:${mentor.phone}`}
             className="inline lg:text-md text-[10px]"
           >
@@ -149,12 +157,12 @@ const TornCard = ({ mentor }) => {
           </div>
         </button>
         <button
-          // onClick={() => makeCall()}
+          onClick={() => makeCall()}
           className="border bg-blue-opacity px-1 py-0.5 border-mentor-blue-500 rounded-[2px] bg-mentor-blue-500 text-white mentor-icons1-sm from-homentor-chat to-homentor-chatHover hover:from-homentor-chatHover hover:to-homentor-chat transition-all duration-300 flex items-center justify-center overflow-hidden "
           title="Chat with mentor"
         >
           <a
-            href={`tel:${mentor.phone}`}
+            // href={`tel:${mentor.phone}`}
             className="inline lg:text-md text-[11px]"
           >
             Call

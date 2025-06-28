@@ -15,7 +15,7 @@ const BookingCard = ({ mentorData, payNow }) => {
 
   const getPrice = () => {
     if (mode === "demo") return demoRate;
-    if (mode === "hourly") return hourlyRate * hours;
+    if (mode === "hourly") return mentorData.teachingModes.homeTuition.monthlyPrice / 20 * hours;
     return monthlyRate;
   };
 

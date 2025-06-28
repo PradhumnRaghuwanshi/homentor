@@ -23,6 +23,7 @@ import TermsCondition from "./pages/TermsCondition";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Refund from "./pages/Refund";
 import PaymentSuccessful from "./pages/PaymentSuccessful";
+import CallAdmin from "./pages/CallAdmin";
 
 
 
@@ -44,6 +45,7 @@ const App = () => (
           <Route path="/mentors/:id" element={<MentorProfile />} />
           <Route path="/dashboard/student" element={<StudentDashboard />} />
           <Route path="/dashboard/mentor" element={<MentorDashboard />} />
+          <Route path="/call-admin" element={<CallAdmin />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/contact-us" element={<ContactUs />} />
