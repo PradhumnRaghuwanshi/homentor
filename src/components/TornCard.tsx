@@ -7,6 +7,7 @@ import axios from "axios";
 import LoginPopup from "./LoginPopup";
 
 const TornCard = ({ mentor }) => {
+  useEffect(()=>{getAdminData()},[])
   const navigate = useNavigate();
 
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -71,6 +72,17 @@ const TornCard = ({ mentor }) => {
       phone: mentor.phone
     }).then((res)=> console.log(res)).catch((err)=> console.log(err))
   }
+  const [callingNo, setCallingNo] = useState("")
+   const getAdminData = () => {
+    axios
+      .get("https://homentor-backend.onrender.com/api/admin")
+      .then((res) => {
+        setCallingNo(res.data.data[0].callingNo)
+      });
+  };
+
+  
+ 
   return (
     <div className="relative animate-shake origin-top w-[100%] flex overflow-hidden flex-col items-center bg-[papayawhip] rounded-lg  shadow-[0_0_20px_-5px_black]">
       {/* 📌 Pin (just like CSS :after) */}
@@ -124,7 +136,7 @@ const TornCard = ({ mentor }) => {
           <PhoneCall className="lg:w-4 lg:h-4 h-2 w-2 transition-transform duration-300 group-hover/icon:scale-110" />
           <a
             onClick={()=> sendCallRequest()}
-            href={`tel:${mentor.phone}`}
+            href={`tel:${callingNo}`}
             className="inline lg:text-md text-[10px]"
           >
             Call
@@ -162,7 +174,7 @@ const TornCard = ({ mentor }) => {
         >
           <a
            onClick={()=> sendCallRequest()}
-            href={`tel:${mentor.phone}`}
+            href={`tel:${callingNo}`}
             // href={`tel:${mentor.phone}`}
             className="inline lg:text-md text-[11px]"
           >

@@ -115,7 +115,9 @@ const CallAdmin = () => {
               <tr>
                 <td>{index + 1}</td>
                 <td>{i.name}</td>
-                <td>{i.phone}</td>
+                <td>
+                  <a href={`tel:${i.phone}`}>{i.phone}</a>
+                </td>
                 <td>{formatDateTime(i.requestTime)}</td>
                 <td>
                   <div>
