@@ -36,12 +36,131 @@ import {
   Loader2,
 } from "lucide-react";
 import axios from "axios";
-import LocationSelector from "@/components/LocationSelector";
-import { locationsData } from "@/components/locationsData";
 import MonthlyRateSlider from "@/components/MonthlyRateSlider";
-import Modal from "@/components/Modal";
 import { useNavigate } from "react-router-dom";
 import StateData from "../StateData.json";
+const graduationData = [
+  // 🔬 Science
+  { label: "B.Sc (Physics)", value: "bsc_physics" },
+  { label: "B.Sc (Chemistry)", value: "bsc_chemistry" },
+  { label: "B.Sc (Mathematics)", value: "bsc_mathematics" },
+  { label: "B.Sc (Botany)", value: "bsc_botany" },
+  { label: "B.Sc (Zoology)", value: "bsc_zoology" },
+  { label: "B.Sc (Biotechnology)", value: "bsc_biotech" },
+  { label: "B.Sc (Microbiology)", value: "bsc_microbiology" },
+  { label: "B.Sc (Environmental Science)", value: "bsc_env_sci" },
+  { label: "B.Sc (Computer Science)", value: "bsc_cs" },
+  { label: "B.Sc (Statistics)", value: "bsc_statistics" },
+  { label: "B.Tech (Computer Science)", value: "btech_cs" },
+  { label: "B.Tech (Mechanical)", value: "btech_me" },
+  { label: "B.Tech (Civil)", value: "btech_civil" },
+  { label: "B.Tech (Electrical)", value: "btech_ee" },
+  { label: "B.Tech (Electronics & Comm)", value: "btech_ec" },
+  { label: "BCA (Computer Applications)", value: "bca" },
+  { label: "B.Pharma (Pharmacy)", value: "bpharma" },
+  { label: "B.Sc (Nursing)", value: "bsc_nursing" },
+
+  // 💼 Commerce
+  { label: "B.Com (General)", value: "bcom_general" },
+  { label: "B.Com (Honours)", value: "bcom_hons" },
+  { label: "B.Com (Accounting & Finance)", value: "bcom_af" },
+  { label: "B.Com (Taxation)", value: "bcom_taxation" },
+  { label: "B.Com (Banking & Insurance)", value: "bcom_bi" },
+  { label: "BBA (Bachelor of Business Administration)", value: "bba" },
+  { label: "BMS (Bachelor of Management Studies)", value: "bms" },
+  { label: "BAF (Accounting & Finance)", value: "baf" },
+
+  // 🎨 Arts / Humanities
+  { label: "B.A. (English)", value: "ba_english" },
+  { label: "B.A. (Hindi)", value: "ba_hindi" },
+  { label: "B.A. (History)", value: "ba_history" },
+  { label: "B.A. (Geography)", value: "ba_geography" },
+  { label: "B.A. (Political Science)", value: "ba_political" },
+  { label: "B.A. (Sociology)", value: "ba_sociology" },
+  { label: "B.A. (Psychology)", value: "ba_psychology" },
+  { label: "B.A. (Economics)", value: "ba_economics" },
+  { label: "B.A. (Philosophy)", value: "ba_philosophy" },
+  { label: "B.A. (Public Administration)", value: "ba_public_admin" },
+  { label: "B.A. (Education)", value: "ba_education" },
+  { label: "BJMC (Journalism & Mass Comm)", value: "bjmc" },
+  { label: "BSW (Social Work)", value: "bsw" },
+  { label: "BFA (Fine Arts)", value: "bfa" },
+
+  // 🏫 Education & Others
+  { label: "B.Ed (Education)", value: "bed" },
+  { label: "B.El.Ed (Elementary Education)", value: "beled" },
+  { label: "B.Li.Sc (Library Science)", value: "blisc" },
+  { label: "B.Design (Interior/Fashion/Product)", value: "bdes" },
+  { label: "B.Arch (Architecture)", value: "barch" },
+  { label: "BHM (Hotel Management)", value: "bhm" },
+  { label: "BPT (Physiotherapy)", value: "bpt" },
+  { label: "LL.B (Law)", value: "llb" },
+];
+const postGraduationData = [
+  // 🔬 Science & IT
+  { label: "M.Sc (Physics)", value: "msc_physics" },
+  { label: "M.Sc (Chemistry)", value: "msc_chemistry" },
+  { label: "M.Sc (Mathematics)", value: "msc_mathematics" },
+  { label: "M.Sc (Botany)", value: "msc_botany" },
+  { label: "M.Sc (Zoology)", value: "msc_zoology" },
+  { label: "M.Sc (Microbiology)", value: "msc_microbiology" },
+  { label: "M.Sc (Biotechnology)", value: "msc_biotech" },
+  { label: "M.Sc (Environmental Science)", value: "msc_env_sci" },
+  { label: "M.Sc (Computer Science)", value: "msc_cs" },
+  { label: "MCA (Computer Applications)", value: "mca" },
+  { label: "M.Tech (Computer Science)", value: "mtech_cs" },
+  { label: "M.Tech (Mechanical Engineering)", value: "mtech_me" },
+  { label: "M.Tech (Civil Engineering)", value: "mtech_civil" },
+  { label: "M.Tech (Electronics & Communication)", value: "mtech_ec" },
+  { label: "M.Tech (Electrical Engineering)", value: "mtech_ee" },
+
+  // 💼 Commerce & Management
+  { label: "M.Com (General)", value: "mcom_general" },
+  { label: "M.Com (Finance)", value: "mcom_finance" },
+  { label: "M.Com (Accounting)", value: "mcom_accounting" },
+  { label: "MBA (Marketing)", value: "mba_marketing" },
+  { label: "MBA (Finance)", value: "mba_finance" },
+  { label: "MBA (Human Resource)", value: "mba_hr" },
+  { label: "MBA (Information Technology)", value: "mba_it" },
+  { label: "MBA (Operations)", value: "mba_operations" },
+  { label: "MBA (International Business)", value: "mba_ib" },
+  { label: "PGDM (Post Graduate Diploma in Management)", value: "pgdm" },
+
+  // 🎨 Arts & Humanities
+  { label: "M.A. (English)", value: "ma_english" },
+  { label: "M.A. (Hindi)", value: "ma_hindi" },
+  { label: "M.A. (History)", value: "ma_history" },
+  { label: "M.A. (Geography)", value: "ma_geography" },
+  { label: "M.A. (Political Science)", value: "ma_political" },
+  { label: "M.A. (Sociology)", value: "ma_sociology" },
+  { label: "M.A. (Psychology)", value: "ma_psychology" },
+  { label: "M.A. (Economics)", value: "ma_economics" },
+  { label: "M.A. (Philosophy)", value: "ma_philosophy" },
+  { label: "M.A. (Education)", value: "ma_education" },
+  { label: "MSW (Master of Social Work)", value: "msw" },
+  { label: "MJMC (Mass Communication)", value: "mjmc" },
+
+  // 🏫 Education & Others
+  { label: "M.Ed (Education)", value: "med" },
+  { label: "M.Li.Sc (Library Science)", value: "mlisc" },
+  { label: "MFA (Fine Arts)", value: "mfa" },
+  { label: "M.Des (Design)", value: "mdes" },
+  { label: "M.Arch (Architecture)", value: "march" },
+  { label: "MPT (Physiotherapy)", value: "mpt" },
+  { label: "MPH (Public Health)", value: "mph" },
+  { label: "LL.M (Law)", value: "llm" },
+  { label: "M.Phil (Various Subjects)", value: "mphil" },
+];
+const InputField = ({ label, value, onChange }) => (
+  <div>
+    <Label>{label}</Label>
+    <Input
+      className="mt-1"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+    />
+  </div>
+);
 
 const TutorRegistrationForm = () => {
   useEffect(() => {
@@ -70,7 +189,16 @@ const TutorRegistrationForm = () => {
       university: "",
       graduationYear: "",
     },
-
+    twelfthStream: "", // new
+    twelfthBoard: "",
+    graduation: {
+      degree: "",
+      college: "",
+    },
+    postGraduation: {
+      degree: "",
+      college: "",
+    },
     experience: "",
 
     // Location & Availability
@@ -166,7 +294,10 @@ const TutorRegistrationForm = () => {
         ...mentorData,
         location: {
           ...mentorData.location,
-          area: place["address_components"].find((i)=> i.types.includes("sublocality_level_1")).long_name || "",
+          area:
+            place["address_components"].find((i) =>
+              i.types.includes("sublocality_level_1")
+            ).long_name || "",
           lat: lat,
           lon: lon,
         },
@@ -175,14 +306,7 @@ const TutorRegistrationForm = () => {
       // setDetails(place);
     });
   }, [mentorData.location.city]);
-const [showThankYouModal, setShowThankYouModal] = useState(false);
-
-  
-
-  const GOOGLE_API_KEY = "AIzaSyAb6ZthJEvNAczmOeuvFrnwEcMJjhlNpUk"; // secure this in .env for production
-
-  const [showModal, setShowModal] = useState(true);
-  const [userLocation, setUserLocation] = useState();
+  const [showThankYouModal, setShowThankYouModal] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const [locationFetched, setLocationFetched] = useState(false);
@@ -963,6 +1087,176 @@ const [showThankYouModal, setShowThankYouModal] = useState(false);
               </div>
             </CardContent>
           </Card>
+          <Card className="border-mentor-yellow-200 shadow-lg">
+            <CardHeader className="bg-gradient-to-r from-mentor-yellow-500 to-mentor-yellow-600 text-white rounded-t-lg">
+              <CardTitle className="flex items-center gap-2">
+                <GraduationCap className="h-5 w-5" />
+                Educational Background
+              </CardTitle>
+              <CardDescription className="text-mentor-yellow-100">
+                Your academic qualifications
+              </CardDescription>
+            </CardHeader>
+
+            <CardContent className="p-6 space-y-6">
+              {/* 11th & 12th Stream */}
+              <div>
+                <Label htmlFor="twelfthStream">12th Stream *</Label>
+                <Select
+                  value={mentorData.twelfthStream}
+                  onValueChange={(value) =>
+                    setMentorData({
+                      ...mentorData,
+                      twelfthStream: value,
+                    })
+                  }
+                >
+                  <SelectTrigger className="mt-1">
+                    <SelectValue placeholder="Select stream" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="science">Science(PCM)</SelectItem>
+                    <SelectItem value="science">Science(Biology)</SelectItem>
+                    <SelectItem value="commerce">Commerce</SelectItem>
+                    <SelectItem value="arts">Arts</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="twelfthBoard">12th Board *</Label>
+                <Select
+                  value={mentorData.twelfthBoard}
+                  onValueChange={(value) =>
+                    setMentorData({
+                      ...mentorData,
+                      twelfthBoard: value,
+                    })
+                  }
+                >
+                  <SelectTrigger className="mt-1">
+                    <SelectValue placeholder="Select board" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="MP Board">MP Board</SelectItem>
+                    <SelectItem value="CBSE Board">CBSE Board</SelectItem>
+                    <SelectItem value="ICSE Board">ICSE Board</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Graduation Details */}
+              <div className="space-y-2">
+                <h4 className="font-semibold text-lg text-mentor-yellow-600">
+                  Graduation
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="graduation-degree">Course/Degree*</Label>
+                    <Select
+                      value={mentorData.graduation.degree}
+                      onValueChange={(value) =>
+                        setMentorData({
+                          ...mentorData,
+                          graduation: {
+                            ...mentorData.graduation,
+                            degree: value,
+                          },
+                        })
+                      }
+                    >
+                      <SelectTrigger className="mt-1">
+                        <SelectValue placeholder="Select degree" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {graduationData.map((i) => (
+                          <SelectItem value={i.label}>{i.label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <Label htmlFor="graduation-college">College Name*</Label>
+                  <Input
+                    className="mt-1"
+                    value={mentorData.graduation.college}
+                    onChange={(e) => setMentorData({
+                      ...mentorData,
+                      graduation: {
+                        ...mentorData.graduation,
+                        college:e.target.value
+                      }
+                    })}
+                  />
+                 
+                </div>
+              </div>
+
+              {/*Post Graduation Details */}
+              <div className="space-y-2">
+                <h4 className="font-semibold text-lg text-mentor-yellow-600">
+                  Post Graduation
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="post-degree">Course/Degree*</Label>
+                    <Select
+                      value={mentorData.postGraduation.degree}
+                      onValueChange={(value) =>
+                        setMentorData({
+                          ...mentorData,
+                          postGraduation: {
+                            ...mentorData.postGraduation,
+                            degree: value,
+                          },
+                        })
+                      }
+                    >
+                      <SelectTrigger className="mt-1">
+                        <SelectValue placeholder="Select board" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {postGraduationData.map((i) => (
+                          <SelectItem value={i.label}>{i.label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                 <Label htmlFor="post-college">College Name*</Label>
+                  <Input
+                    className="mt-1"
+                    value={mentorData.postGraduation.college}
+                    onChange={(e) => setMentorData({
+                      ...mentorData,
+                      postGraduation: {
+                        ...mentorData.postGraduation,
+                        college: e.target.value
+                      }
+                    })}
+                  />
+                </div>
+              </div>
+
+              <div className="md:col-span-2">
+                <Label htmlFor="experience">Teaching Experience *</Label>
+                <Select
+                  value={mentorData.experience}
+                  onValueChange={(value) =>
+                    updateFormData({ experience: value })
+                  }
+                >
+                  <SelectTrigger className="mt-1 focus:ring-mentor-blue-400 focus:border-mentor-blue-400">
+                    <SelectValue placeholder="Select experience level" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white border-mentor-yellow-200">
+                    <SelectItem value="fresher">Fresher</SelectItem>
+                    <SelectItem value="1-3">1-3 years</SelectItem>
+                    <SelectItem value="3-5">3-5 years</SelectItem>
+                    <SelectItem value="5-10">5-10 years</SelectItem>
+                    <SelectItem value="10+">10+ years</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Educational Background */}
           <Card className="border-mentor-yellow-200 shadow-lg">
@@ -1064,26 +1358,6 @@ const [showThankYouModal, setShowThankYouModal] = useState(false);
                           </SelectItem>
                         )
                       )}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="md:col-span-2">
-                  <Label htmlFor="experience">Teaching Experience *</Label>
-                  <Select
-                    value={mentorData.experience}
-                    onValueChange={(value) =>
-                      updateFormData({ experience: value })
-                    }
-                  >
-                    <SelectTrigger className="mt-1 focus:ring-mentor-blue-400 focus:border-mentor-blue-400">
-                      <SelectValue placeholder="Select experience level" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white border-mentor-yellow-200">
-                      <SelectItem value="fresher">Fresher</SelectItem>
-                      <SelectItem value="1-3">1-3 years</SelectItem>
-                      <SelectItem value="3-5">3-5 years</SelectItem>
-                      <SelectItem value="5-10">5-10 years</SelectItem>
-                      <SelectItem value="10+">10+ years</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -1610,28 +1884,27 @@ const [showThankYouModal, setShowThankYouModal] = useState(false);
             </p>
           </div>
           {showThankYouModal && (
-           <div className="h-[100vh] w-[100%] fixed top-[-5%] left-0 z-[1000] flex items-center justify-center">
-            <div className="h-[100vh] w-[100%] top-0 left-0 bg-black opacity-50 fixed"></div>
-            <div className="bg-white z-[50] w-[90%] relative h-auto px-2 py-4 rounded-sm">
-               <p className="text-center text-lg text-gray-700 ">
-                Your application has been submitted successfully. We’ll contact
-                you soon.
-              </p>
-              <div className="text-center ">
-                <Button
-                  onClick={() => {
-                    setShowThankYouModal(false);
-                    navigate("/"); // ✅ On "Okay" click
-                  }}
-                  className="mt-4"
-                >
-                  Okay
-                </Button>
+            <div className="h-[100vh] w-[100%] fixed top-[-5%] left-0 z-[1000] flex items-center justify-center">
+              <div className="h-[100vh] w-[100%] top-0 left-0 bg-black opacity-50 fixed"></div>
+              <div className="bg-white z-[50] w-[90%] relative h-auto px-2 py-4 rounded-sm">
+                <p className="text-center text-lg text-gray-700 ">
+                  Your application has been submitted successfully. We’ll
+                  contact you soon.
+                </p>
+                <div className="text-center ">
+                  <Button
+                    onClick={() => {
+                      setShowThankYouModal(false);
+                      navigate("/"); // ✅ On "Okay" click
+                    }}
+                    className="mt-4"
+                  >
+                    Okay
+                  </Button>
+                </div>
               </div>
             </div>
-          </div>
           )}
-          
         </div>
       </div>
     </div>
