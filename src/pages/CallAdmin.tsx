@@ -57,7 +57,7 @@ const CallAdmin = () => {
     axios
       .get(`https://homentor-backend.onrender.com/api/mentor-call`)
       .then((res) => {
-        setCallData(res.data);
+        setCallData(res.data.reverse());
       })
       .catch((err) => {
         console.log(err);
