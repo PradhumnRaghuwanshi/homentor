@@ -224,6 +224,7 @@ const TutorRegistrationForm = () => {
 
     // Additional Information
     brief: "",
+    teachingExperience: ""
   }));
 
   const getLatLonFromAddress = async (area: string, apiKey: string) => {
@@ -1168,8 +1169,8 @@ const TutorRegistrationForm = () => {
                         <SelectValue placeholder="Select degree" />
                       </SelectTrigger>
                       <SelectContent>
-                        {graduationData.map((i) => (
-                          <SelectItem value={i.label}>{i.label}</SelectItem>
+                        {graduationData.map((i, index) => (
+                          <SelectItem key={index} value={i.label}>{i.label}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -1259,7 +1260,7 @@ const TutorRegistrationForm = () => {
           </Card>
 
           {/* Educational Background */}
-          <Card className="border-mentor-yellow-200 shadow-lg">
+          {/* <Card className="border-mentor-yellow-200 shadow-lg">
             <CardHeader className="bg-gradient-to-r from-mentor-yellow-500 to-mentor-yellow-600 text-white rounded-t-lg">
               <CardTitle className="flex items-center gap-2">
                 <GraduationCap className="h-5 w-5" />
@@ -1363,7 +1364,7 @@ const TutorRegistrationForm = () => {
                 </div>
               </div>
             </CardContent>
-          </Card>
+          </Card> */}
 
           {/* Location & Availability Range */}
           <Card className="border-mentor-blue-200 shadow-lg">
@@ -1853,6 +1854,20 @@ const TutorRegistrationForm = () => {
                 <Textarea
                   id="teachingExperience"
                   placeholder="Briefly describe your teaching experience and methodology (e.g., years of experience, teaching style, student success stories)..."
+                  value={mentorData?.teachingExperience}
+                  onChange={(e) => updateFormData({ teachingExperience: e.target.value })}
+                  className="mt-1 min-h-[80px] focus:ring-mentor-yellow-400 focus:border-mentor-yellow-400"
+                />
+              </div>
+            </CardContent>
+            <CardContent className="p-6">
+              <div>
+                <Label htmlFor="brief">
+                  Bio
+                </Label>
+                <Textarea
+                  id="brief"
+                  placeholder="Briefly describe yourself..."
                   value={mentorData.brief}
                   onChange={(e) => updateFormData({ brief: e.target.value })}
                   className="mt-1 min-h-[80px] focus:ring-mentor-yellow-400 focus:border-mentor-yellow-400"
