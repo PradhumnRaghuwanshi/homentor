@@ -20,10 +20,10 @@ const BookingCard = ({ mentorData, payNow }) => {
   };
 
   return (
-    <div className="flex flex-col gap-4 px-2 py-3 rounded-2xl shadow-xl bg-white border border-gray-200 lg:min-w-[250px] w-full">
+    <div className="flex flex-col gap-4 lg:px-4 px-2 py-3 rounded-2xl bg-white border border-gray-200 lg:min-w-[250px] lg:w-[auto] w-full">
       <div className="flex justify-between">
-        <div className="text-right w-[45%]">
-          <p className="text-4xl font-bold text-yellow-600 tracking-wide">
+        <div className="text-right  w-[45%]">
+          <p className="text-4xl font-bold text-yellow-600 tracking-wide text-nowrap">
             ₹ {getPrice().toLocaleString()}
           </p>
           <p className="text-sm text-gray-400">
@@ -67,7 +67,7 @@ const BookingCard = ({ mentorData, payNow }) => {
         Book Now
       </Button>
 
-      <div className="flex justify-between gap-2 mt-1">
+      <div className="lg:flex hidden justify-between gap-2 mt-1">
         <Button
           variant="outline"
           size="sm"

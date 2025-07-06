@@ -186,7 +186,7 @@ const MentorDetails = () => {
             </div>
             <CardContent className="lg:p-8 p-4 -mt-16 relative bg-white">
               <div className="flex flex-col lg:flex-row items-start gap-6">
-                <div className="flex justify-between w-[100%]">
+                <div className="flex justify-between lg:w-auto w-[100%]">
                   <Avatar className="h-32 w-32 border-4 border-white shadow-2xl">
                     <AvatarImage
                       src={mentorData.profilePhoto}
@@ -223,7 +223,7 @@ const MentorDetails = () => {
                     </a>
                   </div>
                 </div>
-                <div className="flex-1  w-full">
+                <div className="flex-1 w-full">
                   <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between">
                     <div>
                       <h1 className="lg:text-3xl text-2xl font-bold text-slate-900 mb-2 text-nowrap">
@@ -257,7 +257,7 @@ const MentorDetails = () => {
                           {Object.keys(mentorData.teachingModes).map((i) => (
                             <div className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1">
                               <Home className="h-4 w-4" />
-                              {i}
+                              {i.replace(/^./, (c) => c.toUpperCase())}
                             </div>
                           ))}
                         </div>
@@ -303,7 +303,6 @@ const MentorDetails = () => {
                       )}
                     </div>
                     <BookingCard mentorData={mentorData} payNow={payNow}></BookingCard>
-                    
                   </div>
                 </div>
               </div>
