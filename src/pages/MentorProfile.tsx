@@ -229,8 +229,7 @@ const MentorDetails = () => {
                       <h1 className="lg:text-3xl text-2xl font-bold text-slate-900 mb-2 text-nowrap">
                         {mentorData.fullName}
                       </h1>
-                      {/* <p className="text-xl text-blue-700 mb-2 font-semibold">{teacherData.title}</p> */}
-
+                     
                       {mentorData?.qualifications?.display ? (
                         <p className="text-lg text-slate-600 mb-2">
                           Qualification -{" "}
@@ -327,12 +326,12 @@ const MentorDetails = () => {
               >
                 Overview
               </TabsTrigger>
-              <TabsTrigger
+              {/* <TabsTrigger
                 value="experience"
                 className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
               >
                 Experience
-              </TabsTrigger>
+              </TabsTrigger> */}
               {/* <TabsTrigger
                 value="reviews"
                 className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
@@ -365,7 +364,7 @@ const MentorDetails = () => {
                     </CardHeader>
                     <CardContent className="lg:p-6 bg-white">
                       <p className="text-slate-700 leading-relaxed mb-4">
-                        {teacherData.bio}
+                        {mentorData?.brief}
                       </p>
                       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                         <h4 className="font-semibold text-yellow-800 mb-2">
@@ -428,7 +427,7 @@ const MentorDetails = () => {
                 </div>
 
                 <div className="space-y-6">
-                  <Card className="shadow-lg border-0">
+                  {/* <Card className="shadow-lg border-0">
                     <CardHeader className="bg-white border-b border-slate-100">
                       <CardTitle className="text-slate-800">
                         Quick Stats
@@ -462,9 +461,9 @@ const MentorDetails = () => {
                         </span>
                       </div>
                     </CardContent>
-                  </Card>
+                  </Card> */}
 
-                  <Card className="shadow-lg border-0">
+                  {/* <Card className="shadow-lg border-0">
                     <CardHeader className="bg-white border-b border-slate-100">
                       <CardTitle className="text-slate-800">
                         Achievements
@@ -482,7 +481,7 @@ const MentorDetails = () => {
                         ))}
                       </div>
                     </CardContent>
-                  </Card>
+                  </Card> */}
                 </div>
               </div>
             </TabsContent>
@@ -703,7 +702,7 @@ const MentorDetails = () => {
                   </CardContent>
                 </Card>
 
-                <Card className="shadow-lg border-0">
+                {/* <Card className="shadow-lg border-0">
                   <CardHeader className="bg-white border-b border-slate-100">
                     <CardTitle className="text-slate-800">
                       Languages Spoken
@@ -728,7 +727,7 @@ const MentorDetails = () => {
                       ))}
                     </div>
                   </CardContent>
-                </Card>
+                </Card> */}
               </div>
             </TabsContent>
           </Tabs>
