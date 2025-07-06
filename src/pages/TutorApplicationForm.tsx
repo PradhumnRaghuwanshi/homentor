@@ -587,7 +587,7 @@ const TutorRegistrationForm = () => {
   };
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = () => {
     setIsLoading(true);
     console.log("HI");
     axios
@@ -804,7 +804,7 @@ const TutorRegistrationForm = () => {
           </p>
         </div>
 
-        <div onSubmit={handleSubmit} className="space-y-8">
+        <div className="space-y-8">
           {/* Personal Information */}
           <Card className="border-mentor-blue-200 shadow-lg">
             <CardHeader className="bg-gradient-to-r from-mentor-blue-500 to-mentor-blue-600 text-white rounded-t-lg">
@@ -1880,7 +1880,7 @@ const TutorRegistrationForm = () => {
           <div className="text-center">
             <Button
               onClick={() => handleSubmit()}
-              type="submit"
+            
               size="lg"
               className="bg-gradient-to-r from-mentor-blue-600 to-mentor-yellow-500 hover:from-mentor-blue-700 hover:to-mentor-yellow-600 text-white px-12 py-3 text-lg font-semibold rounded-lg shadow-lg transform transition-all duration-200 hover:scale-105"
             >
