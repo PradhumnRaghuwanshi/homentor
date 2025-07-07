@@ -24,7 +24,7 @@ const BookingCard = ({ mentorData, payNow }) => {
       <div className="flex justify-between">
         <div className="text-right  w-[45%]">
           <p className="text-4xl font-bold text-yellow-600 tracking-wide text-nowrap">
-            ₹ {getPrice().toLocaleString()}
+            ₹ {getPrice()?.toLocaleString()}
           </p>
           <p className="text-sm text-gray-400">
             {mode === "monthly" && "per month"}

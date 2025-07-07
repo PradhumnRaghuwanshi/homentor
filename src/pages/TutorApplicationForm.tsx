@@ -296,9 +296,11 @@ const TutorRegistrationForm = () => {
         location: {
           ...mentorData.location,
           area:
-            place["address_components"].find((i) =>
-              i.types.includes("sublocality_level_1")
-            ).long_name || "",
+            place["address_components"][0]
+            // .find((i) =>
+            //   i.types.includes("sublocality_level_1")
+            // )
+            .long_name || "",
           lat: lat,
           lon: lon,
         },

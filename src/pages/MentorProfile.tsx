@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import {
   Star,
@@ -14,6 +14,7 @@ import {
   Quote,
   GraduationCap,
   Home,
+  PhoneCall,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -142,6 +143,9 @@ const teacherData = {
 };
 
 const MentorDetails = () => {
+  useEffect(() => {
+    getAdminData(), [];
+  });
   const mentorData = JSON.parse(localStorage.getItem("mentor"));
   const subjects = [
     ...new Set(Object.values(mentorData.teachingPreferences.school).flat()),
@@ -175,6 +179,21 @@ const MentorDetails = () => {
   const handleScroll = () => {
     targetDivRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+  const [callingNo, setCallingNo] = useState("");
+  const getAdminData = () => {
+    axios.get("https://homentor-backend.onrender.com/api/admin").then((res) => {
+      setCallingNo(res.data.data[0].callingNo);
+    });
+  };
+  const sendCallRequest = () => {
+    axios
+      .post("https://homentor-backend.onrender.com/api/mentor-call", {
+        name: mentorData?.fullName,
+        phone: mentorData?.phone,
+      })
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err));
+  };
   return (
     <Layout>
       <div className="min-h-screen bg-gray-50 mt-[7vh]">
@@ -189,11 +208,11 @@ const MentorDetails = () => {
                 <div className="flex justify-between lg:w-auto w-[100%]">
                   <Avatar className="h-32 w-32 border-4 border-white shadow-2xl">
                     <AvatarImage
-                      src={mentorData.profilePhoto}
-                      alt={mentorData.fullName}
+                      src={mentorData?.profilePhoto}
+                      alt={mentorData?.fullName}
                     />
                     <AvatarFallback className="text-2xl bg-gradient-to-br from-blue-500 to-yellow-500 text-white">
-                      {mentorData.fullName
+                      {mentorData?.fullName
                         .split(" ")
                         .map((n) => n[0])
                         .join("")}
@@ -209,7 +228,8 @@ const MentorDetails = () => {
                       Send Message
                     </Button>
                     <a
-                      href={`tel:${mentorData?.phone}`}
+                      onClick={() => sendCallRequest()}
+                      href={`tel:${callingNo}`}
                       className=" lg:text-md text-[10px]"
                     >
                       <Button
@@ -217,7 +237,7 @@ const MentorDetails = () => {
                         size="lg"
                         className="border-blue-500 w-full text-blue-600 hover:bg-blue-50"
                       >
-                        <MessageCircle className="h-4 w-4 mr-2" />
+                        <PhoneCall className="h-4 w-4 mr-2" />
                         Call
                       </Button>
                     </a>
@@ -229,16 +249,18 @@ const MentorDetails = () => {
                       <h1 className="lg:text-3xl text-2xl font-bold text-slate-900 mb-2 text-nowrap">
                         {mentorData.fullName}
                       </h1>
-                     
-                      {mentorData?.qualifications?.display ? (
+
+                      {!mentorData?.qualifications?.display ? (
                         <p className="text-lg text-slate-600 mb-2">
-                          Qualification -{" "}
-                          {mentorData?.qualifications?.specialization}
+                          Qualification -
+                          {mentorData?.postGraduation?.degree
+                            ? "Post Graduation"
+                            : "Graduation"}
                         </p>
                       ) : (
                         <p className="text-lg text-slate-600 mb-2 capitalize">
-                          Qualification -{" "}
-                          {mentorData?.qualifications?.highestQualification}
+                          Qualification -{""}
+                          {mentorData?.postGraduation?.degree}
                         </p>
                       )}
 
@@ -302,7 +324,10 @@ const MentorDetails = () => {
                         </p>
                       )}
                     </div>
-                    <BookingCard mentorData={mentorData} payNow={payNow}></BookingCard>
+                    <BookingCard
+                      mentorData={mentorData}
+                      payNow={payNow}
+                    ></BookingCard>
                   </div>
                 </div>
               </div>

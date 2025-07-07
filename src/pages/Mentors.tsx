@@ -646,14 +646,30 @@ const Mentors = () => {
   // Apply filters
   const applyFilters = () => {
     let result = [...mentorsData];
-    console.log(selectedSubject);
+    let goldMentorList = [...goldMentors]
     // Filter by Class
     if (selectedClass && selectedSubject.length == 0) {
       result = result.filter((mentor) => {
         const schoolClasses = Object.keys(
           mentor?.teachingPreferences?.school || {}
         );
+        return schoolClasses.some((key) => {
+          const match = key.match(/\d+/g); // extract all numbers from keys like "class-9-10"
+          if (!match) return false;
+          const numbers = match.map(Number); // convert to [9, 10] or [12]
+          // if the class is in a range like class-9-10, check if selectedClass is in range
+          if (numbers.length === 2) {
+            return +selectedClass >= numbers[0] && +selectedClass <= numbers[1];
+          }
+          // if single class like class-12
+          return numbers[0] === +selectedClass;
+        });
+      });
 
+      goldMentorList = goldMentorList.filter((mentor) => {
+        const schoolClasses = Object.keys(
+          mentor?.teachingPreferences?.school || {}
+        );
         return schoolClasses.some((key) => {
           const match = key.match(/\d+/g); // extract all numbers from keys like "class-9-10"
           if (!match) return false;
@@ -697,6 +713,7 @@ const Mentors = () => {
         );
       });
     }
+
     // Filter by subject
     if (selectedSubject.length > 0) {
       result = result.filter((mentor) => {
@@ -705,6 +722,32 @@ const Mentors = () => {
 
         let subjectsForSelectedClass = [];
 
+        // Loop through all class keys
+        for (const [key, subjects] of Object.entries(schoolPrefs)) {
+          const match = key.match(/\d+/g);
+          if (!match) continue;
+
+          const numbers = match.map(Number);
+          const min = numbers[0];
+          const max = numbers[1] || numbers[0];
+
+          // Check if selectedClass falls within this range
+          if (+selectedClass >= min && +selectedClass <= max) {
+            subjectsForSelectedClass = subjects;
+            break; // Found the matching class range, no need to check more
+          }
+        }
+
+        // Check if all selected subjects are present in the found subjects
+        return selectedSubject.every((subject) =>
+          subjectsForSelectedClass.includes(subject)
+        );
+      });
+
+      goldMentorList = goldMentorList.filter((mentor) => {
+        const schoolPrefs = mentor.teachingPreferences?.school;
+        if (!schoolPrefs) return false;
+        let subjectsForSelectedClass = [];
         // Loop through all class keys
         for (const [key, subjects] of Object.entries(schoolPrefs)) {
           const match = key.match(/\d+/g);
@@ -754,8 +797,7 @@ const Mentors = () => {
       });
     }
 
-    console.log(priceRange);
-    console.log("Filtered mentors:", result);
+    setGoldMentors(goldMentorList)
     setFilteredMentors(result);
   };
 
