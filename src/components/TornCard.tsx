@@ -5,6 +5,8 @@ import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import LoginPopup from "./LoginPopup";
+import { createOrder } from "@/api/payment.jsx";
+
 
 const TornCard = ({ mentor }) => {
   useEffect(()=>{getAdminData()},[])
@@ -65,6 +67,23 @@ const TornCard = ({ mentor }) => {
 
     //   const redirectUrl = res.data.redirectUrl;
     // redirectToPhonePe(redirectUrl);
+  };
+
+  const handlePayment = async () => {
+    try {
+      const data = await createOrder({
+        amount: "1",
+        customerId: "user_123",
+        customerName: "John Doe",
+        customerEmail: "johndoe@example.com",
+        customerPhone: "9999999999",
+      });
+
+      // Redirect user to Cashfree's payment link
+      window.location.href = data.payment_link;
+    } catch (error) {
+      alert("Failed to initiate payment");
+    }
   };
   const sendCallRequest = ()=>{
     axios.post("https://homentor-backend.onrender.com/api/mentor-call", {
@@ -157,7 +176,8 @@ const TornCard = ({ mentor }) => {
         </button>
         <button
           onClick={() =>
-            payNow(+mentor?.teachingModes?.homeTuition?.monthlyPrice)
+            // payNow(+mentor?.teachingModes?.homeTuition?.monthlyPrice)
+            handlePayment()
           }
           className="bg-green-500 z-[100] bg-opacity px-1 py-0 gap-0 rounded-[2px] flex lg:hidden flex-col h-[auto]"
         >
@@ -185,7 +205,8 @@ const TornCard = ({ mentor }) => {
 
       <Button
         onClick={() =>
-          payNow(+mentor?.teachingModes?.homeTuition?.monthlyPrice)
+          // payNow(+mentor?.teachingModes?.homeTuition?.monthlyPrice)
+          handlePayment()
         }
         className="absolute z-[100] bg-green-500 gap-0 lg:flex hidden flex-col bottom-[1vh] h-[auto]"
       >

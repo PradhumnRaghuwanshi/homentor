@@ -26,9 +26,9 @@ function PrivacyPolicy() {
       <div className="container">
         <div className="row">
           <div className="col-12 py-3 ">
-            Privacy Policy - WEBBOLSTER Private Limited Introduction This
-            Privacy Policy describes how WEBBOLSTER Private Limited and its
-            affiliates (collectively “WEBBOLSTER Private Limited , we, our, us”)
+            Privacy Policy - HOMENTOR EDU (OPC) PRIVATE LIMITED Introduction This
+            Privacy Policy describes how HOMENTOR EDU (OPC) PRIVATE LIMITED and its
+            affiliates (collectively “HOMENTOR EDU (OPC) PRIVATE LIMITED , we, our, us”)
             collect, use, share, protect or otherwise process your information/
             personal data through our website https://homentor.onrender.com/
             (hereinafter referred to as Platform). Please note that you may be
@@ -167,7 +167,7 @@ function PrivacyPolicy() {
             / notify you about the significant changes to the Privacy Policy, in
             the manner as may be required under applicable laws. Grievance
             Officer – PRADHUMN RAGHUWANSHI: Director: Director Address-
-            WEBBOLSTER Private Limited, 2 - Scheme No. 54, PU-4, Vijay Nagar,
+            HOMENTOR EDU (OPC) PRIVATE LIMITED, 2 - Scheme No. 54, PU-4, Vijay Nagar,
             Indore - 452010, MP Contact us: Contact number :7748833998 Email id
             :homentorindia@gmail.com Monday – Friday – 10:00 – 20:00 Saturday –
             10:00 – 18:00 Sunday – 10:00 – 18:00
