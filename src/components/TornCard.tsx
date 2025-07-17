@@ -78,9 +78,9 @@ const TornCard = ({ mentor }) => {
         customerEmail: "johndoe@example.com",
         customerPhone: "9999999999",
       });
-
+      console.log(data)
       // Redirect user to Cashfree's payment link
-      window.location.href = data.payment_link;
+      // window.location.href = data.payment_link;
     } catch (error) {
       alert("Failed to initiate payment");
     }
