@@ -80,7 +80,7 @@ const TornCard = ({ mentor }) => {
       });
       console.log(data)
       // Redirect user to Cashfree's payment link
-      // window.location.href = data.payment_link;
+      // window.location.href = `https://payments.cashfree.com/order/${data.cf_order_id}`;
     } catch (error) {
       alert("Failed to initiate payment");
     }
