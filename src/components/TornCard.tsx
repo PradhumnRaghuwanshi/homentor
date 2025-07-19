@@ -6,10 +6,13 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import LoginPopup from "./LoginPopup";
 import { createOrder } from "@/api/payment.jsx";
-
+import { Cashfree, CFEnvironment } from "cashfree-pg";
+import { load } from "@cashfreepayments/cashfree-js";
 
 const TornCard = ({ mentor }) => {
-  useEffect(()=>{getAdminData()},[])
+  useEffect(() => {
+    getAdminData();
+  }, []);
   const navigate = useNavigate();
 
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -69,39 +72,47 @@ const TornCard = ({ mentor }) => {
     // redirectToPhonePe(redirectUrl);
   };
 
-  const handlePayment = async () => {
+  const handlePayment = async (fees) => {
     try {
       const data = await createOrder({
-        amount: "1",
-        customerId: "user_123",
-        customerName: "John Doe",
-        customerEmail: "johndoe@example.com",
-        customerPhone: "9999999999",
+        amount: fees,
+        customerId: `homentor${Date.now()}`,
+        customerPhone: userNumber,
       });
-      console.log(data)
+      console.log(data);
+       let cashfree = await load({
+          mode: "production",
+        });
+      console.log(cashfree);
+
+      let checkoutOptions = {
+        paymentSessionId: data.payment_session_id,
+        redirectTarget: "_self",
+      };
+      cashfree.checkout(checkoutOptions);
+
       // Redirect user to Cashfree's payment link
       // window.location.href = `https://payments.cashfree.com/order/${data.cf_order_id}`;
     } catch (error) {
       alert("Failed to initiate payment");
     }
   };
-  const sendCallRequest = ()=>{
-    axios.post("https://homentor-backend.onrender.com/api/mentor-call", {
-      name: mentor.fullName,
-      phone: mentor.phone
-    }).then((res)=> console.log(res)).catch((err)=> console.log(err))
-  }
-  const [callingNo, setCallingNo] = useState("")
-   const getAdminData = () => {
+  const sendCallRequest = () => {
     axios
-      .get("https://homentor-backend.onrender.com/api/admin")
-      .then((res) => {
-        setCallingNo(res.data.data[0].callingNo)
-      });
+      .post("https://homentor-backend.onrender.com/api/mentor-call", {
+        name: mentor.fullName,
+        phone: mentor.phone,
+      })
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err));
+  };
+  const [callingNo, setCallingNo] = useState("");
+  const getAdminData = () => {
+    axios.get("https://homentor-backend.onrender.com/api/admin").then((res) => {
+      setCallingNo(res.data.data[0].callingNo);
+    });
   };
 
-  
- 
   return (
     <div className="relative animate-shake origin-top w-[100%] flex overflow-hidden flex-col items-center bg-[papayawhip] rounded-lg  shadow-[0_0_20px_-5px_black]">
       {/* 📌 Pin (just like CSS :after) */}
@@ -154,7 +165,7 @@ const TornCard = ({ mentor }) => {
         >
           <PhoneCall className="lg:w-4 lg:h-4 h-2 w-2 transition-transform duration-300 group-hover/icon:scale-110" />
           <a
-            onClick={()=> sendCallRequest()}
+            onClick={() => sendCallRequest()}
             href={`tel:${callingNo}`}
             className="inline lg:text-md text-[10px]"
           >
@@ -177,7 +188,7 @@ const TornCard = ({ mentor }) => {
         <button
           onClick={() =>
             // payNow(+mentor?.teachingModes?.homeTuition?.monthlyPrice)
-            handlePayment()
+            handlePayment(+mentor?.teachingModes?.homeTuition?.monthlyPrice)
           }
           className="bg-green-500 z-[100] bg-opacity px-1 py-0 gap-0 rounded-[2px] flex lg:hidden flex-col h-[auto]"
         >
@@ -193,7 +204,7 @@ const TornCard = ({ mentor }) => {
           title="Chat with mentor"
         >
           <a
-           onClick={()=> sendCallRequest()}
+            onClick={() => sendCallRequest()}
             href={`tel:${callingNo}`}
             // href={`tel:${mentor.phone}`}
             className="inline lg:text-md text-[11px]"
@@ -206,7 +217,7 @@ const TornCard = ({ mentor }) => {
       <Button
         onClick={() =>
           // payNow(+mentor?.teachingModes?.homeTuition?.monthlyPrice)
-          handlePayment()
+          handlePayment(+mentor?.teachingModes?.homeTuition?.monthlyPrice)
         }
         className="absolute z-[100] bg-green-500 gap-0 lg:flex hidden flex-col bottom-[1vh] h-[auto]"
       >

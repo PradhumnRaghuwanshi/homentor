@@ -28,7 +28,7 @@ function Refund() {
           <div className="col-12 py-3 ">
             <p>
             Refund policy 
-            No Refund Policy, No refunds accepted by WEBBOLSTER Private Limited.
+            No Refund Policy, No refunds accepted by HOMENTOR EDU Private Limited.
             </p>
           </div>
         </div>
