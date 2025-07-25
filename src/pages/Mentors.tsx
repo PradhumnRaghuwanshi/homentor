@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
-
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -14,7 +12,6 @@ import {
 import TornCard from "@/components/TornCard";
 import SVGFilter from "@/components/SVGFilter";
 import SearchBar from "@/components/SearchBar";
-import AnimatedSelect from "@/components/AnimatedSelect";
 import axios from "axios";
 import StateData from "../StateData.json";
 import PriceSlider from "@/components/PriceSlider";

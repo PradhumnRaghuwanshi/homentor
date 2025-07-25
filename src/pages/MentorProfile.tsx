@@ -148,6 +148,9 @@ const teacherData = {
 
 const MentorDetails = () => {
   useEffect(() => {
+      window.scrollTo(0, 0);
+    }, []);
+  useEffect(() => {
     getAdminData(), [];
   });
   const mentorData = JSON.parse(localStorage.getItem("mentor"));
