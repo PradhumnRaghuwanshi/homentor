@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import LoginPopup from "./LoginPopup";
 import { createOrder } from "@/api/payment.jsx";
-import { Cashfree, CFEnvironment } from "cashfree-pg";
 import { load } from "@cashfreepayments/cashfree-js";
 
 const TornCard = ({ mentor }) => {
@@ -73,6 +72,10 @@ const TornCard = ({ mentor }) => {
   };
 
   const handlePayment = async (fees) => {
+    if (!userNumber) {
+      setIsLoginOpen(true);
+      return
+    }
     try {
       const data = await createOrder({
         amount: fees,
@@ -90,9 +93,6 @@ const TornCard = ({ mentor }) => {
         redirectTarget: "_self",
       };
       cashfree.checkout(checkoutOptions);
-
-      // Redirect user to Cashfree's payment link
-      // window.location.href = `https://payments.cashfree.com/order/${data.cf_order_id}`;
     } catch (error) {
       alert("Failed to initiate payment");
     }

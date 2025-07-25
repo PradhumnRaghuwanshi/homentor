@@ -11,7 +11,6 @@ const BookingCard = ({ mentorData, payNow }) => {
     10
   );
   const demoRate = 99; // fixed demo rate (customize if you have per-mentor demoFee)
-  const hourlyRate = 300; // fixed per-hour rate (customize per mentor)
 
   const getPrice = () => {
     if (mode === "demo") return demoRate;
@@ -59,7 +58,7 @@ const BookingCard = ({ mentorData, payNow }) => {
       </div>
 
       <Button
-        onClick={() => payNow()}
+        onClick={() => payNow(getPrice())}
         size="lg"
         className="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white text-md font-semibold shadow-md"
       >

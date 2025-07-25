@@ -26,6 +26,10 @@ import Layout from "@/components/Layout";
 import axios from "axios";
 import LoginPopup from "@/components/LoginPopup";
 import BookingCard from "@/comp/BookingCard";
+import { createOrder } from "@/api/payment.jsx";
+import { load } from "@cashfreepayments/cashfree-js";
+
+
 
 // Mock teacher data for homentor platform
 const teacherData = {
@@ -150,6 +154,13 @@ const MentorDetails = () => {
   const subjects = [
     ...new Set(Object.values(mentorData.teachingPreferences.school).flat()),
   ];
+  const prioritySubjects = ["Mathematics", "Science", "Social Science"];
+  // Sort subjects: priority ones come first, rest follow
+  const sortedSubjects = [
+    ...prioritySubjects.filter((s) => subjects.includes(s)),
+    ...subjects.filter((s) => !prioritySubjects.includes(s)),
+  ];
+
   const { id } = useParams();
   const [activeTab, setActiveTab] = useState("overview");
   console.log(mentorData);
@@ -157,24 +168,33 @@ const MentorDetails = () => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const userNumber = localStorage.getItem("usernumber");
 
-  const payNow = async () => {
-    if (!userNumber) {
-      setIsLoginOpen(true);
-    } else {
-      const res = await axios.post(
-        "https://homentor-backend.onrender.com/api/pay-now",
-        {
-          phone: userNumber,
-          amount: +mentorData.teachingModes.homeTuition.monthlyPrice,
-        }
-      );
-      console.log("PhonPe response", res.data);
-      window.location.href = res.data; // ← This tries to redirect after axios call
-    }
-
-    //   const redirectUrl = res.data.redirectUrl;
-    // redirectToPhonePe(redirectUrl);
-  };
+  
+   const payNow = async (fees) => {
+      if (!userNumber) {
+        setIsLoginOpen(true);
+        return
+      }
+      try {
+        const data = await createOrder({
+          amount: fees,
+          customerId: `homentor${Date.now()}`,
+          customerPhone: userNumber,
+        });
+        console.log(data);
+         let cashfree = await load({
+            mode: "production",
+          });
+        console.log(cashfree);
+  
+        let checkoutOptions = {
+          paymentSessionId: data.payment_session_id,
+          redirectTarget: "_self",
+        };
+        cashfree.checkout(checkoutOptions);
+      } catch (error) {
+        alert("Failed to initiate payment");
+      }
+    };
   const targetDivRef = useRef(null);
   const handleScroll = () => {
     targetDivRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -206,7 +226,7 @@ const MentorDetails = () => {
             <CardContent className="lg:p-8 p-4 -mt-16 relative bg-white">
               <div className="flex flex-col lg:flex-row items-start gap-6">
                 <div className="flex justify-between lg:w-auto w-[100%]">
-                  <Avatar className="h-32 w-32 border-4 border-white shadow-2xl">
+                  <Avatar className="h-32 w-32 border-4 border-white shadow-xl">
                     <AvatarImage
                       src={mentorData?.profilePhoto}
                       alt={mentorData?.fullName}
@@ -218,29 +238,28 @@ const MentorDetails = () => {
                         .join("")}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="flex flex-col lg:hidden justify-center gap-4">
-                    <Button
-                      variant="outline"
-                      size="lg"
-                      className="border-blue-500 text-blue-600 hover:bg-blue-50"
-                    >
-                      <MessageCircle className="h-4 w-4 mr-2" />
-                      Send Message
-                    </Button>
-                    <a
-                      onClick={() => sendCallRequest()}
-                      href={`tel:${callingNo}`}
-                      className=" lg:text-md text-[10px]"
-                    >
-                      <Button
-                        variant="outline"
-                        size="lg"
-                        className="border-blue-500 w-full text-blue-600 hover:bg-blue-50"
-                      >
-                        <PhoneCall className="h-4 w-4 mr-2" />
-                        Call
-                      </Button>
-                    </a>
+                  <div className="flex flex-col justify-evenly">
+                    <div className="flex items-center gap-1 bg-blue-50 border text-blue-700 hover:bg-blue-100 border-blue-500 py-1 px-2 rounded-[10px]">
+                      <label>Rating -</label>
+                      {/* Stars */}
+                      {[...Array(5)].map((_, index) => (
+                        <Star
+                          key={index}
+                          className={`h-4 w-4 ${
+                            index < Math.round(mentorData.rating)
+                              ? "fill-yellow-400 text-yellow-400"
+                              : "text-gray-300"
+                          }`}
+                        />
+                      ))}
+                      {/* <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" /> */}
+                      {/* {mentorData.rating} */}
+                    </div>
+                    <div className="flex items-center gap-1 bg-blue-50 border text-blue-700 hover:bg-blue-100 border-blue-500 py-1 px-2 rounded-[10px]">
+                      <label>Experience -</label>
+
+                      {mentorData.experience}
+                    </div>
                   </div>
                 </div>
                 <div className="flex-1 w-full">
@@ -259,39 +278,19 @@ const MentorDetails = () => {
                         </p>
                       ) : (
                         <p className="text-lg text-slate-600 mb-2 capitalize">
-                          Qualification -{""}
-                          {mentorData?.postGraduation?.degree}
+                          Qualification - {""}
+                          {mentorData?.postGraduation?.degree},{" "}
+                          {mentorData?.graduation?.degree}
                         </p>
                       )}
 
-                      <div className="flex flex-wrap items-center gap-4 text-sm text-slate-600 mb-4">
-                        <div className="flex items-center gap-1 bg-blue-50 border text-blue-700 hover:bg-blue-100 border-blue-500 py-1 px-2 rounded-[10px]">
-                          <label>Rating -</label>
-                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                          {mentorData.rating}
-                        </div>
-                        <div className="flex items-center gap-1 bg-blue-50 border text-blue-700 hover:bg-blue-100 border-blue-500 py-1 px-2 rounded-[10px]">
-                          <label>Experience -</label>
-
-                          {mentorData.experience}
-                        </div>
-                        <div className="flex items-center gap-2">
-                          {Object.keys(mentorData.teachingModes).map((i) => (
-                            <div className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1">
-                              <Home className="h-4 w-4" />
-                              {i.replace(/^./, (c) => c.toUpperCase())}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="flex flex-wrap gap-2 mb-3 ">
-                        {subjects.map(
+                      <div className="flex flex-wrap gap-2  mb-3 ">
+                        {sortedSubjects.map(
                           (subject, index) =>
                             index < 3 && (
                               <Badge
                                 key={subject}
-                                className="bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-200"
+                                className="bg-blue-50 text-blue-700 text-sm hover:bg-blue-100 border-blue-200"
                               >
                                 {subject}
                               </Badge>
@@ -328,6 +327,30 @@ const MentorDetails = () => {
                       mentorData={mentorData}
                       payNow={payNow}
                     ></BookingCard>
+                    <div className="flex flex-row lg:hidden justify-center gap-4">
+                      <Button
+                        variant="outline"
+                        size="lg"
+                        className="border-blue-500 text-blue-600 hover:bg-blue-50"
+                      >
+                        <MessageCircle className="h-4 w-4 mr-2" />
+                        Send Message
+                      </Button>
+                      <a
+                        onClick={() => sendCallRequest()}
+                        href={`tel:${callingNo}`}
+                        className=" lg:text-md text-[10px]"
+                      >
+                        <Button
+                          variant="outline"
+                          size="lg"
+                          className="border-blue-500 w-full text-blue-600 hover:bg-blue-50"
+                        >
+                          <PhoneCall className="h-4 w-4 mr-2" />
+                          Call
+                        </Button>
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -350,18 +373,7 @@ const MentorDetails = () => {
               >
                 Overview
               </TabsTrigger>
-              {/* <TabsTrigger
-                value="experience"
-                className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
-              >
-                Experience
-              </TabsTrigger> */}
-              {/* <TabsTrigger
-                value="reviews"
-                className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
-              >
-                Reviews
-              </TabsTrigger> */}
+              
               <TabsTrigger
                 value="availability"
                 className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
@@ -403,7 +415,27 @@ const MentorDetails = () => {
                       </div>
                     </CardContent>
                   </Card>
-
+                  <Card className="shadow-lg border-0">
+                    <CardHeader className="bg-white border-b border-slate-100">
+                      <CardTitle className="text-slate-800">
+                        Teaching Approach
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-6 bg-white">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                        {teacherData.teachingAreas.map((area) => (
+                          <div
+                            key={area}
+                            className="text-center p-3 bg-gradient-to-br from-blue-50 to-yellow-50 rounded-lg border border-slate-200"
+                          >
+                            <span className="text-sm font-medium text-slate-800">
+                              {area}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
                   <Card ref={targetDivRef} className="shadow-lg border-0">
                     <CardHeader className="bg-white border-b border-slate-100">
                       <CardTitle className="text-slate-800">
@@ -427,27 +459,7 @@ const MentorDetails = () => {
                     </CardContent>
                   </Card>
 
-                  <Card className="shadow-lg border-0">
-                    <CardHeader className="bg-white border-b border-slate-100">
-                      <CardTitle className="text-slate-800">
-                        Teaching Approach
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-6 bg-white">
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                        {teacherData.teachingAreas.map((area) => (
-                          <div
-                            key={area}
-                            className="text-center p-3 bg-gradient-to-br from-blue-50 to-yellow-50 rounded-lg border border-slate-200"
-                          >
-                            <span className="text-sm font-medium text-slate-800">
-                              {area}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
+                  
                 </div>
 
                 <div className="space-y-6">
