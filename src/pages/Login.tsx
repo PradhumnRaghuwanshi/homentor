@@ -21,12 +21,45 @@ const Login = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-  const [userType, setUserType] = useState<"student" | "mentor">("student");
-  const [email, setEmail] = useState("");
+
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [otp, setOTP] = useState("");
-  const [number, setNumber] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+  const [otpSent, setOtpSent] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [userType, setUserType] = useState<"student" | "mentor">("student");
+
+  const [number, setNumber] = useState("");
+  const [mentorOtpSent, setMentorOtpSent] = useState(false); // for mentor
+  const handleSendOTP = async () => {
+    navigate(`/dashboard/${userType}`)
+    // if (!phoneNumber || phoneNumber.length !== 10)
+    //   return toast.error("Enter valid 10-digit number");
+
+    // setIsLoading(true);
+    // try {
+    //   await sendOTP({ phone: phoneNumber, userType }); // Call your backend API here
+    //   setOtpSent(true);
+    //   toast.success("OTP sent!");
+    // } catch (err) {
+    //   toast.error("Failed to send OTP");
+    // } finally {
+    //   setIsLoading(false);
+    // }
+  };
+
+  const handleVerifyOTP = async () => {
+    setIsLoading(true);
+    try {
+      await verifyOTP({ phone: phoneNumber, otp, userType }); // Backend verify logic
+      toast.success("Logged in successfully!");
+      // Navigate to dashboard after login
+    } catch (err) {
+      toast.error("Incorrect OTP");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const [isOTP, setIsOTP] = useState(false);
 
   const { toast } = useToast();
@@ -80,114 +113,131 @@ const Login = () => {
       "https://homentor-backend.onrender.com/api/users/login-check",
       { phone: number }
     );
-    setIsLoading(false)
+    setIsLoading(false);
   };
 
-  const verifyOTP = async ()=>{
-      setIsLoading(true);
-const response = await axios.post(
+  const verifyOTP = async () => {
+    setIsLoading(true);
+    const response = await axios.post(
       "https://homentor-backend.onrender.com/api/users/verify-check",
       { phone: number }
     );
-  }
+  };
 
   return (
     <Layout>
-      <div className="container-tight max-w-md py-12 mt-[8vh]">
-        <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-gray-900">Welcome Back</h1>
-          <p className="text-gray-600 mt-2">Log in to your Homentor account</p>
-        </div>
+      <Card className="max-w-md mx-auto mt-12">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl">Login to Homentor</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Tabs
+            defaultValue="student"
+            onValueChange={(val) => {
+              setUserType(val as "student" | "mentor");
+              setOtpSent(false);
+              setPhoneNumber("");
+              setOTP("");
+            }}
+          >
+            <TabsList className="grid grid-cols-2 mb-6">
+              <TabsTrigger value="student">Student</TabsTrigger>
+              <TabsTrigger value="mentor">Mentor</TabsTrigger>
+            </TabsList>
 
-        <Card>
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-center">Login</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Tabs
-              defaultValue="student"
-              className="w-full"
-              onValueChange={(value) =>
-                setUserType(value as "student" | "mentor")
-              }
-            >
-              <TabsList className="grid grid-cols-2 w-full mb-6">
-                <TabsTrigger value="student">Student</TabsTrigger>
-                <TabsTrigger value="mentor">Mentor</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="student">
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="student-email">Mobile Number</Label>
-                    <Input
-                      id="student-phone"
-                      type="text"
-                      placeholder=""
-                      required
-                      value={number}
-                      onChange={(e) => setNumber(e.target.value)}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="student-email">Enter OTP</Label>
-                    <Input
-                      id="student-otp"
-                      type="number"
-                      placeholder="Enter OTP"
-                      required
-                      value={otp}
-                      onChange={(e) => setOTP(e.target.value)}
-                    />
-                  </div>
-
-                  <Button
-                    onClick={() => handleOTP()}
-                    className="w-full bg-homentor-blue hover:bg-homentor-darkBlue"
-                    disabled={isLoading}
-                  >
-                    {isLoading ? "Signing In..." : "Send OTP"}
-                  </Button>
+            {/* Login Tab Content */}
+            <TabsContent value="student">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Phone Number</Label>
+                  <Input
+                    type="text"
+                    maxLength={10}
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    placeholder="Enter 10-digit number"
+                  />
                 </div>
-                <div onSubmit={handleSubmit} className="space-y-4">
+
+                {!otpSent ? (
                   <Button
-                    type="submit"
                     className="w-full bg-homentor-blue hover:bg-homentor-darkBlue"
+                    onClick={handleSendOTP}
                     disabled={isLoading}
                   >
-                    {isLoading ? "Signing In..." : "Send OTP"}
+                    {isLoading ? "Sending OTP..." : "Send OTP"}
                   </Button>
+                ) : (
+                  <>
+                    <div className="space-y-2">
+                      <Label>Enter OTP</Label>
+                      <Input
+                        type="text"
+                        maxLength={6}
+                        value={otp}
+                        onChange={(e) => setOTP(e.target.value)}
+                        placeholder="6-digit OTP"
+                      />
+                    </div>
+                    <Button
+                      className="w-full bg-homentor-blue hover:bg-homentor-darkBlue"
+                      onClick={handleVerifyOTP}
+                      disabled={isLoading}
+                    >
+                      {isLoading ? "Verifying..." : "Login"}
+                    </Button>
+                  </>
+                )}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="mentor">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Phone Number</Label>
+                  <Input
+                    type="text"
+                    maxLength={10}
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    placeholder="Enter 10-digit number"
+                  />
                 </div>
-              </TabsContent>
 
-              <TabsContent value="mentor">
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="student-email">Mobile Number</Label>
-                    <Input
-                      id="student-email"
-                      type="email"
-                      placeholder=""
-                      required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
-                  </div>
-
+                {!otpSent ? (
                   <Button
-                    type="submit"
                     className="w-full bg-homentor-blue hover:bg-homentor-darkBlue"
+                    onClick={handleSendOTP}
                     disabled={isLoading}
                   >
-                    {isLoading ? "Signing In..." : "Send OTP"}
+                    {isLoading ? "Sending OTP..." : "Send OTP"}
                   </Button>
-                </form>
-              </TabsContent>
-            </Tabs>
-          </CardContent>
-        </Card>
-      </div>
+                ) : (
+                  <>
+                    <div className="space-y-2">
+                      <Label>Enter OTP</Label>
+                      <Input
+                        type="text"
+                        maxLength={6}
+                        value={otp}
+                        onChange={(e) => setOTP(e.target.value)}
+                        placeholder="6-digit OTP"
+                      />
+                    </div>
+                    <Button
+                      className="w-full bg-homentor-blue hover:bg-homentor-darkBlue"
+                      onClick={handleVerifyOTP}
+                      disabled={isLoading}
+                    >
+                      {isLoading ? "Verifying..." : "Login"}
+                    </Button>
+                  </>
+                )}
+              </div>
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
     </Layout>
   );
 };
