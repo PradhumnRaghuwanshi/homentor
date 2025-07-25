@@ -83,6 +83,7 @@ const TornCard = ({ mentor }) => {
         customerPhone: userNumber,
       });
       console.log(data);
+      localStorage.setItem("orderId", data.order_id);
        let cashfree = await load({
           mode: "production",
         });
@@ -92,7 +93,8 @@ const TornCard = ({ mentor }) => {
         paymentSessionId: data.payment_session_id,
         redirectTarget: "_self",
       };
-      cashfree.checkout(checkoutOptions);
+      await cashfree.checkout(checkoutOptions);
+
     } catch (error) {
       alert("Failed to initiate payment");
     }
