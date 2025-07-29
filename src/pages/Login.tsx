@@ -29,9 +29,37 @@ const Login = () => {
   const [userType, setUserType] = useState<"student" | "mentor">("student");
 
   const [number, setNumber] = useState("");
-  const [mentorOtpSent, setMentorOtpSent] = useState(false); // for mentor
+  const [verificationId, setVerificationId] = useState("");
+
+  const handlePhoneSubmit = () => {
+    try {
+      axios
+        .post("https://homentor-backend.onrender.com/api/otp/send-otp", {
+          mobile: phoneNumber,
+        })
+        .then((res) => {
+          console.log(res.data);
+          setVerificationId(res.data.verificationId);
+          setOtpSent(true)
+        });
+    } catch (error) {
+      console.error("Error sending OTP:", error);
+    }
+  };
+  const handleOtpVerify = async() => {
+     const res = await axios.post("https://homentor-backend.onrender.com/api/otp/verify-otp", {
+      verificationId,
+      code: otp,
+      phone: phoneNumber,
+    });
+    localStorage.setItem("usernumber", phoneNumber)
+    console.log('OTP verified:', otp, 'for phone:', phoneNumber);
+    navigate(`/dashboard/${userType}`);
+    // Here you would typically verify the OTP with your backend
+  };
   const handleSendOTP = async () => {
-    navigate(`/dashboard/${userType}`)
+    localStorage.setItem("mentor-detail", phoneNumber);
+    navigate(`/dashboard/${userType}`);
     // if (!phoneNumber || phoneNumber.length !== 10)
     //   return toast.error("Enter valid 10-digit number");
 
@@ -65,56 +93,7 @@ const Login = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-
-    try {
-      // Mock login - in a real app, this would be an API call
-      // Redirect based on user type
-      if (userType === "student") {
-        const response = await axios.post(
-          "https://homentor-backend.onrender.com/api/users/login-check",
-          { phone: number }
-        );
-        localStorage.setItem("usernumber", number);
-        navigate("/dashboard/student");
-      } else {
-        const response = await axios.post(
-          "https://homentor-backend.onrender.com/api/mentor/login-check",
-          { phone: number }
-        );
-        localStorage.setItem("usernumber", number);
-
-        navigate("/dashboard/mentor");
-      }
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      toast({
-        title: "Logged in successfully",
-        description: `Welcome back! You are logged in as a ${userType}.`,
-      });
-    } catch (error) {
-      toast({
-        title: "Login failed",
-        description: "Please check your credentials and try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const [isOtp, setIsOtp] = useState(false);
-  const handleOTP = async () => {
-    setIsOtp(true);
-    setIsLoading(true);
-    const response = await axios.post(
-      "https://homentor-backend.onrender.com/api/users/login-check",
-      { phone: number }
-    );
-    setIsLoading(false);
-  };
 
   const verifyOTP = async () => {
     setIsLoading(true);
@@ -207,7 +186,7 @@ const Login = () => {
                 {!otpSent ? (
                   <Button
                     className="w-full bg-homentor-blue hover:bg-homentor-darkBlue"
-                    onClick={handleSendOTP}
+                    onClick={handlePhoneSubmit}
                     disabled={isLoading}
                   >
                     {isLoading ? "Sending OTP..." : "Send OTP"}
@@ -226,7 +205,7 @@ const Login = () => {
                     </div>
                     <Button
                       className="w-full bg-homentor-blue hover:bg-homentor-darkBlue"
-                      onClick={handleVerifyOTP}
+                      onClick={handleOtpVerify}
                       disabled={isLoading}
                     >
                       {isLoading ? "Verifying..." : "Login"}

@@ -51,25 +51,7 @@ const TornCard = ({ mentor }) => {
   };
 
   const userNumber = localStorage.getItem("usernumber");
-  const payNow = async (fees) => {
-    if (!userNumber) {
-      setIsLoginOpen(true);
-    } else {
-      const res = await axios.post(
-        "https://homentor-backend.onrender.com/api/pay-now",
-        {
-          phone: userNumber,
-          amount: fees,
-        }
-      );
-
-      console.log("PhonPe response", res.data);
-      window.location.href = res.data.url; // ← This tries to redirect after axios call
-    }
-
-    //   const redirectUrl = res.data.redirectUrl;
-    // redirectToPhonePe(redirectUrl);
-  };
+ 
 
   const handlePayment = async (fees) => {
     if (!userNumber) {
