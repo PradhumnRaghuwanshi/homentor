@@ -36,6 +36,7 @@ const Login = () => {
       axios
         .post("https://homentor-backend.onrender.com/api/otp/send-otp", {
           mobile: phoneNumber,
+          userType : userType
         })
         .then((res) => {
           console.log(res.data);
@@ -51,57 +52,16 @@ const Login = () => {
       verificationId,
       code: otp,
       phone: phoneNumber,
+      userType : userType
     });
     localStorage.setItem("usernumber", phoneNumber)
     console.log('OTP verified:', otp, 'for phone:', phoneNumber);
-    navigate(`/dashboard/${userType}`);
+    console.log(res)
+    // navigate(`/dashboard/${userType}`);
     // Here you would typically verify the OTP with your backend
   };
-  const handleSendOTP = async () => {
-    localStorage.setItem("mentor-detail", phoneNumber);
-    navigate(`/dashboard/${userType}`);
-    // if (!phoneNumber || phoneNumber.length !== 10)
-    //   return toast.error("Enter valid 10-digit number");
-
-    // setIsLoading(true);
-    // try {
-    //   await sendOTP({ phone: phoneNumber, userType }); // Call your backend API here
-    //   setOtpSent(true);
-    //   toast.success("OTP sent!");
-    // } catch (err) {
-    //   toast.error("Failed to send OTP");
-    // } finally {
-    //   setIsLoading(false);
-    // }
-  };
-
-  const handleVerifyOTP = async () => {
-    setIsLoading(true);
-    try {
-      await verifyOTP({ phone: phoneNumber, otp, userType }); // Backend verify logic
-      toast.success("Logged in successfully!");
-      // Navigate to dashboard after login
-    } catch (err) {
-      toast.error("Incorrect OTP");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const [isOTP, setIsOTP] = useState(false);
-
-  const { toast } = useToast();
   const navigate = useNavigate();
-
-  const [isOtp, setIsOtp] = useState(false);
-
-  const verifyOTP = async () => {
-    setIsLoading(true);
-    const response = await axios.post(
-      "https://homentor-backend.onrender.com/api/users/verify-check",
-      { phone: number }
-    );
-  };
+  
 
   return (
     <Layout>
@@ -141,7 +101,7 @@ const Login = () => {
                 {!otpSent ? (
                   <Button
                     className="w-full bg-homentor-blue hover:bg-homentor-darkBlue"
-                    onClick={handleSendOTP}
+                    onClick={handlePhoneSubmit}
                     disabled={isLoading}
                   >
                     {isLoading ? "Sending OTP..." : "Send OTP"}
@@ -160,7 +120,7 @@ const Login = () => {
                     </div>
                     <Button
                       className="w-full bg-homentor-blue hover:bg-homentor-darkBlue"
-                      onClick={handleVerifyOTP}
+                      onClick={handleOtpVerify}
                       disabled={isLoading}
                     >
                       {isLoading ? "Verifying..." : "Login"}

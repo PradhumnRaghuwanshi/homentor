@@ -70,7 +70,7 @@ const TornCard = ({ mentor }) => {
           mode: "production",
         });
       console.log(cashfree);
-
+        
       let checkoutOptions = {
         paymentSessionId: data.payment_session_id,
         redirectTarget: "_self",
