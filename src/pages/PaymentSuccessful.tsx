@@ -11,11 +11,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Confetti from "@/components/Confetti";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const PaymentSuccessful = () => {
   const orderId = localStorage.getItem("order_id");
   const [orderStatus, setOrderStatus] = useState("");
   const [orderDetail, setOrderDetail] = useState(null);
+  
   const getPaymentDetails = async () => {
     const response = await axios.get(
       `https://homentor-backend.onrender.com/api/payment/verify-order/${orderId}`
@@ -62,6 +64,8 @@ const PaymentSuccessful = () => {
     date: new Date().toLocaleDateString(),
     items: [{ name: "Premium Plan", quantity: 1, price: "$99.99" }],
   };
+  
+  const navigate = useNavigate()
 
 
   return (
@@ -197,6 +201,7 @@ const PaymentSuccessful = () => {
 
         {/* Continue Button */}
         <Button
+         onClick={()=> navigate('/dashboard/student')}
           size="lg"
           className="mt-8 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white px-12 py-4 rounded-full font-medium transition-all duration-200 hover:scale-105 animate-fade-in"
         >

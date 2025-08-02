@@ -63,9 +63,11 @@ const TornCard = ({ mentor }) => {
         amount: fees,
         customerId: `homentor${Date.now()}`,
         customerPhone: userNumber,
+        mentorId: mentor._id
       });
       console.log(data);
       localStorage.setItem("orderId", data.order_id);
+
        let cashfree = await load({
           mode: "production",
         });

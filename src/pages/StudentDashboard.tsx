@@ -13,8 +13,11 @@ import {
   Bell,
   ChevronRight,
   Star,
-  Video
+  Video,
+  PhoneCall
 } from 'lucide-react';
+import NoBookingCard from '@/comp/NoBookingCard';
+import axios from 'axios';
 
 // Mock data for demonstration
 const mockClasses = [
@@ -69,6 +72,42 @@ const MentorDashboard = () => {
     const type = urlParams.get('type') as 'parent' | 'mentor';
     if (type) setUserType(type);
   }, []);
+  const studentNumber = localStorage.getItem("usernumber")
+  const [studentDetail, setStudentDetail] = useState(null)
+  const getStudentDetail = async () => {
+      try {
+        const response = await axios.post(
+          `https://homentor-backend.onrender.com/api/user`,
+          {
+            phone : studentNumber
+          }
+        );
+        setStudentDetail(response.data.data);
+      } catch (error) {
+        console.error("Failed to fetch student", error);
+      } finally {
+        setLoading(false);
+      }
+    }; 
+  const [bookings, setBookings] = useState([])
+  const [loading, setLoading] = useState(false)
+  const fetchBookings = async () => {
+      try {
+        const response = await axios.get(
+          `https://homentor-backend.onrender.com/api/class-bookings/${studentDetail._id}`
+        );
+        setBookings(response.data.data);
+      } catch (error) {
+        console.error("Failed to fetch bookings", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    useEffect(() => {
+      fetchBookings();
+      getStudentDetail()
+    }, []);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -92,31 +131,34 @@ const MentorDashboard = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">
-              {userType === 'parent' ? 'Parent' : 'Mentor'} Dashboard
-            </h1>
-            <p className="text-gray-600 mt-1">
-              {userType === 'parent' 
-                ? 'Manage your mentoring sessions and track progress' 
-                : 'Manage your students and upcoming sessions'
-              }
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm">
-              <Settings className="w-4 h-4 mr-2" />
-              Settings
-            </Button>
-            <Button variant="outline" size="sm">
-              <Bell className="w-4 h-4" />
-            </Button>
+        <div className="mb-8">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            {/* Title and Subheading */}
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                {userType === "parent" ? "Parent" : "Mentor"} Dashboard
+              </h1>
+              <p className="text-gray-600 mt-1 text-sm sm:text-base">
+                Manage your students and upcoming sessions
+              </p>
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-2 w-full sm:w-auto justify-end sm:justify-start">
+              <Button variant="outline" size="sm" className="w-full sm:w-auto">
+                <Settings className="w-4 h-4 mr-2" />
+                <span className="hidden sm:inline">Settings</span>
+              </Button>
+              <Button variant="outline" size="sm" className="w-full sm:w-auto">
+                <PhoneCall className="w-4 h-4 mr-2" />
+                <span className=" sm:inline">9203149956</span>
+              </Button>
+            </div>
           </div>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        {/* <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
@@ -174,11 +216,11 @@ const MentorDashboard = () => {
               </p>
             </CardContent>
           </Card>
-        </div>
+        </div> */}
 
         {/* Main Content */}
         <Tabs defaultValue="classes" className="space-y-4">
-          <TabsList>
+          {/* <TabsList>
             <TabsTrigger value="classes">
               {userType === 'parent' ? 'My Classes' : 'Student Classes'}
             </TabsTrigger>
@@ -186,7 +228,7 @@ const MentorDashboard = () => {
             <TabsTrigger value="payments">
               {userType === 'parent' ? 'Payments' : 'Earnings'}
             </TabsTrigger>
-          </TabsList>
+          </TabsList> */}
 
           <TabsContent value="classes" className="space-y-4">
             <div className="flex justify-between items-center">
@@ -198,7 +240,8 @@ const MentorDashboard = () => {
                 View Calendar
               </Button>
             </div>
-
+            {bookings.length == 0 ? 
+            <NoBookingCard></NoBookingCard> : 
             <div className="space-y-4">
               {mockClasses.map((classItem) => (
                 <Card key={classItem.id} className="hover:shadow-md transition-shadow">
@@ -270,7 +313,7 @@ const MentorDashboard = () => {
                   </CardContent>
                 </Card>
               ))}
-            </div>
+            </div>}
           </TabsContent>
 
           <TabsContent value="schedule">
