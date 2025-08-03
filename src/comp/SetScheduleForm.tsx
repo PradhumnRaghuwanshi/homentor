@@ -12,6 +12,7 @@ export default function ScheduleModal({classBooking, getBookings}) {
     school: "",
     scheduledDate: "",
     scheduledTime: "",
+    status: "scheduled"
   });
 
   const handleChange = (e) =>
@@ -27,7 +28,7 @@ export default function ScheduleModal({classBooking, getBookings}) {
               ...formData
             }
           );
-          getBookings()
+          await getBookings()
           console.log(response.data.data);
         } catch (error) {
           console.error("Failed to fetch bookings", error);
@@ -122,7 +123,7 @@ export default function ScheduleModal({classBooking, getBookings}) {
                   <label className="block font-medium">Date</label>
                   <input
                     type="date"
-                    name="date"
+                    name="scheduledDate"
                     value={formData.scheduledDate}
                     onChange={handleChange}
                     className="w-full px-3 py-2 border rounded-lg"
@@ -133,7 +134,7 @@ export default function ScheduleModal({classBooking, getBookings}) {
                   <label className="block font-medium">Time</label>
                   <input
                     type="time"
-                    name="time"
+                    name="scheduledTime"
                     value={formData.scheduledTime}
                     onChange={handleChange}
                     className="w-full px-3 py-2 border rounded-lg"

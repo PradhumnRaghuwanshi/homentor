@@ -21,6 +21,7 @@ import {
   Star,
   Video,
   CalendarX,
+  IndianRupee,
 } from "lucide-react";
 import axios from "axios";
 import ScheduleModal from "@/comp/SetScheduleForm";
@@ -140,7 +141,7 @@ const MentorDashboard = () => {
       console.log(res.data.data);
 
       const response = await axios.get(
-        `https://homentor-backend.onrender.com/api/class-bookings/mentor/${mentorDetail._id}`
+        `https://homentor-backend.onrender.com/api/class-bookings/mentor/${res.data.data._id}`
       );
       setBookings(response.data.data);
       console.log(response.data.data);
@@ -163,14 +164,17 @@ const MentorDashboard = () => {
         <div className="mb-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             {/* Title and Subheading */}
+             <div className="flex items-center gap-4">
+            <img
+              src={mentorDetail?.profilePhoto || "/placeholder.svg"}
+              alt="mentor profile"
+              className="w-16 h-16 rounded-full border object-cover"
+            />
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
-                {userType === "parent" ? "Parent" : "Mentor"} Dashboard
-              </h1>
-              <p className="text-gray-600 mt-1 text-sm sm:text-base">
-                Manage your students and upcoming sessions
-              </p>
+              <p className="font-semibold text-lg">{mentorDetail?.fullName}</p>
+              <p className="text-sm text-gray-500">ID: {mentorDetail?._id}</p>
             </div>
+          </div>
 
             {/* Actions */}
             <div className="flex gap-2 w-full sm:w-auto justify-end sm:justify-start">
@@ -261,17 +265,7 @@ const MentorDashboard = () => {
         </div>
 
         <CardContent className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <img
-              src={mentorDetail?.profilePhoto || "/placeholder.svg"}
-              alt="mentor profile"
-              className="w-16 h-16 rounded-full border object-cover"
-            />
-            <div>
-              <p className="font-semibold text-lg">{mentorDetail?.fullName}</p>
-              <p className="text-sm text-gray-500">ID: {mentorDetail?._id}</p>
-            </div>
-          </div>
+         
 
           <div className="flex items-center gap-3">
             <Button variant="secondary">Form Edit</Button>
@@ -354,7 +348,7 @@ const MentorDashboard = () => {
                                 {classItem.duration}
                               </span>
                               <span className="flex items-center gap-1">
-                                <DollarSign className="w-4 h-4" />$
+                                <IndianRupee className="w-4 h-4" />
                                 {classItem.price}
                               </span>
                               <span>Booked: {classItem.bookedDate}</span>
@@ -388,7 +382,7 @@ const MentorDashboard = () => {
                         </div>
                         <div className="flex flex-col gap-2">
                           {classItem.status === "pending_schedule" && (
-                            <ScheduleModal></ScheduleModal>
+                            <ScheduleModal classBooking={classItem} getBookings={fetchBookings}></ScheduleModal>
                           )}
 
                           {classItem.status === "scheduled" && (

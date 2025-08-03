@@ -72,17 +72,22 @@ const MentorDashboard = () => {
     const type = urlParams.get('type') as 'parent' | 'mentor';
     if (type) setUserType(type);
   }, []);
-  const studentNumber = localStorage.getItem("usernumber")
+  const studentNumber = localStorage.getItem("student")
   const [studentDetail, setStudentDetail] = useState(null)
   const getStudentDetail = async () => {
       try {
         const response = await axios.post(
-          `https://homentor-backend.onrender.com/api/user`,
+          `https://homentor-backend.onrender.com/api/users/login-check`,
           {
             phone : studentNumber
           }
         );
         setStudentDetail(response.data.data);
+
+        const res = await axios.get(
+          `https://homentor-backend.onrender.com/api/class-bookings/student/${response.data.data._id}`
+        );
+        setBookings(res.data.data);
       } catch (error) {
         console.error("Failed to fetch student", error);
       } finally {
@@ -94,7 +99,7 @@ const MentorDashboard = () => {
   const fetchBookings = async () => {
       try {
         const response = await axios.get(
-          `https://homentor-backend.onrender.com/api/class-bookings/${studentDetail._id}`
+          `https://homentor-backend.onrender.com/api/class-bookings/student/${studentDetail._id}`
         );
         setBookings(response.data.data);
       } catch (error) {
@@ -243,14 +248,14 @@ const MentorDashboard = () => {
             {bookings.length == 0 ? 
             <NoBookingCard></NoBookingCard> : 
             <div className="space-y-4">
-              {mockClasses.map((classItem) => (
+              {bookings.map((classItem) => (
                 <Card key={classItem.id} className="hover:shadow-md transition-shadow">
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between">
                       <div className="flex items-start space-x-4">
                         <img
-                          src={classItem.mentorImage}
-                          alt={classItem.mentorName}
+                          src={classItem?.mentor?.profilePhoto}
+                          alt={classItem?.mentor?.fullName}
                           className="w-12 h-12 rounded-full object-cover"
                         />
                         <div className="flex-1">
@@ -261,18 +266,15 @@ const MentorDashboard = () => {
                             </Badge>
                           </div>
                           <p className="text-gray-600 mb-1">
-                            {userType === 'parent' ? 'Mentor: ' : 'Student: '}{classItem.mentorName}
+                            {userType === 'parent' ? 'Mentor: ' : 'Student: '}{classItem?.mentor?.fullName}
                           </p>
                           <div className="flex items-center gap-4 text-sm text-gray-500">
                             <span className="flex items-center gap-1">
                               <Clock className="w-4 h-4" />
-                              {classItem.duration}
+                              {classItem.duration} days
                             </span>
-                            <span className="flex items-center gap-1">
-                              <DollarSign className="w-4 h-4" />
-                              ${classItem.price}
-                            </span>
-                            <span>Booked: {classItem.bookedDate}</span>
+                            
+                            <span>Booked: {classItem.bookedDate} </span>
                           </div>
                           {classItem.scheduledDate && (
                             <div className="mt-2 p-2 bg-green-50 rounded-md">

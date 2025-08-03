@@ -36,7 +36,7 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ isOpen, onClose }) => {
       code: otp,
       phone: phoneNumber,
     });
-    localStorage.setItem("usernumber", phoneNumber)
+    localStorage.setItem("student", phoneNumber)
     console.log('OTP verified:', otp, 'for phone:', phoneNumber);
     // Here you would typically verify the OTP with your backend
     onClose();

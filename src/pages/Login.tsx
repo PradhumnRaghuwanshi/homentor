@@ -54,7 +54,7 @@ const Login = () => {
       phone: phoneNumber,
       userType : userType
     });
-    localStorage.setItem("usernumber", phoneNumber)
+    localStorage.setItem(`${userType}`, phoneNumber)
     console.log('OTP verified:', otp, 'for phone:', phoneNumber);
     console.log(res)
     navigate(`/dashboard/${userType}`);
