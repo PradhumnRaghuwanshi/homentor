@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import axios from "axios";
 import ScheduleModal from "@/comp/SetScheduleForm";
+import AttendanceModal from "@/comp/AttendanceModal";
 
 // Mock data for demonstration
 const mockClasses = [
@@ -164,17 +165,19 @@ const MentorDashboard = () => {
         <div className="mb-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             {/* Title and Subheading */}
-             <div className="flex items-center gap-4">
-            <img
-              src={mentorDetail?.profilePhoto || "/placeholder.svg"}
-              alt="mentor profile"
-              className="w-16 h-16 rounded-full border object-cover"
-            />
-            <div>
-              <p className="font-semibold text-lg">{mentorDetail?.fullName}</p>
-              <p className="text-sm text-gray-500">ID: {mentorDetail?._id}</p>
+            <div className="flex items-center gap-4">
+              <img
+                src={mentorDetail?.profilePhoto || "/placeholder.svg"}
+                alt="mentor profile"
+                className="w-16 h-16 rounded-full border object-cover"
+              />
+              <div>
+                <p className="font-semibold text-lg">
+                  {mentorDetail?.fullName}
+                </p>
+                <p className="text-sm text-gray-500">ID: {mentorDetail?._id}</p>
+              </div>
             </div>
-          </div>
 
             {/* Actions */}
             <div className="flex gap-2 w-full sm:w-auto justify-end sm:justify-start">
@@ -265,8 +268,6 @@ const MentorDashboard = () => {
         </div>
 
         <CardContent className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-         
-
           <div className="flex items-center gap-3">
             <Button variant="secondary">Form Edit</Button>
             <Button variant="default">Second Form</Button>
@@ -382,14 +383,17 @@ const MentorDashboard = () => {
                         </div>
                         <div className="flex flex-col gap-2">
                           {classItem.status === "pending_schedule" && (
-                            <ScheduleModal classBooking={classItem} getBookings={fetchBookings}></ScheduleModal>
+                            <ScheduleModal
+                              classBooking={classItem}
+                              getBookings={fetchBookings}
+                            ></ScheduleModal>
                           )}
 
                           {classItem.status === "scheduled" && (
-                            <Button size="sm">
-                              <Video className="w-4 h-4 mr-2" />
-                              Join Session
-                            </Button>
+                            <AttendanceModal
+                              classBooking={classItem}
+                              getBookings={fetchBookings}
+                            />
                           )}
                           <Button variant="outline" size="sm">
                             <ChevronRight className="w-4 h-4" />
