@@ -57,7 +57,7 @@ const Login = () => {
     localStorage.setItem("usernumber", phoneNumber)
     console.log('OTP verified:', otp, 'for phone:', phoneNumber);
     console.log(res)
-    // navigate(`/dashboard/${userType}`);
+    navigate(`/dashboard/${userType}`);
     // Here you would typically verify the OTP with your backend
   };
   const navigate = useNavigate();

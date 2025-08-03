@@ -14,7 +14,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const PaymentSuccessful = () => {
-  const orderId = localStorage.getItem("order_id");
+  const orderId = localStorage.getItem("orderId");
+  // const orderId = "order_79465630jgBdKjHiFKHPtI9Je85k5sFd0";
   const [orderStatus, setOrderStatus] = useState("");
   const [orderDetail, setOrderDetail] = useState(null);
   
