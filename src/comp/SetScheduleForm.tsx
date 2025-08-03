@@ -10,8 +10,8 @@ export default function ScheduleModal({classBooking, getBookings}) {
     studentName: "",
     class: "",
     school: "",
-    date: "",
-    time: "",
+    scheduledDate: "",
+    scheduledTime: "",
   });
 
   const handleChange = (e) =>
@@ -22,7 +22,10 @@ export default function ScheduleModal({classBooking, getBookings}) {
     console.log("Form submitted:", formData);
     try {
           const response = await axios.put(
-            `https://homentor-backend.onrender.com/api/class-bookings/booking/${classBooking?._id}`
+            `https://homentor-backend.onrender.com/api/class-bookings/booking/${classBooking?._id}`,
+            {
+              ...formData
+            }
           );
           getBookings()
           console.log(response.data.data);
@@ -120,7 +123,7 @@ export default function ScheduleModal({classBooking, getBookings}) {
                   <input
                     type="date"
                     name="date"
-                    value={formData.date}
+                    value={formData.scheduledDate}
                     onChange={handleChange}
                     className="w-full px-3 py-2 border rounded-lg"
                     required
@@ -131,7 +134,7 @@ export default function ScheduleModal({classBooking, getBookings}) {
                   <input
                     type="time"
                     name="time"
-                    value={formData.time}
+                    value={formData.scheduledTime}
                     onChange={handleChange}
                     className="w-full px-3 py-2 border rounded-lg"
                     required
