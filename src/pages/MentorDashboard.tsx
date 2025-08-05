@@ -130,8 +130,6 @@ const MentorDashboard = () => {
         return status;
     }
   };
-  const [loadingDisplay, setLoadingDisplay] = useState(false);
-  const [isAvailable, setIsAvailable] = useState(true);
 
   const getMentorDetail = async () => {
     try {
@@ -147,7 +145,7 @@ const MentorDashboard = () => {
       setBookings(response.data.data);
       console.log(response.data.data);
       setMentorDetail(res.data.data);
-      setIsAvailable(res.data.data.showOnWebsite);
+      setIsOn(res.data.data.showOnWebsite);
     } catch (err) {
       console.error("Failed to fetch availability");
     }
@@ -157,6 +155,47 @@ const MentorDashboard = () => {
     getMentorDetail();
   }, []);
   const [isOn, setIsOn] = useState(false);
+
+  const updateMentorDetail = async (websiteStatus) => {
+    try {
+      const res = await axios.put(
+        `https://homentor-backend.onrender.com/api/mentor/${mentorDetail._id}`,
+        { showOnWebsite: websiteStatus }
+      );
+      console.log(res.data.data);
+      getMentorDetail();
+    } catch (err) {
+      console.error("Failed to fetch availability");
+    }
+  };
+  const formatDateTime = (isoDate: string) => {
+    return new Intl.DateTimeFormat("en-IN", {
+      dateStyle: "medium", // e.g., Aug 2, 2025
+      timeStyle: "short", // e.g., 3:09 PM
+      timeZone: "Asia/Kolkata", // To adjust for Indian time
+    }).format(new Date(isoDate));
+  };
+  const formatDateOnly = (isoDate: string) => {
+    const options = {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      timeZone: "Asia/Kolkata",
+    };
+    return new Date(isoDate).toLocaleDateString("en-IN", options);
+  };
+
+  const formatTimeOnly = (timeStr: string) => {
+    const [hour, minute] = timeStr.split(":").map(Number);
+    const date = new Date();
+    date.setHours(hour, minute);
+
+    return date.toLocaleTimeString("en-IN", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
@@ -190,7 +229,7 @@ const MentorDashboard = () => {
                   Display
                 </label>
                 <button
-                  onClick={() => setIsOn(!isOn)}
+                  onClick={() => updateMentorDetail(!isOn)}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-300 ${
                     isOn ? "bg-green-500" : "bg-gray-300"
                   }`}
@@ -323,11 +362,6 @@ const MentorDashboard = () => {
                     <CardContent className="p-6">
                       <div className="flex items-start justify-between">
                         <div className="flex items-start space-x-4">
-                          <img
-                            src={classItem.mentorImage}
-                            alt={classItem.mentorName}
-                            className="w-12 h-12 rounded-full object-cover"
-                          />
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
                               <h3 className="font-semibold text-lg">
@@ -348,19 +382,20 @@ const MentorDashboard = () => {
                                 <Clock className="w-4 h-4" />
                                 {classItem.duration}
                               </span>
-                              <span className="flex items-center gap-1">
-                                <IndianRupee className="w-4 h-4" />
-                                {classItem.price}
+
+                              <span>
+                                Booked: {formatDateTime(classItem.bookedDate)}
                               </span>
-                              <span>Booked: {classItem.bookedDate}</span>
                             </div>
                             {classItem.scheduledDate && (
                               <div className="mt-2 p-2 bg-green-50 rounded-md">
                                 <p className="text-sm text-green-800">
                                   <Calendar className="w-4 h-4 inline mr-1" />
-                                  Scheduled for {
+                                  Scheduled for{" "}
+                                  {formatDateOnly(
                                     classItem.scheduledDate
-                                  } at {classItem.scheduledTime}
+                                  )} at{" "}
+                                  {formatTimeOnly(classItem.scheduledTime)}
                                 </p>
                               </div>
                             )}

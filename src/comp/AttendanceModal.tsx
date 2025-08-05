@@ -15,8 +15,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import axios from "axios";
 
 export default function AttendanceModal({ classBooking, getBookings }) {
+  const closeRef = useRef(null); // ⬅️ Ref for closing the modal
   const [formData, setFormData] = useState({
     date: "",
     timeIn: "",
@@ -25,6 +27,9 @@ export default function AttendanceModal({ classBooking, getBookings }) {
     topic: "",
     mentorTick: false,
     parentTick: false,
+    classBooking: classBooking._id,
+    mentor : classBooking.mentor,
+    parent : classBooking.parent
   });
 
   const handleChange = (e) => {
@@ -38,11 +43,20 @@ export default function AttendanceModal({ classBooking, getBookings }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Attendance submitted:", formData);
-    // You can POST to backend here with classBooking._id
-    // await axios.post(`/api/attendance/${classBooking._id}`, formData);
-    getBookings(); // Refresh bookings
-  };
 
+    try {
+      const response = await axios.post(`https://homentor-backend.onrender.com/api/class-records` ,formData)
+      console.log(response.data);
+      // ✅ Close the modal
+      if (closeRef.current) {
+        closeRef.current.click();
+      }
+
+    } catch (error) {
+      console.log(error)
+    }
+
+  };
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -52,6 +66,7 @@ export default function AttendanceModal({ classBooking, getBookings }) {
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>📄 Attendance Sheet</DialogTitle>
+         
           <DialogDescription>
             Fill in class attendance for <strong>{classBooking.subject}</strong>.
           </DialogDescription>

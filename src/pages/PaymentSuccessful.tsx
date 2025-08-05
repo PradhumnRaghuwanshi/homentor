@@ -18,7 +18,8 @@ const PaymentSuccessful = () => {
   // const orderId = "order_79465630jgBdKjHiFKHPtI9Je85k5sFd0";
   const [orderStatus, setOrderStatus] = useState("");
   const [orderDetail, setOrderDetail] = useState(null);
-  
+  const [loading, setLoading] = useState(true);
+
   const getPaymentDetails = async () => {
     const response = await axios.get(
       `https://homentor-backend.onrender.com/api/payment/verify-order/${orderId}`
@@ -26,6 +27,7 @@ const PaymentSuccessful = () => {
     const getOrderResponse = response.data;
     setOrderDetail(response.data[0]);
     console.log(response.data);
+    setLoading(false)
     if (
       getOrderResponse.filter(
         (transaction) => transaction.payment_status === "SUCCESS"
@@ -67,6 +69,42 @@ const PaymentSuccessful = () => {
   };
   
   const navigate = useNavigate()
+  if (loading) {
+  return (
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center">
+      
+      <div className="text-center space-y-4 mt-20">
+        <svg
+          className="animate-spin h-12 w-12 text-blue-600 mx-auto"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            className="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="4"
+          ></circle>
+          <path
+            className="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8v8H4z"
+          ></path>
+        </svg>
+        <h2 className="text-xl font-semibold text-muted-foreground">
+          Fetching your payment status...
+        </h2>
+        <p className="text-sm text-muted-foreground">
+          Please wait while we verify your transaction
+        </p>
+      </div>
+     
+    </div>
+  );
+}
 
 
   return (

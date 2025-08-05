@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import NoBookingCard from '@/comp/NoBookingCard';
 import axios from 'axios';
+import ClassCard from '@/comp/ClassCard';
 
 // Mock data for demonstration
 const mockClasses = [
@@ -249,71 +250,72 @@ const MentorDashboard = () => {
             <NoBookingCard></NoBookingCard> : 
             <div className="space-y-4">
               {bookings.map((classItem) => (
-                <Card key={classItem.id} className="hover:shadow-md transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-start space-x-4">
-                        <img
-                          src={classItem?.mentor?.profilePhoto}
-                          alt={classItem?.mentor?.fullName}
-                          className="w-12 h-12 rounded-full object-cover"
-                        />
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h3 className="font-semibold text-lg">{classItem.subject}</h3>
-                            <Badge className={getStatusColor(classItem.status)}>
-                              {getStatusText(classItem.status)}
-                            </Badge>
-                          </div>
-                          <p className="text-gray-600 mb-1">
-                            {userType === 'parent' ? 'Mentor: ' : 'Student: '}{classItem?.mentor?.fullName}
-                          </p>
-                          <div className="flex items-center gap-4 text-sm text-gray-500">
-                            <span className="flex items-center gap-1">
-                              <Clock className="w-4 h-4" />
-                              {classItem.duration} days
-                            </span>
+                // <Card key={classItem.id} className="hover:shadow-md transition-shadow">
+                //   <CardContent className="p-6">
+                //     <div className="flex items-start justify-between">
+                //       <div className="flex items-start space-x-4">
+                //         <img
+                //           src={classItem?.mentor?.profilePhoto}
+                //           alt={classItem?.mentor?.fullName}
+                //           className="w-12 h-12 rounded-full object-cover"
+                //         />
+                //         <div className="flex-1">
+                //           <div className="flex items-center gap-2 mb-1">
+                //             <h3 className="font-semibold text-lg">{classItem.subject}</h3>
+                //             <Badge className={getStatusColor(classItem.status)}>
+                //               {getStatusText(classItem.status)}
+                //             </Badge>
+                //           </div>
+                //           <p className="text-gray-600 mb-1">
+                //             {userType === 'parent' ? 'Mentor: ' : 'Student: '}{classItem?.mentor?.fullName}
+                //           </p>
+                //           <div className="flex items-center gap-4 text-sm text-gray-500">
+                //             <span className="flex items-center gap-1">
+                //               <Clock className="w-4 h-4" />
+                //               {classItem.duration} days
+                //             </span>
                             
-                            <span>Booked: {classItem.bookedDate} </span>
-                          </div>
-                          {classItem.scheduledDate && (
-                            <div className="mt-2 p-2 bg-green-50 rounded-md">
-                              <p className="text-sm text-green-800">
-                                <Calendar className="w-4 h-4 inline mr-1" />
-                                Scheduled for {classItem.scheduledDate} at {classItem.scheduledTime}
-                              </p>
-                            </div>
-                          )}
-                          {classItem.status === 'completed' && classItem.rating && (
-                            <div className="mt-2 flex items-center gap-1">
-                              <span className="text-sm text-gray-600">Rating:</span>
-                              {[...Array(classItem.rating)].map((_, i) => (
-                                <Star key={i} className="w-4 h-4 text-yellow-400" fill="currentColor" />
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        {classItem.status === 'pending_schedule' && userType === 'mentor' && (
-                          <Button size="sm">
-                            <Calendar className="w-4 h-4 mr-2" />
-                            Set Schedule
-                          </Button>
-                        )}
-                        {classItem.status === 'scheduled' && (
-                          <Button size="sm">
-                            <Video className="w-4 h-4 mr-2" />
-                            Join Session
-                          </Button>
-                        )}
-                        <Button variant="outline" size="sm">
-                          <ChevronRight className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                //             <span>Booked: {classItem.bookedDate} </span>
+                //           </div>
+                //           {classItem.scheduledDate && (
+                //             <div className="mt-2 p-2 bg-green-50 rounded-md">
+                //               <p className="text-sm text-green-800">
+                //                 <Calendar className="w-4 h-4 inline mr-1" />
+                //                 Scheduled for {classItem.scheduledDate} at {classItem.scheduledTime}
+                //               </p>
+                //             </div>
+                //           )}
+                //           {classItem.status === 'completed' && classItem.rating && (
+                //             <div className="mt-2 flex items-center gap-1">
+                //               <span className="text-sm text-gray-600">Rating:</span>
+                //               {[...Array(classItem.rating)].map((_, i) => (
+                //                 <Star key={i} className="w-4 h-4 text-yellow-400" fill="currentColor" />
+                //               ))}
+                //             </div>
+                //           )}
+                //         </div>
+                //       </div>
+                //       <div className="flex flex-col gap-2">
+                //         {classItem.status === 'pending_schedule' && userType === 'mentor' && (
+                //           <Button size="sm">
+                //             <Calendar className="w-4 h-4 mr-2" />
+                //             Set Schedule
+                //           </Button>
+                //         )}
+                //         {classItem.status === 'scheduled' && (
+                //           <Button size="sm">
+                //             <Video className="w-4 h-4 mr-2" />
+                //             Join Session
+                //           </Button>
+                //         )}
+                //         <Button variant="outline" size="sm">
+                //           <ChevronRight className="w-4 h-4" />
+                //         </Button>
+                //       </div>
+                //     </div>
+                //   </CardContent>
+                // </Card>
+                <ClassCard classItem={classItem} userType="parent" key={classItem._id}></ClassCard>
               ))}
             </div>}
           </TabsContent>

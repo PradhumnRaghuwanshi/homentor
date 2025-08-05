@@ -24,6 +24,8 @@ const Navbar = () => {
     };
   }, []);
 
+  
+
   return (
     <header className={`fixed w-full top-0 z-[50] transition-all duration-300 ${
       scrolled ? 'bg-white shadow-md py-2' : 'bg-transparent py-4'
@@ -145,13 +147,21 @@ const Navbar = () => {
               Contact Us
             </Link>
             <div className="border-t border-gray-100 pt-4 flex flex-col space-y-2 mt-4">
+              {localStorage.getItem("student") || localStorage.getItem("mentor") ?
+              <Link 
+                to="/login" 
+                className="block px-4 py-2 text-homentor-blue hover:bg-homentor-lightBlue rounded-lg"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Dashboard
+              </Link>:
               <Link 
                 to="/login" 
                 className="block px-4 py-2 text-homentor-blue hover:bg-homentor-lightBlue rounded-lg"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Log in
-              </Link>
+              </Link>}
               <Link 
                 to="/signup" 
                 className="block px-4 py-2 bg-homentor-blue text-white hover:bg-homentor-darkBlue rounded-lg text-center shadow-soft"
