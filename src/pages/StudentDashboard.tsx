@@ -20,59 +20,9 @@ import NoBookingCard from '@/comp/NoBookingCard';
 import axios from 'axios';
 import ClassCard from '@/comp/ClassCard';
 
-// Mock data for demonstration
-const mockClasses = [
-  {
-    id: 2,
-    mentorName: "Alex Rodriguez",
-    mentorImage: "/placeholder.svg", 
-    subject: "Full Stack Development",
-    status: "pending_schedule",
-    duration: "90 min",
-    price: 120,
-    bookedDate: "2024-07-24",
-    type: "one-on-one"
-  },
-  {
-    id: 1,
-    mentorName: "Dr. Sarah Chen",
-    mentorImage: "/placeholder.svg",
-    subject: "Machine Learning Fundamentals",
-    status: "scheduled",
-    scheduledDate: "2024-07-28",
-    scheduledTime: "2:00 PM",
-    duration: "60 min",
-    price: 150,
-    bookedDate: "2024-07-25",
-    type: "one-on-one"
-  },
-  
-  {
-    id: 3,
-    mentorName: "Emily Johnson",
-    mentorImage: "/placeholder.svg",
-    subject: "Product Strategy Session",
-    status: "completed",
-    scheduledDate: "2024-07-20",
-    scheduledTime: "10:00 AM",
-    duration: "45 min",
-    price: 200,
-    bookedDate: "2024-07-18",
-    type: "consultation",
-    rating: 5
-  }
-];
 
 const MentorDashboard = () => {
-  const [userType, setUserType] = useState<'parent' | 'mentor'>('parent');
-  
-  // Simulate user type detection (in real app, this would come from auth)
-  useEffect(() => {
-    // For demo purposes, you can change this to 'mentor' to see mentor view
-    const urlParams = new URLSearchParams(window.location.search);
-    const type = urlParams.get('type') as 'parent' | 'mentor';
-    if (type) setUserType(type);
-  }, []);
+  const [userType, setUserType] = useState('parent');
   const studentNumber = localStorage.getItem("student")
   const [studentDetail, setStudentDetail] = useState(null)
   const getStudentDetail = async () => {

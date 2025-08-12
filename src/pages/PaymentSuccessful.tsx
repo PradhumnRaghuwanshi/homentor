@@ -200,6 +200,16 @@ const PaymentSuccessful = () => {
           </CardContent>
         </Card>
 
+         {/* Continue Button */}
+        <Button
+         onClick={()=> navigate('/dashboard/student')}
+          size="lg"
+          className="mt-8 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white px-12 py-4 rounded-full font-medium transition-all duration-200 hover:scale-105 animate-fade-in"
+        >
+          Continue to Dashboard
+          <ArrowRight className="w-5 h-5 ml-2" />
+        </Button>
+
         {/* Next Steps Card */}
         {orderStatus == "Success" && (
           <Card className="w-full max-w-2xl mt-6 bg-white/60 backdrop-blur-sm border-0 shadow-lg animate-fade-in">
@@ -238,15 +248,7 @@ const PaymentSuccessful = () => {
           </Card>
         )}
 
-        {/* Continue Button */}
-        <Button
-         onClick={()=> navigate('/dashboard/student')}
-          size="lg"
-          className="mt-8 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white px-12 py-4 rounded-full font-medium transition-all duration-200 hover:scale-105 animate-fade-in"
-        >
-          Continue to Dashboard
-          <ArrowRight className="w-5 h-5 ml-2" />
-        </Button>
+       
       </div>
     </div>
   );

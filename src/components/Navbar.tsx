@@ -147,13 +147,21 @@ const Navbar = () => {
               Contact Us
             </Link>
             <div className="border-t border-gray-100 pt-4 flex flex-col space-y-2 mt-4">
-              {localStorage.getItem("student") || localStorage.getItem("mentor") ?
+              {localStorage.getItem("mentor") ?
               <Link 
-                to="/login" 
+                to="/dashboard/mentor" 
                 className="block px-4 py-2 text-homentor-blue hover:bg-homentor-lightBlue rounded-lg"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Dashboard
+                Mentor Dashboard
+              </Link>:
+              localStorage.getItem("usernumber") ?
+              <Link 
+                to="/dashboard/student" 
+                className="block px-4 py-2 text-homentor-blue hover:bg-homentor-lightBlue rounded-lg"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Parent Dashboard
               </Link>:
               <Link 
                 to="/login" 

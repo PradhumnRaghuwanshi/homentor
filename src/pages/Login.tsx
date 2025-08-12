@@ -28,7 +28,6 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [userType, setUserType] = useState<"student" | "mentor">("student");
 
-  const [number, setNumber] = useState("");
   const [verificationId, setVerificationId] = useState("");
 
   const handlePhoneSubmit = () => {
@@ -54,7 +53,12 @@ const Login = () => {
       phone: phoneNumber,
       userType : userType
     });
-    localStorage.setItem(`${userType}`, phoneNumber)
+    if(userType == "student"){
+      localStorage.setItem(`usernumber`, phoneNumber)
+    } else {
+      localStorage.setItem(`${userType}`, phoneNumber)
+    }
+    
     console.log('OTP verified:', otp, 'for phone:', phoneNumber);
     console.log(res)
     navigate(`/dashboard/${userType}`);

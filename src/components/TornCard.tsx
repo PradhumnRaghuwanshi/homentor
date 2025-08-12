@@ -23,27 +23,6 @@ const TornCard = ({ mentor }) => {
 
     navigate(`/chat/${mentor.fullName}`);
   };
-  const makeCall = async () => {
-    console.log("Hi");
-    try {
-      const response = await axios.post(
-        "https://homentor-backend.onrender.com/api/call",
-        {
-          parentNumber: "9630709988", // Parent's phone number
-          mentorNumber: "8182858627", // Mentor's real phone number
-        }
-      );
-
-      if (response.data.success) {
-        alert("Call initiated successfully!");
-      } else {
-        alert("Failed to initiate call");
-      }
-    } catch (error) {
-      console.error("Call error:", error);
-      alert("Something went wrong!");
-    }
-  };
 
   const handleSelectMentor = () => {
     localStorage.setItem("mentor", JSON.stringify(mentor));
