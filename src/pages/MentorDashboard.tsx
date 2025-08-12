@@ -133,9 +133,10 @@ const MentorDashboard = () => {
 
   const getMentorDetail = async () => {
     try {
+      console.log("Hii",localStorage.getItem("mentor"))
       const res = await axios.post(
         `https://homentor-backend.onrender.com/api/mentor/login-check`,
-        { phone: localStorage.getItem("usernumber") }
+        { phone: localStorage.getItem("mentor") }
       );
       console.log(res.data.data);
 
