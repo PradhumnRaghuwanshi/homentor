@@ -4,17 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronRight, Star, GraduationCap, School, Users } from "lucide-react";
 import AnimatedSpheres from "@/components/AnimatedSpheres";
 
-interface HeroSectionProps {
-  title?: string;
-  description?: string;
-  image?: string;
-  primaryButtonText?: string;
-  primaryButtonLink?: string;
-  secondaryButtonText?: string;
-  secondaryButtonLink?: string;
-}
-
-const HeroSection: React.FC<HeroSectionProps> = ({
+const HeroSection = ({
   title = "Your Child Deserves a Mentor, Not Just a Teacher",
   description = "Get matched with trusted tutors and subject mentors who provide customized learning plans based on your academic needs.",
 }) => {
@@ -36,7 +26,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
   // Logo colors
   const logoBlue = "#1E90FF";
   const logoGold = "#FFD700";
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   return (
     <section className="relative overflow-hidden min-h-[100vh] flex items-center">
@@ -70,7 +60,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
           <div className="space-y-8" style={{ transform: heroTextTransform }}>
             <h1 className="text-4xl md:text-5xl lg:text-5xl font-bold text-gray-900 leading-tight animate-fade-in">
               {title.split(" ").map((word, i) => (
-                <React.Fragment key={i}>
+                <span key={i}>
                   {word.toLowerCase() === "mentor," ? (
                     <span className="text-homentor-blue relative">
                       {word}{" "}
@@ -79,7 +69,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                   ) : (
                     word + " "
                   )}
-                </React.Fragment>
+                </span>
               ))}
             </h1>
             <p
@@ -89,7 +79,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
               {description}
             </p>
             <div
-             onClick={()=> navigate('/mentors')}
+              onClick={() => navigate("/mentors")}
               className="flex flex-col sm:flex-row gap-4 pt-4 animate-fade-in"
               style={{ animationDelay: "0.4s" }}
             >
@@ -102,14 +92,11 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                     <Star className="h-6 w-6 text-homentor-gold fill-current" />
                   </div>
                   <div>
-                    <p className="text-gray-900 font-semibold">
-                      Book A Mentor
-                    </p>
+                    <p className="text-gray-900 font-semibold">Book A Mentor</p>
                     {/* <p className="text-gray-800">students & parents</p> */}
                   </div>
                 </div>
               </div>
-              
             </div>
           </div>
 

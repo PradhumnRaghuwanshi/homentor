@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import io from "socket.io-client";
 import axios from "axios";
 
-const socket = io("http://localhost:5000"); // change if different
+const socket = io("http://localhost:8080"); // change if different
 
 const ChatPage = ( ) => {
   const [message, setMessage] = useState("");

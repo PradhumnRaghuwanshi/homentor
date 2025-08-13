@@ -355,9 +355,9 @@ const MentorDashboard = () => {
               </div>
             ) : (
               <div className="space-y-4">
-                {bookings.map((classItem) => (
+                {bookings.map((classItem, index) => (
                   <Card
-                    key={classItem.id}
+                    key={index}
                     className="hover:shadow-md transition-shadow"
                   >
                     <CardContent className="p-6">

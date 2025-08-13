@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Dialog,
   DialogTrigger,
@@ -8,161 +8,253 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import axios from "axios";
 
-export default function AttendanceModal({ classBooking, getBookings }) {
-  const closeRef = useRef(null); // ⬅️ Ref for closing the modal
-  const [formData, setFormData] = useState({
-    date: "",
-    timeIn: "",
-    timeOut: "",
-    duration: "",
-    topic: "",
-    mentorTick: false,
-    parentTick: false,
-    classBooking: classBooking._id,
-    mentor : classBooking.mentor,
-    parent : classBooking.parent
-  });
+export default function AttendanceModal({ classBooking }) {
+  const closeRef = useRef(null);
+  const [records, setRecords] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(null); // track saving row
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === "checkbox" ? checked : value,
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log("Attendance submitted:", formData);
-
-    try {
-      const response = await axios.post(`https://homentor-backend.onrender.com/api/class-records` ,formData)
-      console.log(response.data);
-      // ✅ Close the modal
-      if (closeRef.current) {
-        closeRef.current.click();
+  // Fetch all attendance records
+  useEffect(() => {
+    const fetchRecords = async () => {
+      setLoading(true);
+      try {
+        const res = await axios.get(
+          
+          `https://homentor-backend.onrender.com/api/class-records/class-booking/${classBooking._id}`
+        );
+        setRecords(res.data.data || []);
+      } catch (err) {
+        console.error("Error fetching records:", err);
       }
+      setLoading(false);
+    };
+    fetchRecords();
+  }, [classBooking._id]);
 
-    } catch (error) {
-      console.log(error)
-    }
-
+  // Handle inline change
+  const handleChange = (id, field, value) => {
+    setRecords((prev) =>
+      prev.map((rec) =>
+        rec._id === id ? { ...rec, [field]: value } : rec
+      )
+    );
   };
+
+  // Save changes for a row
+  const handleSave = async (record) => {
+    setSaving(record._id);
+    try {
+      await axios.put(
+        `https://homentor-backend.onrender.com/api/class-records/${record._id}`,
+        record
+      );
+    } catch (err) {
+      console.error("Error saving:", err);
+    }
+    setSaving(null);
+  };
+
+  const [todayAtt, setTodayAtt] = useState({
+    date: "",
+  timeIn: "",
+  timeOut: "",
+  duration: "",
+  topic: "",
+  mentorTick: "",
+  parentTick: "",
+  }) 
+
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="secondary" size="sm">📝 Mark Attendance</Button>
+        <Button variant="secondary" size="sm">
+          📝 Mark Attendance
+        </Button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-3xl">
         <DialogHeader>
           <DialogTitle>📄 Attendance Sheet</DialogTitle>
-         
           <DialogDescription>
-            Fill in class attendance for <strong>{classBooking.subject}</strong>.
+            Update attendance for <strong>{classBooking.subject}</strong>
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label>Date</Label>
-              <Input
-                type="date"
-                name="date"
-                value={formData.date}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div>
-              <Label>Topic Covered</Label>
-              <Input
-                type="text"
-                name="topic"
-                placeholder="e.g., Algebra Basics"
-                value={formData.topic}
-                onChange={handleChange}
-                required
-              />
-            </div>
+        {loading ? (
+          <p className="text-center text-gray-500">Loading records...</p>
+        ) : (
+          <div className="overflow-x-auto border rounded-lg">
+            <table className="min-w-full text-sm text-left">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="px-3 py-2">Date</th>
+                  <th className="px-3 py-2">Topic</th>
+                  <th className="px-3 py-2">Time In</th>
+                  <th className="px-3 py-2">Time Out</th>
+                  <th className="px-3 py-2">Duration</th>
+                  <th className="px-3 py-2">Mentor</th>
+                  <th className="px-3 py-2">Parent</th>
+                  <th className="px-3 py-2">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {
+                  records.map((rec) => (
+                    <tr key={rec._id} className="border-b">
+                      <td className="px-3 py-2">{rec.date}</td>
+
+                      <td className="px-3 py-2">
+                        <Input
+                          value={rec.topic || ""}
+                          onChange={(e) =>
+                            handleChange(rec._id, "topic", e.target.value)
+                          }
+                        />
+                      </td>
+
+                      <td className="px-3 py-2">
+                        <Input
+                          type="time"
+                          value={rec.timeIn || ""}
+                          onChange={(e) =>
+                            handleChange(rec._id, "timeIn", e.target.value)
+                          }
+                        />
+                      </td>
+
+                      <td className="px-3 py-2">
+                        <Input
+                          type="time"
+                          value={rec.timeOut || ""}
+                          onChange={(e) =>
+                            handleChange(rec._id, "timeOut", e.target.value)
+                          }
+                        />
+                      </td>
+
+                      <td className="px-3 py-2">
+                        <Input
+                          value={rec.duration || ""}
+                          onChange={(e) =>
+                            handleChange(rec._id, "duration", e.target.value)
+                          }
+                        />
+                      </td>
+
+                      <td className="px-3 py-2 text-center">
+                        <Checkbox
+                          checked={rec.mentorTick}
+                          onCheckedChange={(val) =>
+                            handleChange(rec._id, "mentorTick", val)
+                          }
+                        />
+                      </td>
+
+                      <td className="px-3 py-2 text-center">
+                        <Checkbox
+                          checked={rec.parentTick}
+                          onCheckedChange={(val) =>
+                            handleChange(rec._id, "parentTick", val)
+                          }
+                        />
+                      </td>
+
+                      <td className="px-3 py-2">
+                        <Button
+                          size="sm"
+                          onClick={() => handleSave(rec)}
+                          disabled={saving === rec._id}
+                        >
+                          {saving === rec._id ? "Saving..." : "Save"}
+                        </Button>
+                      </td>
+                    </tr>
+                  ))
+               }
+               <tr className="border-b">
+                      <td className="px-3 py-2">
+                        <input type="date"></input>
+                      </td>
+
+                      <td className="px-3 py-2">
+                        <Input
+                          value={todayAtt.topic || ""}
+                          onChange={(e) =>
+                           
+                            setTodayAtt({...todayAtt, topic : e.target.value})
+                          
+                          }
+                        />
+                      </td>
+
+                      <td className="px-3 py-2">
+                        <Input
+                          type="time"
+                          value={todayAtt.timeIn || ""}
+                          onChange={(e) =>
+                            setTodayAtt({...todayAtt, timeIn : e.target.value})
+                          }
+                        />
+                      </td>
+
+                      <td className="px-3 py-2">
+                        <Input
+                          type="time"
+                          value={todayAtt.timeOut || ""}
+                          onChange={(e) =>
+                            setTodayAtt({...todayAtt, timeOut : e.target.value})
+                          }
+                        />
+                      </td>
+
+                      <td className="px-3 py-2">
+                        <Input
+                          value={todayAtt.duration || ""}
+                          onChange={(e) =>
+                            setTodayAtt({...todayAtt, duration : e.target.value})
+                          }
+                        />
+                      </td>
+
+                      <td className="px-3 py-2 text-center">
+                        <Checkbox
+                          // checked={todayAtt?.mentorTick}
+                          
+                        />
+                      </td>
+
+                      <td className="px-3 py-2 text-center">
+                        <Checkbox
+                          // checked={rec.parentTick}
+                          // onCheckedChange={(val) =>
+                          //   handleChange(rec._id, "parentTick", val)
+                          // }
+                        />
+                      </td>
+
+                      <td className="px-3 py-2">
+                        <Button
+                          size="sm"
+                          onClick={() => handleSave(todayAtt)}
+                          // disabled={saving === todayAtt._id}
+                        >
+                          Save
+                          {/* {saving === rec._id ? "Saving..." : "Save"} */}
+                        </Button>
+                      </td>
+                    </tr>
+              </tbody>
+            </table>
           </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label>Time In</Label>
-              <Input
-                type="time"
-                name="timeIn"
-                value={formData.timeIn}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div>
-              <Label>Time Out</Label>
-              <Input
-                type="time"
-                name="timeOut"
-                value={formData.timeOut}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          </div>
-
-          <div>
-            <Label>Duration</Label>
-            <Input
-              type="text"
-              name="duration"
-              placeholder="e.g., 60 mins"
-              value={formData.duration}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="flex items-center gap-4 mt-4">
-            <label className="flex items-center gap-2">
-              <Checkbox
-                name="mentorTick"
-                checked={formData.mentorTick}
-                onCheckedChange={(val) =>
-                  setFormData((prev) => ({ ...prev, mentorTick: val }))
-                }
-              />
-              Mentor Tick
-            </label>
-
-            <label className="flex items-center gap-2">
-              <Checkbox
-                name="parentTick"
-                checked={formData.parentTick}
-                onCheckedChange={(val) =>
-                  setFormData((prev) => ({ ...prev, parentTick: val }))
-                }
-              />
-              Parent Tick
-            </label>
-          </div>
-
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline" type="button">Cancel</Button>
-            </DialogClose>
-            <Button type="submit">Submit Attendance</Button>
-          </DialogFooter>
-        </form>
+        )}
       </DialogContent>
     </Dialog>
   );
