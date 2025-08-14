@@ -23,7 +23,7 @@ import ClassCard from '@/comp/ClassCard';
 
 const MentorDashboard = () => {
   const [userType, setUserType] = useState('parent');
-  const studentNumber = localStorage.getItem("student")
+  const studentNumber = localStorage.getItem("usernumber")
   const [studentDetail, setStudentDetail] = useState(null)
   const getStudentDetail = async () => {
       try {
@@ -34,7 +34,7 @@ const MentorDashboard = () => {
           }
         );
         setStudentDetail(response.data.data);
-
+        console.log(response.data.data)
         const res = await axios.get(
           `https://homentor-backend.onrender.com/api/class-bookings/student/${response.data.data._id}`
         );

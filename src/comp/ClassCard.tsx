@@ -19,8 +19,10 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+
 import { Badge } from "@/components/ui/badge";
 import axios from "axios";
+import ParentAttendanceModal from "./ParentAttendanceModal";
 
 // Helper functions
 const getStatusColor = (status) => {
@@ -92,18 +94,23 @@ export default function ClassCard({ classItem, userType }) {
 
   const handleParentAttendance = async (record) => {
     const response = await axios.put(
-      `https://homentor-backend.onrender.com/api/class-records/${record._id}` , {
-        parentTick : !record.parentTick
+      `https://homentor-backend.onrender.com/api/class-records/${record._id}`,
+      {
+        parentTick: !record.parentTick,
       }
     );
     getClassRecords();
   };
+  console.log(classItem);
 
   return (
     <>
       <Card key={classItem.id} className="hover:shadow-md transition-shadow">
         <CardContent className="p-6">
-          <div className="flex lg:flex-row flex-col items-start justify-between">
+          <div className="flex lg:flex-row gap-2 flex-col items-start justify-between">
+            <Badge className={getStatusColor(classItem.status)}>
+              {getStatusText(classItem.status)}
+            </Badge>
             <div className="flex items-start space-x-4">
               <img
                 src={classItem?.mentor?.profilePhoto}
@@ -112,134 +119,46 @@ export default function ClassCard({ classItem, userType }) {
               />
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
-                  <h3 className="font-semibold text-lg">{classItem.subject}</h3>
-                  <Badge className={getStatusColor(classItem.status)}>
-                    {getStatusText(classItem.status)}
-                  </Badge>
+                  <h3 className="font-semibold text-lg">
+                    {" "}
+                    {classItem?.mentor?.fullName}
+                  </h3>
                 </div>
 
                 <p className="text-gray-600 mb-1">
-                  {userType === "parent" ? "Mentor: " : "Student: "}
-                  {classItem?.mentor?.fullName}
+                  Mobile No : {classItem?.mentor?.phone}
                 </p>
-
-                <div className="flex items-center gap-4 text-sm text-gray-500">
-                  <span className="flex items-center gap-1">
-                    <Clock className="w-4 h-4" />
-                    {classItem.duration} days
-                  </span>
-                  <span>Booked: {formatDateTime(classItem.bookedDate)}</span>
-                </div>
-
-                {classItem.scheduledDate && (
-                  <div className="mt-2 p-2 bg-green-50 rounded-md">
-                    <p className="text-sm text-green-800">
-                      <Calendar className="w-4 h-4 inline mr-1" />
-                      Scheduled for {formatDateOnly(
-                        classItem.scheduledDate
-                      )} at {formatTimeOnly(classItem.scheduledTime)}
-                    </p>
-                  </div>
-                )}
-
-                {/* Daily Attendance Section */}
-                <div className="border rounded-lg p-3 bg-gray-50 max-h-[300px] overflow-y-auto">
-                  {classRecords.length ? (
-                    classRecords.map((day, index) => (
-                      <div
-                        key={index}
-                        className="p-3 mb-2 border rounded-md bg-white shadow-sm"
-                      >
-                        <div className="flex justify-between flex-wrap">
-                          <div>
-                            <p className="text-sm font-medium text-gray-700">
-                              {formatDateOnly(day.date)}
-                            </p>
-                            <p className="text-sm text-gray-600">
-                              Topic: {day.topic}
-                            </p>
-                            <p className="text-sm text-gray-600">
-                              Duration: {day.duration} min
-                            </p>
-                            <p className="text-sm text-gray-600">
-                              Time: {day.timeIn} - {day.timeOut}
-                            </p>
-                          </div>
-
-                          <div className="space-y-1 text-sm">
-                            <p
-                              className={
-                                day.mentorMarked
-                                  ? "text-green-600"
-                                  : "text-red-600"
-                              }
-                            >
-                              Mentor: {day.mentorMarked ? "Present" : "Absent"}
-                            </p>
-
-                            <div className="flex items-center gap-2">
-                              <span className="text-gray-700">You:</span>
-                              
-                                <input
-                                  type="checkbox"
-                                  name={`parent-${index}`}
-                                  checked={day.parentTick}
-                                  onChange={() =>
-                                    handleParentAttendance(day)
-                                  }
-                                />
-                               
-                              
-                             
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-sm text-gray-500">
-                      No class records available yet.
-                    </p>
-                  )}
-                </div>
-
-                {/* Rating */}
-                {classItem.status === "completed" && classItem.rating && (
-                  <div className="mt-2 flex items-center gap-1">
-                    <span className="text-sm text-gray-600">Rating:</span>
-                    {[...Array(classItem.rating)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className="w-4 h-4 text-yellow-400"
-                        fill="currentColor"
-                      />
-                    ))}
-                  </div>
-                )}
               </div>
             </div>
-
-            <div className="flex lg:flex-col flex-row  justify-between lg:w-auto w-full gap-2">
-              {classItem.status === "pending_schedule" &&
-                userType === "mentor" && (
-                  <Button size="sm">
-                    <Calendar className="w-4 h-4 mr-2" />
-                    Set Schedule
-                  </Button>
-                )}
-              {classItem.status === "scheduled" && (
-                <Button
-                  onClick={() => setIsAttendanceModalOpen(true)}
-                  size="sm"
-                >
-                  <View className="w-4 h-4 mr-2" />
-                  View Sheet
-                </Button>
-              )}
-              <Button variant="outline" size="sm">
-                <ChevronRight className="w-4 h-4" />
-              </Button>
+            {classItem.scheduledDate && (
+              <div className="mt-2 p-2 bg-green-50 rounded-md">
+                <p className="text-sm text-green-800">
+                  <Calendar className="w-4 h-4 inline mr-1" />
+                  Scheduled for {formatDateOnly(
+                    classItem.scheduledDate
+                  )} at {formatTimeOnly(classItem.scheduledTime)}
+                </p>
+              </div>
+            )}
+            <div className="flex items-center gap-4 text-sm text-gray-500">
+              <span className="flex items-center gap-1">
+                <Clock className="w-4 h-4" />
+                {classItem.duration} days
+              </span>
+              <span>Booked: {formatDateTime(classItem.bookedDate)}</span>
             </div>
+            <div className="flex items-center gap-2 mb-1">
+              <h5 className="font-semibold text-lg">
+                Student Name: {classItem?.studentName}
+              </h5>
+            </div>
+            <p className="text-gray-600 mb-1">Class : {classItem?.class}</p>
+            <p className="text-gray-600 mb-1">School : {classItem?.school}</p>
+            <p className="text-gray-600 mb-1">Subject : {classItem?.subject}</p>
+
+            {classItem.status === "scheduled" && (
+              <ParentAttendanceModal classBooking={classItem} />
+            )}
           </div>
         </CardContent>
       </Card>

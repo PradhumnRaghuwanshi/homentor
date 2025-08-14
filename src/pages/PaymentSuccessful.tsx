@@ -27,13 +27,16 @@ const PaymentSuccessful = () => {
     const getOrderResponse = response.data;
     setOrderDetail(response.data[0]);
     console.log(response.data);
-    setLoading(false)
+    setLoading(false);
     if (
       getOrderResponse.filter(
         (transaction) => transaction.payment_status === "SUCCESS"
       ).length > 0
     ) {
       setOrderStatus("Success");
+      setTimeout(() => {
+        navigate("/dashboard/student");
+      }, 3000);
     } else if (
       getOrderResponse.filter(
         (transaction) => transaction.payment_status === "PENDING"
@@ -67,45 +70,42 @@ const PaymentSuccessful = () => {
     date: new Date().toLocaleDateString(),
     items: [{ name: "Premium Plan", quantity: 1, price: "$99.99" }],
   };
-  
-  const navigate = useNavigate()
-  if (loading) {
-  return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center">
-      
-      <div className="text-center space-y-4 mt-20">
-        <svg
-          className="animate-spin h-12 w-12 text-blue-600 mx-auto"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-        >
-          <circle
-            className="opacity-25"
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            strokeWidth="4"
-          ></circle>
-          <path
-            className="opacity-75"
-            fill="currentColor"
-            d="M4 12a8 8 0 018-8v8H4z"
-          ></path>
-        </svg>
-        <h2 className="text-xl font-semibold text-muted-foreground">
-          Fetching your payment status...
-        </h2>
-        <p className="text-sm text-muted-foreground">
-          Please wait while we verify your transaction
-        </p>
-      </div>
-     
-    </div>
-  );
-}
 
+  const navigate = useNavigate();
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center">
+        <div className="text-center space-y-4 mt-20">
+          <svg
+            className="animate-spin h-12 w-12 text-blue-600 mx-auto"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            ></circle>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8v8H4z"
+            ></path>
+          </svg>
+          <h2 className="text-xl font-semibold text-muted-foreground">
+            Fetching your payment status...
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            Please wait while we verify your transaction
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 relative overflow-hidden">
@@ -200,9 +200,9 @@ const PaymentSuccessful = () => {
           </CardContent>
         </Card>
 
-         {/* Continue Button */}
+        {/* Continue Button */}
         <Button
-         onClick={()=> navigate('/dashboard/student')}
+          onClick={() => navigate("/dashboard/student")}
           size="lg"
           className="mt-8 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white px-12 py-4 rounded-full font-medium transition-all duration-200 hover:scale-105 animate-fade-in"
         >
@@ -247,8 +247,6 @@ const PaymentSuccessful = () => {
             </CardContent>
           </Card>
         )}
-
-       
       </div>
     </div>
   );
