@@ -361,22 +361,31 @@ const MentorDashboard = () => {
                     className="hover:shadow-md transition-shadow"
                   >
                     <CardContent className="p-6">
-                      <div className="flex items-start justify-between">
+                      <div className="flex flex-col gap-4 items-start justify-between">
                         <div className="flex items-start space-x-4">
                           <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-1">
-                              <h3 className="font-semibold text-lg">
-                                {classItem.subject}
-                              </h3>
-                              <Badge
+                             <Badge
                                 className={getStatusColor(classItem.status)}
                               >
                                 {getStatusText(classItem.status)}
                               </Badge>
+                            <div className="flex items-center gap-2 mb-1">
+                              <h3 className="font-semibold text-lg">
+                               Name: {classItem?.studentName}
+                              </h3>
+                             
                             </div>
                             <p className="text-gray-600 mb-1">
-                              Class Id : {classItem._id}
-                              {classItem.mentorName}
+                              Mobile : {classItem?.parent?.phone}
+                            </p>
+                            <p className="text-gray-600 mb-1">
+                              Class : {classItem?.class}
+                            </p>
+                            <p className="text-gray-600 mb-1">
+                              School : {classItem?.school}
+                            </p>
+                            <p className="text-gray-600 mb-1">
+                              Subject : {classItem?.subject}
                             </p>
                             <div className="flex items-center gap-4 text-sm text-gray-500">
                               <span className="flex items-center gap-1">
@@ -431,9 +440,7 @@ const MentorDashboard = () => {
                               getBookings={fetchBookings}
                             />
                           )}
-                          <Button variant="outline" size="sm">
-                            <ChevronRight className="w-4 h-4" />
-                          </Button>
+                         
                         </div>
                       </div>
                     </CardContent>

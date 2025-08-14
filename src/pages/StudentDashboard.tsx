@@ -47,7 +47,9 @@ const MentorDashboard = () => {
     }; 
   const [bookings, setBookings] = useState([])
   const [loading, setLoading] = useState(false)
+  
   const fetchBookings = async () => {
+    console.log(studentDetail)
       try {
         const response = await axios.get(
           `https://homentor-backend.onrender.com/api/class-bookings/student/${studentDetail._id}`
