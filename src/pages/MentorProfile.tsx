@@ -155,16 +155,15 @@ const MentorDetails = () => {
   });
   const mentorData = JSON.parse(localStorage.getItem("mentor"));
   const subjects = [
-    ...new Set(Object.values(mentorData?.teachingPreferences?.school).flat()),
+    ...new Set(Object.values(mentorData?.teachingPreferences?.school)?.flat()),
   ];
   const prioritySubjects = ["Mathematics", "Science", "Social Science"];
   // Sort subjects: priority ones come first, rest follow
   const sortedSubjects = [
-    ...prioritySubjects.filter((s) => subjects.includes(s)),
-    ...subjects.filter((s) => !prioritySubjects.includes(s)),
+    ...prioritySubjects.filter((s) => subjects?.includes(s)),
+    ...subjects?.filter((s) => !prioritySubjects.includes(s)),
   ];
 
-  const { id } = useParams();
   const [activeTab, setActiveTab] = useState("overview");
   console.log(mentorData);
 
@@ -467,61 +466,7 @@ const MentorDetails = () => {
                 </div>
 
                 <div className="space-y-6">
-                  {/* <Card className="shadow-lg border-0">
-                    <CardHeader className="bg-white border-b border-slate-100">
-                      <CardTitle className="text-slate-800">
-                        Quick Stats
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4 p-6 bg-white">
-                      <div className="flex justify-between items-center">
-                        <span className="text-slate-600">
-                          Teaching Experience
-                        </span>
-                        <span className="font-semibold text-blue-700">
-                          {teacherData.yearsExperience} years
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-slate-600">Students Taught</span>
-                        <span className="font-semibold text-blue-700">
-                          {teacherData.totalStudents}
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-slate-600">Response Time</span>
-                        <span className="font-semibold text-blue-700">
-                          {teacherData.responseTime}
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-slate-600">Languages</span>
-                        <span className="font-semibold text-blue-700">
-                          {teacherData.languages.length}
-                        </span>
-                      </div>
-                    </CardContent>
-                  </Card> */}
-
-                  {/* <Card className="shadow-lg border-0">
-                    <CardHeader className="bg-white border-b border-slate-100">
-                      <CardTitle className="text-slate-800">
-                        Achievements
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-6 bg-white">
-                      <div className="space-y-3">
-                        {teacherData.achievements.map((achievement, index) => (
-                          <div key={index} className="flex items-start gap-2">
-                            <Award className="h-4 w-4 text-yellow-500 mt-0.5 flex-shrink-0" />
-                            <span className="text-sm text-slate-700">
-                              {achievement}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card> */}
+                
                 </div>
               </div>
             </TabsContent>
