@@ -155,8 +155,10 @@ const MentorDetails = () => {
   });
   const mentorData = JSON.parse(localStorage.getItem("mentor"));
   const subjects = [
-    ...new Set(Object.values(mentorData?.teachingPreferences?.school)?.flat()),
-  ];
+  ...new Set(
+    Object.values(mentorData?.teachingPreferences?.school || {}).flat()
+  ),
+];
   const prioritySubjects = ["Mathematics", "Science", "Social Science"];
   // Sort subjects: priority ones come first, rest follow
   const sortedSubjects = [
