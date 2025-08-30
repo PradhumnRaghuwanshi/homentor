@@ -443,127 +443,127 @@ const TutorRegistrationForm = () => {
         },
       },
     },
-    graduation: {
-      label: "Graduation Level",
-      classes: {
-        btech: {
-          label: "B.Tech/Engineering",
-          subjects: [
-            "Engineering Mathematics",
-            "Physics",
-            "Chemistry",
-            "Computer Science",
-            "Mechanical Engineering",
-            "Electrical Engineering",
-            "Civil Engineering",
-          ],
-        },
-        bsc: {
-          label: "B.Sc",
-          subjects: [
-            "Mathematics",
-            "Physics",
-            "Chemistry",
-            "Biology",
-            "Computer Science",
-            "Statistics",
-          ],
-        },
-        bcom: {
-          label: "B.Com",
-          subjects: [
-            "Accountancy",
-            "Business Studies",
-            "Economics",
-            "Mathematics",
-            "Statistics",
-          ],
-        },
-        ba: {
-          label: "B.A",
-          subjects: [
-            "English",
-            "Hindi",
-            "History",
-            "Geography",
-            "Political Science",
-            "Economics",
-            "Psychology",
-          ],
-        },
-      },
-    },
-    postgraduation: {
-      label: "Post Graduation",
-      classes: {
-        mtech: {
-          label: "M.Tech/M.E",
-          subjects: [
-            "Advanced Engineering Mathematics",
-            "Research Methodology",
-            "Specialized Engineering Subjects",
-          ],
-        },
-        msc: {
-          label: "M.Sc",
-          subjects: [
-            "Advanced Mathematics",
-            "Advanced Physics",
-            "Advanced Chemistry",
-            "Research Methods",
-          ],
-        },
-        mcom: {
-          label: "M.Com",
-          subjects: [
-            "Advanced Accountancy",
-            "Financial Management",
-            "Business Research",
-            "Economics",
-          ],
-        },
-        ma: {
-          label: "M.A",
-          subjects: [
-            "Literature",
-            "Linguistics",
-            "History",
-            "Political Science",
-            "Psychology",
-          ],
-        },
-      },
-    },
-    competitive: {
-      label: "Competitive Exams",
-      classes: {
-        jee: {
-          label: "JEE Preparation",
-          subjects: ["Mathematics", "Physics", "Chemistry"],
-        },
-        neet: {
-          label: "NEET Preparation",
-          subjects: ["Physics", "Chemistry", "Biology"],
-        },
-        gate: {
-          label: "GATE Preparation",
-          subjects: [
-            "Engineering Mathematics",
-            "General Aptitude",
-            "Technical Subjects",
-          ],
-        },
-        banking: {
-          label: "Banking Exams",
-          subjects: [
-            "Quantitative Aptitude",
-            "Reasoning",
-            "English",
-            "General Knowledge",
-          ],
-        },
-      },
-    },
+    // graduation: {
+    //   label: "Graduation Level",
+    //   classes: {
+    //     btech: {
+    //       label: "B.Tech/Engineering",
+    //       subjects: [
+    //         "Engineering Mathematics",
+    //         "Physics",
+    //         "Chemistry",
+    //         "Computer Science",
+    //         "Mechanical Engineering",
+    //         "Electrical Engineering",
+    //         "Civil Engineering",
+    //       ],
+    //     },
+    //     bsc: {
+    //       label: "B.Sc",
+    //       subjects: [
+    //         "Mathematics",
+    //         "Physics",
+    //         "Chemistry",
+    //         "Biology",
+    //         "Computer Science",
+    //         "Statistics",
+    //       ],
+    //     },
+    //     bcom: {
+    //       label: "B.Com",
+    //       subjects: [
+    //         "Accountancy",
+    //         "Business Studies",
+    //         "Economics",
+    //         "Mathematics",
+    //         "Statistics",
+    //       ],
+    //     },
+    //     ba: {
+    //       label: "B.A",
+    //       subjects: [
+    //         "English",
+    //         "Hindi",
+    //         "History",
+    //         "Geography",
+    //         "Political Science",
+    //         "Economics",
+    //         "Psychology",
+    //       ],
+    //     },
+    //   },
+    // },
+    // postgraduation: {
+    //   label: "Post Graduation",
+    //   classes: {
+    //     mtech: {
+    //       label: "M.Tech/M.E",
+    //       subjects: [
+    //         "Advanced Engineering Mathematics",
+    //         "Research Methodology",
+    //         "Specialized Engineering Subjects",
+    //       ],
+    //     },
+    //     msc: {
+    //       label: "M.Sc",
+    //       subjects: [
+    //         "Advanced Mathematics",
+    //         "Advanced Physics",
+    //         "Advanced Chemistry",
+    //         "Research Methods",
+    //       ],
+    //     },
+    //     mcom: {
+    //       label: "M.Com",
+    //       subjects: [
+    //         "Advanced Accountancy",
+    //         "Financial Management",
+    //         "Business Research",
+    //         "Economics",
+    //       ],
+    //     },
+    //     ma: {
+    //       label: "M.A",
+    //       subjects: [
+    //         "Literature",
+    //         "Linguistics",
+    //         "History",
+    //         "Political Science",
+    //         "Psychology",
+    //       ],
+    //     },
+    //   },
+    // },
+    // competitive: {
+    //   label: "Competitive Exams",
+    //   classes: {
+    //     jee: {
+    //       label: "JEE Preparation",
+    //       subjects: ["Mathematics", "Physics", "Chemistry"],
+    //     },
+    //     neet: {
+    //       label: "NEET Preparation",
+    //       subjects: ["Physics", "Chemistry", "Biology"],
+    //     },
+    //     gate: {
+    //       label: "GATE Preparation",
+    //       subjects: [
+    //         "Engineering Mathematics",
+    //         "General Aptitude",
+    //         "Technical Subjects",
+    //       ],
+    //     },
+    //     banking: {
+    //       label: "Banking Exams",
+    //       subjects: [
+    //         "Quantitative Aptitude",
+    //         "Reasoning",
+    //         "English",
+    //         "General Knowledge",
+    //       ],
+    //     },
+    //   },
+    // },
   };
 
   const [selectedLevels, setSelectedLevels] = useState<string[]>([]);
@@ -615,21 +615,21 @@ const TutorRegistrationForm = () => {
       label: "My Place",
       description: "Students come to your location",
     },
-    {
-      id: "coachingCenter",
-      label: "Coaching Center",
-      description: "Teach at coaching institutes",
-    },
-    {
-      id: "schoolTeaching",
-      label: "School Teaching",
-      description: "Regular school teaching positions",
-    },
-    {
-      id: "counsellor",
-      label: "Home Counsellor",
-      description: "Home Counsellor",
-    },
+    // {
+    //   id: "coachingCenter",
+    //   label: "Coaching Center",
+    //   description: "Teach at coaching institutes",
+    // },
+    // {
+    //   id: "schoolTeaching",
+    //   label: "School Teaching",
+    //   description: "Regular school teaching positions",
+    // },
+    // {
+    //   id: "counsellor",
+    //   label: "Home Counsellor",
+    //   description: "Home Counsellor",
+    // },
     {
       id: "groupClasses",
       label: "Group Classes",
@@ -834,7 +834,7 @@ const TutorRegistrationForm = () => {
                     required
                   />
                 </div>
-                <div>
+                {/* <div>
                   <Label htmlFor="email">Email Address *</Label>
                   <Input
                     id="email"
@@ -845,7 +845,7 @@ const TutorRegistrationForm = () => {
                     className="focus:ring-mentor-yellow-400 focus:border-mentor-yellow-400"
                     required
                   />
-                </div>
+                </div> */}
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -877,7 +877,7 @@ const TutorRegistrationForm = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                <div>
+                {/* <div>
                   <Label htmlFor="age">Age *</Label>
                   <Input
                     id="age"
@@ -890,7 +890,7 @@ const TutorRegistrationForm = () => {
                     className="focus:ring-mentor-yellow-400 focus:border-mentor-yellow-400"
                     required
                   />
-                </div>
+                </div> */}
               </div>
 
               {/* File Upload Section */}
@@ -929,7 +929,7 @@ const TutorRegistrationForm = () => {
                           </div>
                         ) : mentorData?.profilePhoto ? (
                           <img
-                            src={mentorData.profilePhoto}
+                            src={mentorData?.profilePhoto}
                             controls
                             className="h-full w-auto object-contain rounded"
                           />
@@ -946,7 +946,7 @@ const TutorRegistrationForm = () => {
                   </div>
 
                   {/* ID Document */}
-                  <div>
+                  {/* <div>
                     <Label
                       htmlFor="mentorId"
                       className="flex items-center gap-2 mb-2"
@@ -989,10 +989,10 @@ const TutorRegistrationForm = () => {
                         )}
                       </label>
                     </div>
-                  </div>
+                  </div> */}
 
                   {/* Tutorial Video */}
-                  <div>
+                  {/* <div>
                     <Label
                       htmlFor="teachingVideo"
                       className="flex items-center gap-2 mb-2"
@@ -1035,10 +1035,10 @@ const TutorRegistrationForm = () => {
                         )}
                       </label>
                     </div>
-                  </div>
+                  </div> */}
 
                   {/* Resume */}
-                  <div>
+                  {/* <div>
                     <Label
                       htmlFor="cv"
                       className="flex items-center gap-2 mb-2"
@@ -1081,12 +1081,12 @@ const TutorRegistrationForm = () => {
                         )}
                       </label>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
-                <p className="text-xs text-gray-500 mt-2">
+                {/* <p className="text-xs text-gray-500 mt-2">
                   * Required fields. Teaching video is optional but recommended
                   to showcase your teaching style.
-                </p>
+                </p> */}
               </div>
             </CardContent>
           </Card>
@@ -1103,7 +1103,7 @@ const TutorRegistrationForm = () => {
 
             <CardContent className="p-6 space-y-6">
               {/* 11th & 12th Stream */}
-              <div>
+              {/* <div>
                 <Label htmlFor="twelfthStream">12th Stream *</Label>
                 <Select
                   value={mentorData.twelfthStream}
@@ -1124,8 +1124,9 @@ const TutorRegistrationForm = () => {
                     <SelectItem value="arts">Arts</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
-              <div>
+              </div> */}
+
+              {/* <div>
                 <Label htmlFor="twelfthBoard">12th Board *</Label>
                 <Select
                   value={mentorData.twelfthBoard}
@@ -1145,7 +1146,7 @@ const TutorRegistrationForm = () => {
                     <SelectItem value="ICSE Board">ICSE Board</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
+              </div> */}
 
               {/* Graduation Details */}
               <div className="space-y-2">
@@ -1177,7 +1178,7 @@ const TutorRegistrationForm = () => {
                       </SelectContent>
                     </Select>
                   </div>
-                  <Label htmlFor="graduation-college">College Name*</Label>
+                  {/* <Label htmlFor="graduation-college">College Name*</Label>
                   <Input
                     className="mt-1"
                     value={mentorData.graduation.college}
@@ -1188,13 +1189,13 @@ const TutorRegistrationForm = () => {
                         college:e.target.value
                       }
                     })}
-                  />
+                  /> */}
                  
                 </div>
               </div>
 
               {/*Post Graduation Details */}
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <h4 className="font-semibold text-lg text-mentor-yellow-600">
                   Post Graduation
                 </h4>
@@ -1236,7 +1237,7 @@ const TutorRegistrationForm = () => {
                     })}
                   />
                 </div>
-              </div>
+              </div> */}
 
               <div className="md:col-span-2">
                 <Label htmlFor="experience">Teaching Experience *</Label>
@@ -1753,7 +1754,7 @@ const TutorRegistrationForm = () => {
           </Card>
 
           {/* Availability - Simplified */}
-          <Card className="border-mentor-yellow-200 shadow-lg">
+          {/* <Card className="border-mentor-yellow-200 shadow-lg">
             <CardHeader className="bg-gradient-to-r from-mentor-yellow-500 to-mentor-yellow-600 text-white rounded-t-lg">
               <CardTitle className="flex items-center gap-2">
                 <Clock className="h-5 w-5" />
@@ -1764,7 +1765,7 @@ const TutorRegistrationForm = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="p-6 space-y-6">
-              {/* Week Type Selection */}
+             
               <div className="space-y-2">
                 <Label className="text-base font-medium">
                   Available Days *
@@ -1791,7 +1792,7 @@ const TutorRegistrationForm = () => {
                 </div>
               </div>
 
-              {/* Common hours per day */}
+            
               <div className="space-y-2">
                 <Label htmlFor="daily-hours" className="text-sm font-medium">
                   Hours available per day *
@@ -1814,7 +1815,7 @@ const TutorRegistrationForm = () => {
                 </p>
               </div>
 
-              {/* Start immediately option */}
+              
               <div className="space-y-2">
                 <Label className="text-base font-medium">
                   Can Start Immediately? *
@@ -1835,7 +1836,7 @@ const TutorRegistrationForm = () => {
                 </Select>
               </div>
             </CardContent>
-          </Card>
+          </Card> */}
 
           {/* Teaching Experience - Simplified */}
           <Card className="border-mentor-blue-200 shadow-lg">
@@ -1848,7 +1849,7 @@ const TutorRegistrationForm = () => {
                 Brief description of your teaching approach
               </CardDescription>
             </CardHeader>
-            <CardContent className="p-6">
+            {/* <CardContent className="p-6">
               <div>
                 <Label htmlFor="teachingExperience">
                   Teaching Experience & Approach
@@ -1861,7 +1862,7 @@ const TutorRegistrationForm = () => {
                   className="mt-1 min-h-[80px] focus:ring-mentor-yellow-400 focus:border-mentor-yellow-400"
                 />
               </div>
-            </CardContent>
+            </CardContent> */}
             <CardContent className="p-6">
               <div>
                 <Label htmlFor="brief">

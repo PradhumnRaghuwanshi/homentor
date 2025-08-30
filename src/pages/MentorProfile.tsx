@@ -155,7 +155,7 @@ const MentorDetails = () => {
   });
   const mentorData = JSON.parse(localStorage.getItem("mentor"));
   const subjects = [
-    ...new Set(Object.values(mentorData.teachingPreferences.school).flat()),
+    ...new Set(Object.values(mentorData?.teachingPreferences?.school).flat()),
   ];
   const prioritySubjects = ["Mathematics", "Science", "Social Science"];
   // Sort subjects: priority ones come first, rest follow
@@ -176,12 +176,13 @@ const MentorDetails = () => {
       if (!userNumber) {
         setIsLoginOpen(true);
         return
-      }
+      } 
       try {
         const data = await createOrder({
           amount: fees,
           customerId: `homentor${Date.now()}`,
           customerPhone: userNumber,
+          mentorId: mentorData._id
         });
         console.log(data);
          let cashfree = await load({
@@ -541,16 +542,16 @@ const MentorDetails = () => {
                           className="border-l-4 border-blue-400 pl-4 bg-slate-50 p-4 rounded-r-lg"
                         >
                           <h3 className="font-semibold text-lg text-slate-800">
-                            {exp.role}
+                            {exp?.role}
                           </h3>
                           <p className="text-blue-600 font-medium">
-                            {exp.school}
+                            {exp?.school}
                           </p>
                           <p className="text-sm text-slate-600 mb-2">
-                            {exp.duration}
+                            {exp?.duration}
                           </p>
                           <p className="text-slate-700 text-sm">
-                            {exp.description}
+                            {exp?.description}
                           </p>
                         </div>
                       ))}
@@ -564,18 +565,18 @@ const MentorDetails = () => {
                   </CardHeader>
                   <CardContent className="p-6 bg-white">
                     <div className="space-y-6">
-                      {teacherData.education.map((edu, index) => (
+                      {teacherData?.education.map((edu, index) => (
                         <div
                           key={index}
                           className="border-l-4 border-yellow-400 pl-4 bg-slate-50 p-4 rounded-r-lg"
                         >
                           <h3 className="font-semibold text-lg text-slate-800">
-                            {edu.degree}
+                            {edu?.degree}
                           </h3>
                           <p className="text-yellow-600 font-medium">
-                            {edu.school}
+                            {edu?.school}
                           </p>
-                          <p className="text-sm text-slate-600">{edu.year}</p>
+                          <p className="text-sm text-slate-600">{edu?.year}</p>
                         </div>
                       ))}
                     </div>

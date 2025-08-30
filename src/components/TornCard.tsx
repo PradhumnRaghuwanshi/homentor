@@ -30,7 +30,6 @@ const TornCard = ({ mentor }) => {
   };
 
   const userNumber = localStorage.getItem("usernumber");
- 
 
   const handlePayment = async (fees) => {
     if (!userNumber) {
